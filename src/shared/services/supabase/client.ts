@@ -8,36 +8,28 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://xhpwmondzar
 const supabaseAnonKey =
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? 'sb_publishable_m7deqa--hK3BofZbiTzcuQ_6Q1wrzyn';
 
-const REQUEST_TIMEOUT_MS = 15_000;
-
-function requestUrl(input: RequestInfo | URL): string {
-  if (typeof input === 'string') return input;
-  if (input instanceof URL) return input.toString();
-  return input.url;
-}
+// Signup/login can trigger server-side email sending and take longer than a
+// typical read, so the client timeout has headroom above GoTrue's own budget.
+const REQUEST_TIMEOUT_MS = 30_000;
 
 // Every request gets a hard timeout so a stalled connection surfaces as a
-// clear "Timeout" AppError instead of a screen that spins forever.
-function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
-  const url = requestUrl(input);
-  const method = init?.method ?? 'GET';
-  const startedAt = Date.now();
-
+// clear "Timeout" AppError instead of a screen that spins forever. RN/Hermes's
+// AbortController doesn't reliably support abort(reason), so a plain flag
+// tracks whether *our* timeout fired before re-throwing with a message that
+// errorMapping.ts can recognize even after Supabase wraps the rejection.
+export function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   const controller = new AbortController();
+  let timedOut = false;
   const timeout = setTimeout(() => {
-    console.warn(`[supabase] ${method} ${url} timed out after ${REQUEST_TIMEOUT_MS}ms, aborting`);
-    controller.abort(new Error(`Request to ${url} timed out after ${REQUEST_TIMEOUT_MS}ms`));
+    timedOut = true;
+    controller.abort();
   }, REQUEST_TIMEOUT_MS);
 
-  console.log(`[supabase] → ${method} ${url}`);
-
   return fetch(input, { ...init, signal: controller.signal })
-    .then((response) => {
-      console.log(`[supabase] ← ${response.status} ${method} ${url} (${Date.now() - startedAt}ms)`);
-      return response;
-    })
     .catch((error) => {
-      console.error(`[supabase] ✗ ${method} ${url} failed after ${Date.now() - startedAt}ms:`, error);
+      if (timedOut) {
+        throw new Error('Request timed out');
+      }
       throw error;
     })
     .finally(() => clearTimeout(timeout));

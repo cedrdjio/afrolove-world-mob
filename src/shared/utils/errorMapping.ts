@@ -70,24 +70,23 @@ function buildError(kind: AppErrorKind, overrideMessage?: string): AppError {
   return { kind, ...APP_ERRORS[kind], ...(overrideMessage ? { message: overrideMessage } : {}) };
 }
 
-/**
- * Normalizes any error thrown by Supabase, fetch, or React Query into a
- * single AppError shape so every screen renders the same illustration +
- * title + message + retry affordance for a given failure kind.
- */
-export function mapToAppError(error: unknown): AppError {
-  console.error('[mapToAppError] raw error', error);
+function isAbortOrTimeout(error: Error): boolean {
+  const message = error.message.toLowerCase();
+  return (
+    error.name === 'AbortError' ||
+    message.includes('abort') ||
+    message.includes('timeout') ||
+    message.includes('timed out')
+  );
+}
 
-  if (error instanceof AuthError && error.name === 'AuthRetryableFetchError') {
-    // Thrown when the underlying fetch itself rejects (network down, our
-    // 15s timeout aborting, CORS, etc) rather than the server responding
-    // with an error — status is always 0 here so it never matches the
-    // code/status checks below.
-    const message = error.message.toLowerCase();
-    if (message.includes('timed out') || message.includes('abort')) {
-      return buildError('timeout');
-    }
-    return buildError('no_internet');
+function resolveAppError(error: unknown): AppError {
+  // GoTrue wraps the raw fetch/AbortError into its own AuthError/AuthApiError
+  // subclasses, so this check must run before the class-specific branches
+  // below or an aborted request falls through to the raw-message 'unknown'
+  // case instead of the friendly 'timeout' one.
+  if (error instanceof Error && isAbortOrTimeout(error)) {
+    return buildError('timeout');
   }
 
   if (error instanceof AuthApiError || error instanceof AuthError) {
@@ -117,18 +116,56 @@ export function mapToAppError(error: unknown): AppError {
   }
 
   if (error instanceof Error) {
-    const message = error.message.toLowerCase();
-    if (error.name === 'AbortError' || message.includes('timeout') || message.includes('timed out')) {
-      return buildError('timeout');
-    }
     if (
-      message.includes('network request failed') ||
-      message.includes('fetch failed') ||
-      message.includes('failed to fetch')
+      error.message.toLowerCase().includes('network request failed') ||
+      error.message.toLowerCase().includes('fetch failed') ||
+      error.message.toLowerCase().includes('failed to fetch')
     ) {
       return buildError('no_internet');
     }
   }
 
   return buildError('unknown');
+}
+
+/**
+ * Prints every technical detail we have about the raw error (constructor,
+ * name, message, stack, Supabase code/status, cause) next to the AppError
+ * kind it resolved to. Dev-only — this is what to grep the Metro/device
+ * logs for when a friendly message on screen isn't enough to debug with.
+ */
+function logAppErrorDetails(error: unknown, resolved: AppError): void {
+  const details: Record<string, unknown> = {
+    resolvedKind: resolved.kind,
+    constructor: error?.constructor?.name,
+  };
+
+  if (error instanceof Error) {
+    details.name = error.name;
+    details.message = error.message;
+    details.stack = error.stack;
+    if ('code' in error) details.code = (error as { code?: unknown }).code;
+    if ('status' in error) details.status = (error as { status?: unknown }).status;
+    if ('cause' in error) details.cause = (error as { cause?: unknown }).cause;
+  } else {
+    details.raw = error;
+  }
+
+  // eslint-disable-next-line no-console
+  console.error('[AppError]', details);
+}
+
+/**
+ * Normalizes any error thrown by Supabase, fetch, or React Query into a
+ * single AppError shape so every screen renders the same illustration +
+ * title + message + retry affordance for a given failure kind.
+ */
+export function mapToAppError(error: unknown): AppError {
+  const resolved = resolveAppError(error);
+
+  if (__DEV__) {
+    logAppErrorDetails(error, resolved);
+  }
+
+  return resolved;
 }
