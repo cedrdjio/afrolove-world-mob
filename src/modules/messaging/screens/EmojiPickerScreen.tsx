@@ -1,4 +1,5 @@
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { colors } from '@/shared/constants/theme';
@@ -23,7 +24,7 @@ export function EmojiPickerScreen() {
         </Pressable>
       </View>
 
-      <FlatList
+      <FlashList
         data={EMOJIS}
         numColumns={6}
         keyExtractor={(item, i) => `${item}-${i}`}

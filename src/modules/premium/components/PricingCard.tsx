@@ -30,7 +30,7 @@ export function PricingCard({ plan }: { plan: PremiumPlan }) {
         {plan.label}
       </Text>
       <Text className="mb-0.5 text-center font-display text-[22px] text-white">{plan.price}</Text>
-      <Text className="mb-2 text-center font-body text-[9px] text-white/38">{plan.description}</Text>
+      <Text className="mb-2 text-center font-body text-[9px] text-white/[0.38]">{plan.description}</Text>
       <Pressable onPress={handlePress} className="rounded-lg py-1.5" style={{ backgroundColor: tone.cta }}>
         <Text className="text-center font-heading text-[9px] uppercase text-white">{plan.cta}</Text>
       </Pressable>

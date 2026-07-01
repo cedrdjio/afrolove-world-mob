@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
-import { View, Text, Pressable, FlatList, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Send, Smile, Image as ImageIcon, MoreHorizontal } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,7 +17,11 @@ export function ChatScreen() {
   const conversation = getConversationById(id ?? '1');
   const [messages, setMessages] = useState<MockMessage[]>(INITIAL_MESSAGES);
   const [draft, setDraft] = useState('');
-  const listRef = useRef<FlatList>(null);
+  const listRef = useRef<FlashListRef<MockMessage>>(null);
+
+  useEffect(() => {
+    requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: false }));
+  }, [messages.length]);
 
   const handleSend = () => {
     if (!draft.trim()) return;
@@ -25,7 +30,6 @@ export function ChatScreen() {
       { id: `${prev.length + 1}`, text: draft.trim(), fromMe: true, timestamp: 'Maintenant' },
     ]);
     setDraft('');
-    requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: true }));
   };
 
   return (
@@ -61,14 +65,13 @@ export function ChatScreen() {
         </View>
       </GlassSurface>
 
-      <FlatList
+      <FlashList
         ref={listRef}
         data={messages}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="px-[18px] py-4 gap-2.5"
-        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
+        contentContainerClassName="px-[18px] py-4"
         renderItem={({ item }) => (
-          <View className={item.fromMe ? 'items-end' : 'items-start'}>
+          <View className={`mb-2.5 ${item.fromMe ? 'items-end' : 'items-start'}`}>
             {item.fromMe ? (
               <LinearGradient
                 colors={gradients.brand}

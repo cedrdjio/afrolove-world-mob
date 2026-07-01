@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { View, Text, Pressable, FlatList, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Search as SearchIcon, X } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
@@ -50,7 +51,7 @@ export function MatchesSearchScreen() {
           description={`Aucun match ne correspond à "${query}".`}
         />
       ) : (
-        <FlatList
+        <FlashList
           data={results}
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-6 pb-8"

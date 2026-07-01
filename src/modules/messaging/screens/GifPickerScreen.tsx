@@ -1,4 +1,5 @@
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
@@ -23,19 +24,20 @@ export function GifPickerScreen() {
         </Pressable>
       </View>
 
-      <FlatList
+      <FlashList
         data={GIF_LABELS}
         numColumns={2}
         keyExtractor={(item) => item}
-        contentContainerClassName="px-6 pb-8 gap-3"
-        columnWrapperClassName="gap-3"
+        contentContainerClassName="px-[18px] pb-8"
         renderItem={({ item, index }) => (
-          <Pressable onPress={() => router.back()} className="flex-1 overflow-hidden rounded-2xl" style={{ aspectRatio: 1 }}>
-            <PhotoPlaceholder seed={index} style={{ flex: 1 }} />
-            <View className="absolute inset-x-0 bottom-0 bg-black/30 px-2.5 py-2">
-              <Text className="font-heading-semibold text-[11px] text-white">{item}</Text>
-            </View>
-          </Pressable>
+          <View className="flex-1 p-1.5">
+            <Pressable onPress={() => router.back()} className="overflow-hidden rounded-2xl" style={{ aspectRatio: 1 }}>
+              <PhotoPlaceholder seed={index} style={{ flex: 1 }} />
+              <View className="absolute inset-x-0 bottom-0 bg-black/30 px-2.5 py-2">
+                <Text className="font-heading-semibold text-[11px] text-white">{item}</Text>
+              </View>
+            </Pressable>
+          </View>
         )}
       />
     </View>

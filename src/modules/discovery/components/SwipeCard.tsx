@@ -135,12 +135,12 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
         </>
       ) : null}
 
-      <View className="absolute left-3.5 top-3.5 flex-row items-center gap-1.5 rounded-full border border-white/95 bg-white/88 px-3 py-1.5">
+      <View className="absolute left-3.5 top-3.5 flex-row items-center gap-1.5 rounded-full border border-white/95 bg-white/[0.88] px-3 py-1.5">
         <Heart size={11} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
         <Text className="font-heading text-[11px] uppercase text-ink">{profile.matchPercent}% Match</Text>
       </View>
       {profile.verified ? (
-        <View className="absolute right-3.5 top-3.5 flex-row items-center gap-1 rounded-full border border-white/95 bg-white/88 px-2.5 py-1.5">
+        <View className="absolute right-3.5 top-3.5 flex-row items-center gap-1 rounded-full border border-white/95 bg-white/[0.88] px-2.5 py-1.5">
           <BadgeCheck size={10} color={colors.gold.DEFAULT} strokeWidth={2.8} />
           <Text className="font-heading-semibold text-[10px] uppercase text-ink">Vérifié</Text>
         </View>

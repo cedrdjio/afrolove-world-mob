@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Bell } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
@@ -40,14 +41,16 @@ export function NotificationsScreen() {
           </Pressable>
         </View>
 
-        <FlatList
+        <FlashList
           horizontal
           showsHorizontalScrollIndicator={false}
           data={NOTIFICATION_FILTERS}
           keyExtractor={(item) => item.key}
-          contentContainerClassName="gap-2 pb-5"
+          contentContainerClassName="pb-5"
           renderItem={({ item }) => (
-            <Chip label={item.label} selected={filter === item.key} onPress={() => setFilter(item.key)} />
+            <View className="mr-2">
+              <Chip label={item.label} selected={filter === item.key} onPress={() => setFilter(item.key)} />
+            </View>
           )}
         />
       </View>
@@ -59,10 +62,10 @@ export function NotificationsScreen() {
           description="Vous êtes à jour ! Revenez plus tard."
         />
       ) : (
-        <FlatList
+        <FlashList
           data={filtered}
           keyExtractor={(item) => item.id}
-          contentContainerClassName="px-6 pb-8 gap-2"
+          contentContainerClassName="px-6 pb-8"
           renderItem={({ item }) => (
             <View
               className={`mb-2 flex-row items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 ${

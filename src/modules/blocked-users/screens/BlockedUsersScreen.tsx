@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Ban } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
@@ -57,12 +58,11 @@ export function BlockedUsersScreen() {
             </Pressable>
           </View>
         ) : (
-          <FlatList
+          <FlashList
             data={users}
             keyExtractor={(item) => item.id}
-            contentContainerClassName="gap-2"
             renderItem={({ item }) => (
-              <View className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
+              <View className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
                 <Avatar seed={item.name} size={48} />
                 <View className="flex-1">
                   <Text className="mb-0.5 font-heading text-[14px] uppercase text-ink">{item.name}</Text>

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { MessageCircle } from 'lucide-react-native';
 import type BottomSheet from '@gorhom/bottom-sheet';
@@ -39,10 +40,10 @@ export function ConversationListScreen() {
           description="Vos conversations avec vos matches apparaîtront ici."
         />
       ) : (
-        <FlatList
+        <FlashList
           data={conversations}
           keyExtractor={(item) => item.id}
-          contentContainerClassName="px-[22px] pb-8 gap-2"
+          contentContainerClassName="px-[22px] pb-8"
           renderItem={({ item }) => (
             <Pressable
               onPress={() => router.push(`/chat/${item.id}`)}

@@ -1,4 +1,5 @@
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Search as SearchIcon, Heart } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
@@ -42,16 +43,16 @@ export function MatchListScreen() {
           onAction={() => router.push('/(tabs)/discover')}
         />
       ) : (
-        <FlatList
+        <FlashList
           data={NEW_MATCHES}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
-          contentContainerClassName="px-[22px] gap-3.5"
+          contentContainerClassName="px-[22px]"
           renderItem={({ item }) => (
             <Pressable
               onPress={() => router.push(`/chat/${item.id}`)}
-              className="items-center gap-1.5"
+              className="mr-3.5 items-center gap-1.5"
               style={{ width: 62 }}
             >
               <Avatar

@@ -55,7 +55,7 @@ export function KycPendingScreen() {
         <Text className="mb-3.5 text-center font-display-semibold text-[17px] uppercase tracking-[2px] text-white/45">
           Vérification en cours
         </Text>
-        <Text className="mb-9 text-center font-body text-[13px] leading-[20px] text-white/38">
+        <Text className="mb-9 text-center font-body text-[13px] leading-[20px] text-white/[0.38]">
           Notre équipe examine votre dossier.{'\n'}Vous recevrez une notification sous{' '}
           <Text className="text-white/65">48 heures maximum.</Text>
         </Text>
