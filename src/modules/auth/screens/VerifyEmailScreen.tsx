@@ -18,8 +18,9 @@ export function VerifyEmailScreen() {
   const verifyOtp = useVerifySignupOtp();
   const resendEmail = useResendSignupEmail();
 
+  const MIN_CODE_LENGTH = 4;
   const handleVerify = () => {
-    if (!email || code.length < 6) return;
+    if (!email || code.length < MIN_CODE_LENGTH) return;
     verifyOtp.mutate({ email, token: code }, { onSuccess: () => router.replace('/(auth)/success') });
   };
 
@@ -46,8 +47,8 @@ export function VerifyEmailScreen() {
 
         <Text className="mb-2.5 font-display text-[34px] uppercase leading-none text-ink">Vérifiez{'\n'}votre email</Text>
         <Text className="mb-8 font-body text-[13.5px] leading-[21px] text-ink-muted">
-          Saisissez le code à 6 chiffres envoyé à {email ?? 'votre adresse email'}, ou ouvrez directement le lien
-          reçu par email.
+          Saisissez le code envoyé à {email ?? 'votre adresse email'}, ou ouvrez directement le lien reçu par
+          email.
         </Text>
 
         {verifyOtp.isError ? (
@@ -75,7 +76,7 @@ export function VerifyEmailScreen() {
 
         <GradientButton
           label="Vérifier"
-          disabled={code.length < 6}
+          disabled={code.length < MIN_CODE_LENGTH}
           loading={verifyOtp.isPending}
           onPress={handleVerify}
         />

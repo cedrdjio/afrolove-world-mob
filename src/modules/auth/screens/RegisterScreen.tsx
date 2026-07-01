@@ -34,9 +34,13 @@ export function RegisterScreen() {
 
   const accepted = watch('acceptedTerms');
   const onSubmit = (values: RegisterFormValues) => {
+    console.log('[RegisterScreen] onSubmit', { email: values.email, firstName: values.firstName });
     register.mutate(values, {
-      onSuccess: () =>
-        router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } }),
+      onSuccess: () => {
+        console.log('[RegisterScreen] navigating to verify-email');
+        router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } });
+      },
+      onError: (error) => console.error('[RegisterScreen] register failed', error),
     });
   };
 
