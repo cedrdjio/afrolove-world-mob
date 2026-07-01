@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { ChoiceListEditor } from '@/modules/edit-profile/components/ChoiceListEditor';
+import { ChoiceListEditor } from '@/shared/components/ui/ChoiceListEditor';
 import { EditScreenLayout } from '@/modules/edit-profile/components/EditScreenLayout';
 
 const OPTIONS = ['Chrétienne', 'Musulmane', 'Traditionnelle africaine', 'Autre', 'Préfère ne pas dire'];

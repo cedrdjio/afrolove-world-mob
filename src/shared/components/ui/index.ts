@@ -10,3 +10,4 @@ export * from './PhotoPlaceholder';
 export * from './Badges';
 export * from './ProgressSteps';
 export * from './SettingsRow';
+export * from './ChoiceListEditor';
