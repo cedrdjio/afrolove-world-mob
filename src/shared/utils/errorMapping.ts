@@ -76,6 +76,20 @@ function buildError(kind: AppErrorKind, overrideMessage?: string): AppError {
  * title + message + retry affordance for a given failure kind.
  */
 export function mapToAppError(error: unknown): AppError {
+  console.error('[mapToAppError] raw error', error);
+
+  if (error instanceof AuthError && error.name === 'AuthRetryableFetchError') {
+    // Thrown when the underlying fetch itself rejects (network down, our
+    // 15s timeout aborting, CORS, etc) rather than the server responding
+    // with an error — status is always 0 here so it never matches the
+    // code/status checks below.
+    const message = error.message.toLowerCase();
+    if (message.includes('timed out') || message.includes('abort')) {
+      return buildError('timeout');
+    }
+    return buildError('no_internet');
+  }
+
   if (error instanceof AuthApiError || error instanceof AuthError) {
     const code = 'code' in error ? (error as { code?: string }).code : undefined;
     const status = 'status' in error ? (error as { status?: number }).status : undefined;

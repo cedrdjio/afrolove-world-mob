@@ -10,13 +10,37 @@ const supabaseAnonKey =
 
 const REQUEST_TIMEOUT_MS = 15_000;
 
+function requestUrl(input: RequestInfo | URL): string {
+  if (typeof input === 'string') return input;
+  if (input instanceof URL) return input.toString();
+  return input.url;
+}
+
 // Every request gets a hard timeout so a stalled connection surfaces as a
 // clear "Timeout" AppError instead of a screen that spins forever.
 function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const url = requestUrl(input);
+  const method = init?.method ?? 'GET';
+  const startedAt = Date.now();
 
-  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timeout));
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    console.warn(`[supabase] ${method} ${url} timed out after ${REQUEST_TIMEOUT_MS}ms, aborting`);
+    controller.abort(new Error(`Request to ${url} timed out after ${REQUEST_TIMEOUT_MS}ms`));
+  }, REQUEST_TIMEOUT_MS);
+
+  console.log(`[supabase] → ${method} ${url}`);
+
+  return fetch(input, { ...init, signal: controller.signal })
+    .then((response) => {
+      console.log(`[supabase] ← ${response.status} ${method} ${url} (${Date.now() - startedAt}ms)`);
+      return response;
+    })
+    .catch((error) => {
+      console.error(`[supabase] ✗ ${method} ${url} failed after ${Date.now() - startedAt}ms:`, error);
+      throw error;
+    })
+    .finally(() => clearTimeout(timeout));
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
