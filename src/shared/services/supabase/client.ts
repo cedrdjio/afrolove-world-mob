@@ -4,14 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import { secureStoreAdapter } from '@/shared/services/supabase/secureStoreAdapter';
 import type { Database } from '@/shared/types/supabase';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY. Add them to your .env file.',
-  );
-}
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://xhpwmondzarbnzciruis.supabase.co';
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? 'sb_publishable_m7deqa--hK3BofZbiTzcuQ_6Q1wrzyn';
 
 const REQUEST_TIMEOUT_MS = 15_000;
 
