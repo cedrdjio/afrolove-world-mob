@@ -1,3 +1,6 @@
+import type { LucideIcon } from 'lucide-react-native';
+import { CircleCheckBig, Crown, FileText } from 'lucide-react-native';
+
 export type NotificationCategory = 'likes' | 'matches' | 'messages' | 'kyc' | 'premium' | 'system';
 
 export interface MockNotification {
@@ -8,7 +11,7 @@ export interface MockNotification {
   timeAgo: string;
   read: boolean;
   photoSeed?: number;
-  emoji?: string;
+  Icon?: LucideIcon;
   accentColor: string;
 }
 
@@ -50,7 +53,7 @@ export const MOCK_NOTIFICATIONS: MockNotification[] = [
     highlight: '',
     timeAgo: 'Il y a 1 jour',
     read: true,
-    emoji: '✅',
+    Icon: CircleCheckBig,
     accentColor: '#4CAF50',
   },
   {
@@ -60,7 +63,7 @@ export const MOCK_NOTIFICATIONS: MockNotification[] = [
     highlight: '',
     timeAgo: '7 jours gratuits · Likes illimités',
     read: true,
-    emoji: '👑',
+    Icon: Crown,
     accentColor: '#C9862A',
   },
   {
@@ -70,7 +73,7 @@ export const MOCK_NOTIFICATIONS: MockNotification[] = [
     highlight: '',
     timeAgo: 'Il y a 3 jours',
     read: true,
-    emoji: '📄',
+    Icon: FileText,
     accentColor: '#7A5540',
   },
 ];

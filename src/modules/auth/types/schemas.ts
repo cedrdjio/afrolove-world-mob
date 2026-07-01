@@ -20,3 +20,14 @@ export const forgotPasswordSchema = z.object({
   email: z.string().email('Adresse email invalide'),
 });
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(6, 'Au moins 6 caractères'),
+    confirmPassword: z.string().min(6, 'Au moins 6 caractères'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Les mots de passe ne correspondent pas',
+    path: ['confirmPassword'],
+  });
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

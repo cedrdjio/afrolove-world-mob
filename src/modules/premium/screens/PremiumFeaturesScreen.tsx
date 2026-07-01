@@ -1,6 +1,6 @@
 import { View, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Heart, Eye, Star, Zap, Globe2, ShieldCheck } from 'lucide-react-native';
+import { Heart, Eye, Star, Zap, Globe2, ShieldCheck, ArrowLeft } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
@@ -27,7 +27,7 @@ export function PremiumFeaturesScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
         <View className="mb-6 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[20px] uppercase text-ink">Avantages Premium</Text>
           <View style={{ width: 44 }} />

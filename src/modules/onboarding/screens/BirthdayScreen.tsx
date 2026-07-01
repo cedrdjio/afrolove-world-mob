@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Cake } from 'lucide-react-native';
 import { OnboardingLayout } from '@/modules/onboarding/components/OnboardingLayout';
 import { OnboardingHeader } from '@/modules/onboarding/components/OnboardingHeader';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
@@ -66,7 +67,7 @@ export function BirthdayScreen() {
         className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/70"
         style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
       >
-        <Text style={{ fontSize: 28 }}>🎂</Text>
+        <Cake size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />
       </View>
       <Text className="mb-2.5 font-display text-[38px] uppercase leading-none text-ink">
         Votre date{'\n'}

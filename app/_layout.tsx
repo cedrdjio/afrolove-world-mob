@@ -4,14 +4,22 @@ import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import * as SplashScreen from 'expo-splash-screen';
 import { useAppFonts } from '@/shared/hooks/useAppFonts';
 import { colors } from '@/shared/constants/theme';
+import { queryClient } from '@/shared/services/queryClient';
+import { OfflineOverlay } from '@/shared/components/feedback';
+import { useInitializeAuth } from '@/modules/auth/hooks/useAuth';
+import { useAuthDeepLink } from '@/modules/auth/hooks/useAuthDeepLink';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-const queryClient = new QueryClient();
+function AppBootstrap() {
+  useInitializeAuth();
+  useAuthDeepLink();
+  return null;
+}
 
 export default function RootLayout() {
   const { loaded, error } = useAppFonts();
@@ -30,6 +38,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
+          <AppBootstrap />
           <Stack
             screenOptions={{
               headerShown: false,
@@ -56,6 +65,7 @@ export default function RootLayout() {
             <Stack.Screen name="blocked-users" />
             <Stack.Screen name="system" />
           </Stack>
+          <OfflineOverlay />
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

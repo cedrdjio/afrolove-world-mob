@@ -9,7 +9,7 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 import type BottomSheet from '@gorhom/bottom-sheet';
-import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler } from 'lucide-react-native';
+import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
@@ -172,7 +172,7 @@ export function ProfileViewScreen() {
         <Pressable onPress={() => router.back()}>
           <GlassSurface variant="dark" radius={13} style={{ width: 42, height: 42 }}>
             <View className="h-[42px] w-[42px] items-center justify-center">
-              <Text style={{ fontSize: 18, color: '#fff' }}>←</Text>
+              <ArrowLeft size={18} color="#fff" strokeWidth={2} />
             </View>
           </GlassSurface>
         </Pressable>

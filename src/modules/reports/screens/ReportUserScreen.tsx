@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, TextInput } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Check } from 'lucide-react-native';
+import { Check, ArrowLeft } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
@@ -24,7 +24,7 @@ export function ReportUserScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
         <View className="mb-6 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[20px] uppercase text-ink">Signaler</Text>
           <View style={{ width: 44 }} />

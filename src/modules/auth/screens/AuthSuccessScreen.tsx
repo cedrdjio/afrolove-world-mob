@@ -54,7 +54,7 @@ export function AuthSuccessScreen() {
 
         <GradientButton
           label="Continuer"
-          onPress={() => router.replace('/(onboarding)/carousel')}
+          onPress={() => router.replace('/(auth)/resolving')}
           style={{ width: '100%' }}
         />
       </View>

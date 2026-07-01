@@ -6,12 +6,18 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDelay } fro
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { gradients } from '@/shared/constants/theme';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
+import { useCompleteOnboarding } from '@/modules/onboarding/hooks/useCompleteOnboarding';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
+import { mapToAppError } from '@/shared/utils/errorMapping';
 
 export function FinishScreen() {
   const router = useRouter();
-  const firstName = useOnboardingStore((s) => s.firstName);
+  const { user } = useAuth();
+  const onboarding = useOnboardingStore();
+  const completeOnboarding = useCompleteOnboarding();
   const scale = useSharedValue(0);
 
   useEffect(() => {
@@ -19,6 +25,23 @@ export function FinishScreen() {
   }, [scale]);
 
   const iconStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  const handleFinish = () => {
+    if (!user || !onboarding.gender || !onboarding.lookingFor) return;
+    completeOnboarding.mutate(
+      {
+        userId: user.id,
+        firstName: onboarding.firstName,
+        gender: onboarding.gender,
+        birthDate: onboarding.birthDate,
+        lookingFor: onboarding.lookingFor,
+        interests: onboarding.interests,
+        lifestyle: onboarding.lifestyle,
+        photoUris: onboarding.photos,
+      },
+      { onSuccess: () => router.replace('/(auth)/resolving') },
+    );
+  };
 
   return (
     <View className="flex-1">
@@ -48,15 +71,27 @@ export function FinishScreen() {
         </Animated.View>
 
         <Text className="mb-3 text-center font-display-black text-[32px] uppercase text-white">
-          Profil complet{firstName ? `, ${firstName}` : ''} !
+          Profil complet{onboarding.firstName ? `, ${onboarding.firstName}` : ''} !
         </Text>
-        <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">
+        <Text className="mb-8 text-center font-body text-[13.5px] leading-[21px] text-white/50">
           Votre profil AfroLove World est prêt.{'\n'}Il est temps de faire de belles rencontres.
         </Text>
 
+        {completeOnboarding.isError ? (
+          <View className="mb-6 w-full">
+            <ErrorState
+              error={mapToAppError(completeOnboarding.error)}
+              variant="inline"
+              tone="onDark"
+              onRetry={handleFinish}
+            />
+          </View>
+        ) : null}
+
         <GradientButton
           label="Découvrir l'application"
-          onPress={() => router.replace('/(tabs)/discover')}
+          loading={completeOnboarding.isPending}
+          onPress={handleFinish}
           style={{ width: '100%' }}
         />
       </View>

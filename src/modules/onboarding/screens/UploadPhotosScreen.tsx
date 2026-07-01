@@ -41,7 +41,7 @@ export function UploadPhotosScreen() {
     <OnboardingLayout orbPosition="topLeft">
       <OnboardingHeader step={6} />
 
-      <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Vos photos 📸</Text>
+      <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Vos photos</Text>
       <Text className="mb-[18px] font-body text-[12.5px] leading-[19px] text-ink-muted">
         Soyez authentique. 3 photos = 4× plus de visibilité.
       </Text>

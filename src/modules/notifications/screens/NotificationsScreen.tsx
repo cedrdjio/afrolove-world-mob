@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { Bell } from 'lucide-react-native';
+import { Bell, ArrowLeft, HelpCircle } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { Chip } from '@/shared/components/ui/Chip';
@@ -33,7 +33,7 @@ export function NotificationsScreen() {
       <View className="px-6" style={{ paddingTop: 64 }}>
         <View className="mb-5 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[22px] uppercase text-ink">Notifications</Text>
           <Pressable onPress={markAllRead} className="rounded-full bg-brand/10 px-3.5 py-2">
@@ -84,7 +84,11 @@ export function NotificationsScreen() {
                   className="h-[46px] w-[46px] items-center justify-center rounded-full"
                   style={{ backgroundColor: `${item.accentColor}1A` }}
                 >
-                  <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
+                  {item.Icon ? (
+                    <item.Icon size={22} color={item.accentColor} />
+                  ) : (
+                    <HelpCircle size={22} color={item.accentColor} />
+                  )}
                 </View>
               )}
               <View className="flex-1">

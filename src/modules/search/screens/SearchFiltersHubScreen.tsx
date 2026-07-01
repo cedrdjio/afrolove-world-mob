@@ -2,7 +2,7 @@ import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
   MapPin, Calendar, Globe2, Building2, Church, Languages as LanguagesIcon,
-  HeartPulse, GraduationCap, Briefcase, Ruler, BadgeCheck,
+  HeartPulse, GraduationCap, Briefcase, Ruler, BadgeCheck, ArrowLeft,
 } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
@@ -47,7 +47,7 @@ export function SearchFiltersHubScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
         <View className="mb-6 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[20px] uppercase text-ink">Recherche avancée</Text>
           <View style={{ width: 44 }} />

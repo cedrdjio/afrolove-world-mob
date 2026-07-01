@@ -3,20 +3,24 @@ import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Pressable } fro
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Mail, Lock, Eye, EyeOff, Check } from 'lucide-react-native';
+import { User, Mail, Lock, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { images } from '@/shared/constants/images';
 import { colors, gradients } from '@/shared/constants/theme';
 import { registerSchema, type RegisterFormValues } from '@/modules/auth/types/schemas';
+import { useRegister } from '@/modules/auth/hooks/useRegister';
+import { mapToAppError } from '@/shared/utils/errorMapping';
 
 export function RegisterScreen() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const register = useRegister();
   const {
     control,
     handleSubmit,
@@ -29,7 +33,12 @@ export function RegisterScreen() {
   });
 
   const accepted = watch('acceptedTerms');
-  const onSubmit = () => router.push('/(onboarding)/carousel');
+  const onSubmit = (values: RegisterFormValues) => {
+    register.mutate(values, {
+      onSuccess: () =>
+        router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } }),
+    });
+  };
 
   return (
     <View className="flex-1">
@@ -42,18 +51,24 @@ export function RegisterScreen() {
         <ScrollView contentContainerClassName="px-6 pb-8" keyboardShouldPersistTaps="handled" style={{ paddingTop: 68 }}>
           <View className="mb-6 flex-row items-center justify-between">
             <IconButton onPress={() => router.back()}>
-              <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+              <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
             </IconButton>
             <Image source={images.logoLight} style={{ width: 44, height: 44, borderRadius: 13 }} contentFit="cover" />
             <View style={{ width: 44 }} />
           </View>
 
           <Text className="mb-1 font-display text-[36px] uppercase leading-none text-ink">
-            Rejoindre AfroLove 🌍
+            Rejoindre AfroLove
           </Text>
           <Text className="mb-[22px] font-body text-[13px] text-ink-muted">
             Créez votre compte en quelques instants.
           </Text>
+
+          {register.isError ? (
+            <View className="mb-4">
+              <ErrorState error={mapToAppError(register.error)} variant="inline" onRetry={handleSubmit(onSubmit)} />
+            </View>
+          ) : null}
 
           <Controller
             control={control}
@@ -136,7 +151,12 @@ export function RegisterScreen() {
             <Text className="mb-2 font-body text-[11px] text-danger">{errors.acceptedTerms.message}</Text>
           ) : null}
 
-          <GradientButton label="Créer mon compte" onPress={handleSubmit(onSubmit)} style={{ marginBottom: 14 }} />
+          <GradientButton
+            label="Créer mon compte"
+            loading={register.isPending}
+            onPress={handleSubmit(onSubmit)}
+            style={{ marginBottom: 14 }}
+          />
 
           <Text className="text-center font-body text-[13px] text-ink-muted">
             Déjà membre ?{' '}

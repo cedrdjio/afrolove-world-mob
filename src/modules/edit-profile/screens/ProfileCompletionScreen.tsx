@@ -1,7 +1,7 @@
 import { View, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
-import { Check, Plus } from 'lucide-react-native';
+import { Check, Plus, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb, ScreenHeader } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
@@ -77,7 +77,10 @@ export function ProfileCompletionScreen() {
                 <Check size={13} color="#fff" strokeWidth={3} />
               </LinearGradient>
               <Text className="flex-1 font-heading-semibold text-[13px] uppercase text-ink">{item}</Text>
-              <Text className="font-body-medium text-[10px] text-brand/60">Fait ✓</Text>
+              <View className="flex-row items-center gap-1">
+                <Text className="font-body-medium text-[10px] text-brand/60">Fait</Text>
+                <Check size={10} color="rgba(200,96,64,0.6)" strokeWidth={3} />
+              </View>
             </View>
           ))}
 
@@ -100,7 +103,12 @@ export function ProfileCompletionScreen() {
           ))}
         </View>
 
-        <GradientButton label="Compléter maintenant →" onPress={() => router.push('/edit-profile/bio')} />
+        <GradientButton
+          label="Compléter maintenant"
+          icon={<ArrowRight size={14} color="#fff" />}
+          iconPosition="right"
+          onPress={() => router.push('/edit-profile/bio')}
+        />
       </ScrollView>
     </View>
   );

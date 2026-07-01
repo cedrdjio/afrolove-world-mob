@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -14,6 +14,7 @@ import Animated, {
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { images } from '@/shared/constants/images';
 import { colors } from '@/shared/constants/theme';
+import { useInitialRoute } from '@/modules/auth/hooks/useInitialRoute';
 
 function LoadingDot({ delay }: { delay: number }) {
   const opacity = useSharedValue(0.3);
@@ -30,9 +31,13 @@ function LoadingDot({ delay }: { delay: number }) {
   return <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.brand.DEFAULT }, style]} />;
 }
 
+const MIN_BRANDING_DELAY_MS = 2000;
+
 export function SplashScreen() {
   const router = useRouter();
   const float = useSharedValue(0);
+  const [brandingDelayElapsed, setBrandingDelayElapsed] = useState(false);
+  const initialRoute = useInitialRoute();
 
   useEffect(() => {
     float.value = withRepeat(
@@ -44,9 +49,15 @@ export function SplashScreen() {
       false,
     );
 
-    const timer = setTimeout(() => router.replace('/(auth)/welcome'), 2600);
+    const timer = setTimeout(() => setBrandingDelayElapsed(true), MIN_BRANDING_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [float, router]);
+  }, [float]);
+
+  useEffect(() => {
+    if (brandingDelayElapsed && initialRoute) {
+      router.replace(initialRoute);
+    }
+  }, [brandingDelayElapsed, initialRoute, router]);
 
   const logoStyle = useAnimatedStyle(() => ({ transform: [{ translateY: float.value }] }));
 

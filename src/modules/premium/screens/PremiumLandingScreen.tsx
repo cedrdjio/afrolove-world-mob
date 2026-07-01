@@ -1,9 +1,10 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { X, Heart, Eye, Star, Zap, Globe2 } from 'lucide-react-native';
+import { X, Heart, Eye, Star, Zap, Globe2, Crown } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { PricingCard } from '@/modules/premium/components/PricingCard';
 import { PREMIUM_PLANS } from '@/modules/premium/constants/plans';
+import { colors } from '@/shared/constants/theme';
 
 const FEATURES = [
   { Icon: Heart, label: 'Likes illimités' },
@@ -30,7 +31,9 @@ export function PremiumLandingScreen() {
         </Pressable>
 
         <View className="mb-[26px] items-center">
-          <Text style={{ fontSize: 40, marginBottom: 12 }}>👑</Text>
+          <View style={{ marginBottom: 12 }}>
+            <Crown size={40} color={colors.gold.DEFAULT} strokeWidth={1.6} />
+          </View>
           <Text className="text-center font-display-black text-[38px] uppercase leading-none text-white">
             AfroLove{'\n'}
             <Text className="text-gold">Premium</Text>

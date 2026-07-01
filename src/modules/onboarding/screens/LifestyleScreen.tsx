@@ -5,20 +5,14 @@ import { OnboardingHeader } from '@/modules/onboarding/components/OnboardingHead
 import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
-
-const CATEGORIES = [
-  { key: 'tabac', label: '🚬 Tabac', options: ['Non-fumeur', 'Occasionnel', 'Fumeur'] },
-  { key: 'alcool', label: '🍷 Alcool', options: ['Jamais', 'Socialement', 'Régulièrement'] },
-  { key: 'sport', label: '💪 Sport', options: ['Jamais', 'Occasionnel', 'Régulier'] },
-  { key: 'enfants', label: '👶 Enfants', options: ["N'en veux pas", 'En a déjà', 'En veut'] },
-  { key: 'animaux', label: '🐾 Animaux', options: ['Adore', 'Neutre', 'Pas fan'] },
-] as const;
+import { LIFESTYLE_CATEGORIES } from '@/shared/constants/lifestyle';
+import { colors } from '@/shared/constants/theme';
 
 export function LifestyleScreen() {
   const router = useRouter();
   const lifestyle = useOnboardingStore((s) => s.lifestyle);
   const setLifestyleChoice = useOnboardingStore((s) => s.setLifestyleChoice);
-  const isValid = CATEGORIES.every((c) => Boolean(lifestyle[c.key]));
+  const isValid = LIFESTYLE_CATEGORIES.every((c) => Boolean(lifestyle[c.key]));
 
   return (
     <OnboardingLayout orbPosition="bottomRight">
@@ -28,11 +22,14 @@ export function LifestyleScreen() {
       <Text className="mb-[18px] font-body text-[12.5px] text-ink-muted">Aidez-nous à mieux vous faire matcher.</Text>
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {CATEGORIES.map((category) => (
+        {LIFESTYLE_CATEGORIES.map((category) => (
           <View key={category.key} className="mb-5">
-            <Text className="mb-2.5 font-heading text-[10px] uppercase tracking-widest text-ink/40">
-              {category.label}
-            </Text>
+            <View className="mb-2.5 flex-row items-center gap-1.5">
+              <category.Icon size={12} color={colors.ink.muted} />
+              <Text className="font-heading text-[10px] uppercase tracking-widest text-ink/40">
+                {category.label}
+              </Text>
+            </View>
             <View className="flex-row flex-wrap gap-2">
               {category.options.map((option) => (
                 <Chip

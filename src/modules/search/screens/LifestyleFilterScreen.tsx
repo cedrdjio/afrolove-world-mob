@@ -4,8 +4,8 @@ import { SearchFieldLayout } from '@/modules/search/components/SearchFieldLayout
 import { useSearchFiltersStore } from '@/modules/search/stores/searchFiltersStore';
 
 const OPTIONS = [
-  '🚭 Non-fumeur', '🍷 Boit socialement', '💪 Sportif', '🐾 Aime les animaux',
-  '👶 Veut des enfants', '🙏 Pratiquant', '✈️ Aime voyager', '🍲 Cuisine',
+  'Non-fumeur', 'Boit socialement', 'Sportif', 'Aime les animaux',
+  'Veut des enfants', 'Pratiquant', 'Aime voyager', 'Cuisine',
 ];
 
 export function LifestyleFilterScreen() {

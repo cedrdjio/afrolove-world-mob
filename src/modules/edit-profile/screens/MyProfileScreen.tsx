@@ -14,7 +14,7 @@ const STATS = [
   { value: '94%', label: 'Taux match', color: colors.success },
 ];
 
-const INTERESTS = ['🎵 Musique', '✈️ Voyage', '📚 Lecture', '👨‍👩‍👧 Famille'];
+const INTERESTS = ['Musique', 'Voyage', 'Lecture', 'Famille'];
 
 export function MyProfileScreen() {
   const router = useRouter();

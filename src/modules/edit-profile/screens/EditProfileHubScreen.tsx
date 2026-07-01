@@ -2,7 +2,7 @@ import { View, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
   Images, FileText, Sparkles, HeartPulse, Languages as LanguagesIcon,
-  Church, GraduationCap, Briefcase, Ruler, SlidersHorizontal,
+  Church, GraduationCap, Briefcase, Ruler, SlidersHorizontal, ArrowLeft,
 } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
@@ -52,7 +52,7 @@ export function EditProfileHubScreen() {
       <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 68 }} showsVerticalScrollIndicator={false}>
         <View className="mb-7 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[20px] uppercase text-ink">Modifier le profil</Text>
           <View style={{ width: 44 }} />

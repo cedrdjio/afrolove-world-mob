@@ -1,4 +1,5 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import type { ReactNode } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -9,10 +10,11 @@ interface ChipProps {
   selected?: boolean;
   onPress?: () => void;
   size?: 'sm' | 'md';
+  icon?: ReactNode;
 }
 
 /** Selectable pill tag — gradient fill when selected, glass when idle. */
-export function Chip({ label, selected = false, onPress, size = 'md' }: ChipProps) {
+export function Chip({ label, selected = false, onPress, size = 'md', icon }: ChipProps) {
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
@@ -39,7 +41,14 @@ export function Chip({ label, selected = false, onPress, size = 'md' }: ChipProp
               shadowOffset: { width: 0, height: 4 },
             }}
           >
-            <Text className="font-heading text-[11.5px] uppercase text-white">{label}</Text>
+            {icon ? (
+              <View className="flex-row items-center gap-1.5">
+                {icon}
+                <Text className="font-heading text-[11.5px] uppercase text-white">{label}</Text>
+              </View>
+            ) : (
+              <Text className="font-heading text-[11.5px] uppercase text-white">{label}</Text>
+            )}
           </LinearGradient>
         </Pressable>
       </Animated.View>
@@ -56,7 +65,14 @@ export function Chip({ label, selected = false, onPress, size = 'md' }: ChipProp
           size === 'sm' ? 'px-3.5 py-2' : 'px-4 py-2.5'
         }`}
       >
-        <Text className="font-heading-medium text-[11.5px] uppercase text-ink">{label}</Text>
+        {icon ? (
+          <View className="flex-row items-center gap-1.5">
+            {icon}
+            <Text className="font-heading-medium text-[11.5px] uppercase text-ink">{label}</Text>
+          </View>
+        ) : (
+          <Text className="font-heading-medium text-[11.5px] uppercase text-ink">{label}</Text>
+        )}
       </Pressable>
     </Animated.View>
   );

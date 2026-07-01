@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Send, Smile, Image as ImageIcon, MoreHorizontal } from 'lucide-react-native';
+import { Send, Smile, Image as ImageIcon, MoreHorizontal, ArrowLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
@@ -46,7 +46,7 @@ export function ChatScreen() {
         <View className="flex-row items-center gap-3 px-[18px] py-3">
           <Pressable onPress={() => router.back()}>
             <View className="h-10 w-10 items-center justify-center rounded-[13px] border border-white/90 bg-white/80">
-              <Text style={{ fontSize: 17, color: colors.ink.DEFAULT }}>←</Text>
+              <ArrowLeft size={17} color={colors.ink.DEFAULT} strokeWidth={2} />
             </View>
           </Pressable>
           <Avatar seed={conversation.name} size={48} />

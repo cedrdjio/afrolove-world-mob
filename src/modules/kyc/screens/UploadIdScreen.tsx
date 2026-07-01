@@ -3,18 +3,19 @@ import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
-import { Check, IdCard, ScanLine } from 'lucide-react-native';
+import { Check, IdCard, ScanLine, ArrowRight, BookOpen, Car } from 'lucide-react-native';
+import type { LucideIcon } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { KycHeader } from '@/modules/kyc/components/KycHeader';
 import { colors, gradients } from '@/shared/constants/theme';
 
-const DOCUMENT_TYPES = [
-  { key: 'cni', label: 'CNI', emoji: '🪪' },
-  { key: 'passport', label: 'Passeport', emoji: '📘' },
-  { key: 'license', label: 'Permis', emoji: '🚗' },
-] as const;
+const DOCUMENT_TYPES: { key: 'cni' | 'passport' | 'license'; label: string; Icon: LucideIcon }[] = [
+  { key: 'cni', label: 'CNI', Icon: IdCard },
+  { key: 'passport', label: 'Passeport', Icon: BookOpen },
+  { key: 'license', label: 'Permis', Icon: Car },
+];
 
 const TIPS = [
   'Document entier visible, non coupé',
@@ -74,7 +75,9 @@ export function UploadIdScreen() {
                   selected ? 'border-brand/30 bg-brand/[0.1]' : 'border-white/[0.88] bg-white/65'
                 }`}
               >
-                <Text style={{ fontSize: 22, marginBottom: 6 }}>{doc.emoji}</Text>
+                <View style={{ marginBottom: 6 }}>
+                  <doc.Icon size={22} color={selected ? colors.brand.DEFAULT : colors.ink.muted} strokeWidth={1.8} />
+                </View>
                 <Text className={`font-heading text-[11px] uppercase ${selected ? 'text-brand' : 'text-ink-muted'}`}>
                   {doc.label}
                 </Text>
@@ -140,7 +143,9 @@ export function UploadIdScreen() {
         </View>
 
         <GradientButton
-          label={backUri ? 'Continuer' : 'Photographier le verso →'}
+          label={backUri ? 'Continuer' : 'Photographier le verso'}
+          icon={<ArrowRight size={14} color="#fff" />}
+          iconPosition="right"
           disabled={!bothCaptured}
           onPress={() => router.push('/kyc/selfie')}
         />

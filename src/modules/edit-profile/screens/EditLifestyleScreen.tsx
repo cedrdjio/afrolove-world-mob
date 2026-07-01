@@ -3,14 +3,8 @@ import { View, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Chip } from '@/shared/components/ui/Chip';
 import { EditScreenLayout } from '@/modules/edit-profile/components/EditScreenLayout';
-
-const CATEGORIES = [
-  { key: 'tabac', label: '🚬 Tabac', options: ['Non-fumeur', 'Occasionnel', 'Fumeur'] },
-  { key: 'alcool', label: '🍷 Alcool', options: ['Jamais', 'Socialement', 'Régulièrement'] },
-  { key: 'sport', label: '💪 Sport', options: ['Jamais', 'Occasionnel', 'Régulier'] },
-  { key: 'enfants', label: '👶 Enfants', options: ["N'en veut pas", 'En a déjà', 'En veut'] },
-  { key: 'animaux', label: '🐾 Animaux', options: ['Adore', 'Neutre', 'Pas fan'] },
-] as const;
+import { LIFESTYLE_CATEGORIES } from '@/shared/constants/lifestyle';
+import { colors } from '@/shared/constants/theme';
 
 const INITIAL: Record<string, string> = {
   tabac: 'Non-fumeur',
@@ -27,11 +21,14 @@ export function EditLifestyleScreen() {
   return (
     <EditScreenLayout title="Mode de vie" onSave={() => router.back()}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {CATEGORIES.map((category) => (
+        {LIFESTYLE_CATEGORIES.map((category) => (
           <View key={category.key} className="mb-5">
-            <Text className="mb-2.5 font-heading text-[10px] uppercase tracking-widest text-ink/40">
-              {category.label}
-            </Text>
+            <View className="mb-2.5 flex-row items-center gap-1.5">
+              <category.Icon size={12} color={colors.ink.muted} />
+              <Text className="font-heading text-[10px] uppercase tracking-widest text-ink/40">
+                {category.label}
+              </Text>
+            </View>
             <View className="flex-row flex-wrap gap-2">
               {category.options.map((option) => (
                 <Chip

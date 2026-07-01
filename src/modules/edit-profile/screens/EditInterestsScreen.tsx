@@ -3,12 +3,10 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Chip } from '@/shared/components/ui/Chip';
 import { EditScreenLayout } from '@/modules/edit-profile/components/EditScreenLayout';
+import { INTERESTS as INTEREST_OPTIONS } from '@/shared/constants/interests';
+import { colors } from '@/shared/constants/theme';
 
-const ALL_INTERESTS = [
-  '🎵 Musique', '💃 Danse', '✈️ Voyage', '🍲 Cuisine', '🎨 Art', '📚 Lecture',
-  '🧘 Yoga', '👗 Mode', '⚽ Sport', '👨‍👩‍👧 Famille', '🙏 Spiritualité', '🌍 Culture', '🎬 Cinéma',
-];
-const INITIAL_SELECTED = ['🎵 Musique', '✈️ Voyage', '📚 Lecture', '👨‍👩‍👧 Famille'];
+const INITIAL_SELECTED = ['Musique', 'Voyage', 'Lecture', 'Famille'];
 
 export function EditInterestsScreen() {
   const router = useRouter();
@@ -26,8 +24,14 @@ export function EditInterestsScreen() {
       saveDisabled={selected.length < 3}
     >
       <View className="flex-row flex-wrap gap-2.5">
-        {ALL_INTERESTS.map((interest) => (
-          <Chip key={interest} label={interest} selected={selected.includes(interest)} onPress={() => toggle(interest)} />
+        {INTEREST_OPTIONS.map((interest) => (
+          <Chip
+            key={interest.key}
+            icon={<interest.Icon size={13} color={selected.includes(interest.label) ? '#fff' : colors.brand.DEFAULT} />}
+            label={interest.label}
+            selected={selected.includes(interest.label)}
+            onPress={() => toggle(interest.label)}
+          />
         ))}
       </View>
     </EditScreenLayout>

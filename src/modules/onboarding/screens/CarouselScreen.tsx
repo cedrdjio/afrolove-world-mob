@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { View, Text, ScrollView, useWindowDimensions, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Globe2, ShieldCheck } from 'lucide-react-native';
+import { Heart, Globe, ShieldCheck } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GhostButton } from '@/shared/components/ui/GhostButton';
@@ -15,7 +15,7 @@ const SLIDES = [
     description: 'Connectez-vous avec des célibataires qui partagent vos valeurs et votre culture.',
   },
   {
-    Icon: Globe2,
+    Icon: Globe,
     title: 'La diaspora,\npartout dans le monde',
     description: "Rencontrez des membres de la communauté africaine où que vous soyez.",
   },

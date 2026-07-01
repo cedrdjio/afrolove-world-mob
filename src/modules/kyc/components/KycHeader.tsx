@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import { ArrowLeft } from 'lucide-react-native';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { images } from '@/shared/constants/images';
 import { colors, gradients } from '@/shared/constants/theme';
@@ -12,7 +13,7 @@ export function KycHeader({ step, total = 3 }: { step: number; total?: number })
   return (
     <View className="mb-5 flex-row items-center justify-between">
       <IconButton onPress={() => router.back()}>
-        <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+        <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
       </IconButton>
       <View className="mx-3.5 flex-1">
         <View className="mb-1.5 flex-row justify-between">

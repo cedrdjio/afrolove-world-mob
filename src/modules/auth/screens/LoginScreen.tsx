@@ -1,21 +1,27 @@
 import { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { images } from '@/shared/constants/images';
 import { colors } from '@/shared/constants/theme';
 import { loginSchema, type LoginFormValues } from '@/modules/auth/types/schemas';
+import { useLogin } from '@/modules/auth/hooks/useLogin';
+import { useGoogleAuth } from '@/modules/auth/hooks/useGoogleAuth';
+import { mapToAppError } from '@/shared/utils/errorMapping';
 
 export function LoginScreen() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const login = useLogin();
+  const googleAuth = useGoogleAuth();
   const {
     control,
     handleSubmit,
@@ -25,7 +31,9 @@ export function LoginScreen() {
     defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = () => router.replace('/(tabs)/discover');
+  const onSubmit = (values: LoginFormValues) => {
+    login.mutate(values, { onSuccess: () => router.replace('/(auth)/resolving') });
+  };
 
   return (
     <View className="flex-1">
@@ -38,14 +46,20 @@ export function LoginScreen() {
         <ScrollView contentContainerClassName="px-6 pb-8" keyboardShouldPersistTaps="handled" style={{ paddingTop: 68 }}>
           <View className="mb-8 flex-row items-center justify-between">
             <IconButton onPress={() => router.back()}>
-              <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+              <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
             </IconButton>
             <Image source={images.logoLight} style={{ width: 44, height: 44, borderRadius: 13 }} contentFit="cover" />
             <View style={{ width: 44 }} />
           </View>
 
-          <Text className="mb-1.5 font-display text-[38px] uppercase leading-none text-ink">Bon retour 👋</Text>
+          <Text className="mb-1.5 font-display text-[38px] uppercase leading-none text-ink">Bon retour</Text>
           <Text className="mb-7 font-body text-[13px] text-ink-muted">Ravis de vous revoir parmi nous.</Text>
+
+          {login.isError ? (
+            <View className="mb-4">
+              <ErrorState error={mapToAppError(login.error)} variant="inline" onRetry={handleSubmit(onSubmit)} />
+            </View>
+          ) : null}
 
           <Controller
             control={control}
@@ -98,7 +112,12 @@ export function LoginScreen() {
             </Text>
           </View>
 
-          <GradientButton label="Se connecter" onPress={handleSubmit(onSubmit)} style={{ marginBottom: 18 }} />
+          <GradientButton
+            label="Se connecter"
+            loading={login.isPending}
+            onPress={handleSubmit(onSubmit)}
+            style={{ marginBottom: 18 }}
+          />
 
           <View className="mb-4 flex-row items-center gap-3">
             <View className="h-px flex-1 bg-ink/[0.08]" />
@@ -106,18 +125,23 @@ export function LoginScreen() {
             <View className="h-px flex-1 bg-ink/[0.08]" />
           </View>
 
-          <View className="mb-6 flex-row gap-2.5">
-            <View className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-white/90 bg-white/75 py-3.5">
-              <Text className="text-[15px] font-bold" style={{ color: '#4285F4' }}>
-                G
-              </Text>
-              <Text className="font-heading-semibold text-[13px] text-ink">Google</Text>
-            </View>
-            <View className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl bg-[#1C1C1E] py-3.5">
-              <Text style={{ fontSize: 16 }}>🍎</Text>
-              <Text className="font-heading-semibold text-[13px] text-white">Apple</Text>
-            </View>
-          </View>
+          <Pressable
+            disabled={!googleAuth.isReady || googleAuth.isPending}
+            onPress={() => googleAuth.promptAsync()}
+            className="mb-6 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-white/90 bg-white/75 py-3.5"
+            style={{ opacity: googleAuth.isReady ? 1 : 0.5 }}
+          >
+            {googleAuth.isPending ? (
+              <ActivityIndicator color={colors.brand.DEFAULT} />
+            ) : (
+              <>
+                <Text className="text-[15px] font-bold" style={{ color: '#4285F4' }}>
+                  G
+                </Text>
+                <Text className="font-heading-semibold text-[13px] text-ink">Continuer avec Google</Text>
+              </>
+            )}
+          </Pressable>
 
           <Text className="text-center font-body text-[13px] text-ink-muted">
             Pas encore membre ?{' '}

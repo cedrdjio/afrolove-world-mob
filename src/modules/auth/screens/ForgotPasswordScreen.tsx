@@ -7,12 +7,16 @@ import { Mail, KeyRound } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb, ScreenHeader } from '@/shared/components/layout';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { colors } from '@/shared/constants/theme';
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from '@/modules/auth/types/schemas';
+import { useForgotPassword } from '@/modules/auth/hooks/useForgotPassword';
+import { mapToAppError } from '@/shared/utils/errorMapping';
 
 export function ForgotPasswordScreen() {
   const router = useRouter();
   const [sent, setSent] = useState(false);
+  const forgotPassword = useForgotPassword();
   const {
     control,
     handleSubmit,
@@ -21,6 +25,10 @@ export function ForgotPasswordScreen() {
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: { email: '' },
   });
+
+  const onSubmit = (values: ForgotPasswordFormValues) => {
+    forgotPassword.mutate(values.email, { onSuccess: () => setSent(true) });
+  };
 
   return (
     <View className="flex-1">
@@ -42,7 +50,7 @@ export function ForgotPasswordScreen() {
           {sent ? (
             <>
               <Text className="mb-2.5 font-display text-[34px] uppercase leading-none text-ink">
-                Vérifiez vos{'\n'}emails 📬
+                Vérifiez vos{'\n'}emails
               </Text>
               <Text className="mb-8 font-body text-[13.5px] leading-[21px] text-ink-muted">
                 Un lien de réinitialisation vient de vous être envoyé. Consultez votre boîte de réception.
@@ -57,6 +65,15 @@ export function ForgotPasswordScreen() {
               <Text className="mb-7 font-body text-[13.5px] leading-[21px] text-ink-muted">
                 Indiquez votre email, nous vous enverrons un lien de réinitialisation.
               </Text>
+              {forgotPassword.isError ? (
+                <View className="mb-4">
+                  <ErrorState
+                    error={mapToAppError(forgotPassword.error)}
+                    variant="inline"
+                    onRetry={handleSubmit(onSubmit)}
+                  />
+                </View>
+              ) : null}
               <Controller
                 control={control}
                 name="email"
@@ -75,7 +92,7 @@ export function ForgotPasswordScreen() {
                 )}
               />
               <View className="mt-2" />
-              <GradientButton label="Envoyer le lien" onPress={handleSubmit(() => setSent(true))} />
+              <GradientButton label="Envoyer le lien" loading={forgotPassword.isPending} onPress={handleSubmit(onSubmit)} />
             </>
           )}
         </View>

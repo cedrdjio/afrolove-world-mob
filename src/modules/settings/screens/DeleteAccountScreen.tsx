@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { AlertTriangle } from 'lucide-react-native';
+import { AlertTriangle, ArrowLeft } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { colors } from '@/shared/constants/theme';
@@ -28,7 +28,7 @@ export function DeleteAccountScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
         <View className="mb-6 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[20px] uppercase text-ink">Supprimer le compte</Text>
           <View style={{ width: 44 }} />

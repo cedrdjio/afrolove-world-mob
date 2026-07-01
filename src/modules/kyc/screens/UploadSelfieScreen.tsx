@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import Animated, {
   useAnimatedStyle,
@@ -52,7 +53,7 @@ export function UploadSelfieScreen() {
       <View className="absolute inset-x-[18px] flex-row items-center justify-between" style={{ top: 60 }}>
         <Pressable onPress={() => router.back()}>
           <View className="h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/[0.14]">
-            <Text style={{ fontSize: 17, color: '#fff' }}>←</Text>
+            <ArrowLeft size={17} color="#fff" strokeWidth={2} />
           </View>
         </Pressable>
         <View className="rounded-full border border-white/20 bg-white/[0.12] px-4 py-1.5">

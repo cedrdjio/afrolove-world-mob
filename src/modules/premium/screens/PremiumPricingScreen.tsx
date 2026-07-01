@@ -2,17 +2,18 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Search, Calendar, Crown, ShieldCheck, Heart, ArrowLeft, UserPlus } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { colors, gradients } from '@/shared/constants/theme';
 
 const TIERS = [
-  { emoji: '🆓', title: 'Inscription Gratuite', subtitle: 'Max 5 profils', price: '0€', priceColor: colors.ink.DEFAULT, cta: 'Commencer', ctaBg: 'rgba(44,20,8,0.07)', ctaColor: colors.ink.muted, iconBg: 'rgba(44,20,8,0.06)', highlight: false },
-  { emoji: '🔍', title: 'Découverte Illimitée', subtitle: 'Accès illimité 24h', price: '2€', priceSuffix: '/j', priceColor: '#2860B0', cta: 'Choisir', ctaBg: 'rgba(30,100,180,0.08)', ctaColor: '#2860B0', iconBg: 'rgba(30,100,180,0.08)', highlight: false },
-  { emoji: '📅', title: '7 Jours', subtitle: 'Accès illimité', price: '5€', priceColor: '#C83030', cta: 'Choisir', ctaGradient: ['#C83030', '#8A1010'], iconBg: 'rgba(200,60,50,0.1)', highlight: true, highlightColor: 'rgba(200,60,50,0.26)' },
-  { emoji: '📅', title: '1 Mois', subtitle: '30 jours · Accès illimité', price: '15€', priceColor: '#C07010', cta: 'Choisir', ctaBg: 'rgba(200,110,20,0.1)', ctaColor: '#C07010', iconBg: 'rgba(200,110,20,0.1)', highlight: true, highlightColor: 'rgba(200,110,20,0.24)' },
-  { emoji: '📅', title: '3 Mois', subtitle: '90 jours · Accès illimité', price: '25€', priceColor: '#1A7A30', cta: 'Choisir', ctaBg: 'rgba(30,140,60,0.09)', ctaColor: '#1A7A30', iconBg: 'rgba(30,140,60,0.09)', highlight: true, highlightColor: 'rgba(30,140,60,0.2)' },
-  { emoji: '👑', title: '1 An', subtitle: '365 jours · Accès illimité', price: '65€', priceColor: '#C9862A', cta: 'Choisir', ctaGradient: gradients.gold, iconBg: 'rgba(201,134,42,0.14)', highlight: true, highlightColor: 'rgba(201,134,42,0.36)', badge: 'Meilleure offre' },
+  { Icon: UserPlus, title: 'Inscription Gratuite', subtitle: 'Max 5 profils', price: '0€', priceColor: colors.ink.DEFAULT, cta: 'Commencer', ctaBg: 'rgba(44,20,8,0.07)', ctaColor: colors.ink.muted, iconBg: 'rgba(44,20,8,0.06)', highlight: false },
+  { Icon: Search, title: 'Découverte Illimitée', subtitle: 'Accès illimité 24h', price: '2€', priceSuffix: '/j', priceColor: '#2860B0', cta: 'Choisir', ctaBg: 'rgba(30,100,180,0.08)', ctaColor: '#2860B0', iconBg: 'rgba(30,100,180,0.08)', highlight: false },
+  { Icon: Calendar, title: '7 Jours', subtitle: 'Accès illimité', price: '5€', priceColor: '#C83030', cta: 'Choisir', ctaGradient: ['#C83030', '#8A1010'], iconBg: 'rgba(200,60,50,0.1)', highlight: true, highlightColor: 'rgba(200,60,50,0.26)' },
+  { Icon: Calendar, title: '1 Mois', subtitle: '30 jours · Accès illimité', price: '15€', priceColor: '#C07010', cta: 'Choisir', ctaBg: 'rgba(200,110,20,0.1)', ctaColor: '#C07010', iconBg: 'rgba(200,110,20,0.1)', highlight: true, highlightColor: 'rgba(200,110,20,0.24)' },
+  { Icon: Calendar, title: '3 Mois', subtitle: '90 jours · Accès illimité', price: '25€', priceColor: '#1A7A30', cta: 'Choisir', ctaBg: 'rgba(30,140,60,0.09)', ctaColor: '#1A7A30', iconBg: 'rgba(30,140,60,0.09)', highlight: true, highlightColor: 'rgba(30,140,60,0.2)' },
+  { Icon: Crown, title: '1 An', subtitle: '365 jours · Accès illimité', price: '65€', priceColor: '#C9862A', cta: 'Choisir', ctaGradient: gradients.gold, iconBg: 'rgba(201,134,42,0.14)', highlight: true, highlightColor: 'rgba(201,134,42,0.36)', badge: 'Meilleure offre' },
 ] as const;
 
 export function PremiumPricingScreen() {
@@ -32,7 +33,7 @@ export function PremiumPricingScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 20 }}>
         <View className="mb-[18px] flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <Text style={{ fontSize: 19, color: colors.ink.DEFAULT }}>←</Text>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <View className="items-center">
             <Text className="font-display text-[22px] uppercase text-ink">Nos Tarifs</Text>
@@ -59,7 +60,7 @@ export function PremiumPricingScreen() {
                 ) : null}
                 <View className="flex-1 flex-row items-center gap-2.5">
                   <View className="h-9 w-9 items-center justify-center rounded-[11px]" style={{ backgroundColor: tier.iconBg }}>
-                    <Text style={{ fontSize: 17 }}>{tier.emoji}</Text>
+                    <tier.Icon size={17} color={tier.priceColor} />
                   </View>
                   <View className="flex-1">
                     <Text className="font-heading text-[12.5px] uppercase text-ink">{tier.title}</Text>
@@ -96,8 +97,14 @@ export function PremiumPricingScreen() {
           </View>
 
           <View className="mt-4 flex-row justify-center gap-[18px]">
-            <Text className="font-body-medium text-[10.5px] text-ink-muted">✅ Profils vérifiés</Text>
-            <Text className="font-body-medium text-[10.5px] text-ink-muted">❤️ Rencontres sérieuses</Text>
+            <View className="flex-row items-center gap-1.5">
+              <ShieldCheck size={11} color={colors.ink.muted} />
+              <Text className="font-body-medium text-[10.5px] text-ink-muted">Profils vérifiés</Text>
+            </View>
+            <View className="flex-row items-center gap-1.5">
+              <Heart size={11} color={colors.ink.muted} />
+              <Text className="font-body-medium text-[10.5px] text-ink-muted">Rencontres sérieuses</Text>
+            </View>
           </View>
         </ScrollView>
       </View>

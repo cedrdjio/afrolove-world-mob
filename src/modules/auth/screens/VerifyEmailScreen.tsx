@@ -1,15 +1,32 @@
 import { useState } from 'react';
 import { View, Text } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MailCheck } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb, ScreenHeader } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { OtpInput } from '@/modules/auth/components/OtpInput';
 import { colors } from '@/shared/constants/theme';
+import { useVerifySignupOtp, useResendSignupEmail } from '@/modules/auth/hooks/useVerifyEmail';
+import { mapToAppError } from '@/shared/utils/errorMapping';
 
 export function VerifyEmailScreen() {
   const router = useRouter();
+  const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState('');
+  const [resendConfirmed, setResendConfirmed] = useState(false);
+  const verifyOtp = useVerifySignupOtp();
+  const resendEmail = useResendSignupEmail();
+
+  const handleVerify = () => {
+    if (!email || code.length < 6) return;
+    verifyOtp.mutate({ email, token: code }, { onSuccess: () => router.replace('/(auth)/success') });
+  };
+
+  const handleResend = () => {
+    if (!email) return;
+    resendEmail.mutate(email, { onSuccess: () => setResendConfirmed(true) });
+  };
 
   return (
     <View className="flex-1">
@@ -29,19 +46,38 @@ export function VerifyEmailScreen() {
 
         <Text className="mb-2.5 font-display text-[34px] uppercase leading-none text-ink">Vérifiez{'\n'}votre email</Text>
         <Text className="mb-8 font-body text-[13.5px] leading-[21px] text-ink-muted">
-          Saisissez le code à 6 chiffres envoyé à votre adresse email.
+          Saisissez le code à 6 chiffres envoyé à {email ?? 'votre adresse email'}, ou ouvrez directement le lien
+          reçu par email.
         </Text>
+
+        {verifyOtp.isError ? (
+          <View className="mb-5">
+            <ErrorState error={mapToAppError(verifyOtp.error)} variant="inline" onRetry={handleVerify} />
+          </View>
+        ) : null}
 
         <OtpInput onComplete={setCode} />
 
         <Text className="my-6 text-center font-body text-[12.5px] text-ink-muted">
-          Vous n'avez rien reçu ? <Text className="font-heading-semibold text-brand">Renvoyer le code</Text>
+          {resendConfirmed
+            ? 'Code renvoyé !'
+            : resendEmail.isPending
+              ? 'Envoi en cours…'
+              : (
+                <>
+                  Vous n'avez rien reçu ?{' '}
+                  <Text onPress={handleResend} className="font-heading-semibold text-brand">
+                    Renvoyer le code
+                  </Text>
+                </>
+              )}
         </Text>
 
         <GradientButton
           label="Vérifier"
           disabled={code.length < 6}
-          onPress={() => router.push('/(auth)/success')}
+          loading={verifyOtp.isPending}
+          onPress={handleVerify}
         />
       </View>
     </View>

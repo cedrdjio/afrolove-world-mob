@@ -4,9 +4,15 @@ import { LogOut } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { colors } from '@/shared/constants/theme';
+import { useLogout } from '@/modules/auth/hooks/useLogout';
 
 export function LogoutScreen() {
   const router = useRouter();
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    logout.mutate(undefined, { onSuccess: () => router.replace('/(auth)/welcome') });
+  };
 
   return (
     <View className="flex-1">
@@ -27,7 +33,8 @@ export function LogoutScreen() {
 
         <GradientButton
           label="Se déconnecter"
-          onPress={() => router.replace('/(auth)/welcome')}
+          loading={logout.isPending}
+          onPress={handleLogout}
           style={{ width: '100%', marginBottom: 12 }}
         />
         <Pressable onPress={() => router.back()}>
