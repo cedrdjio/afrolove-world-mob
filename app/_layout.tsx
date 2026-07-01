@@ -35,7 +35,23 @@ export default function RootLayout() {
               headerShown: false,
               contentStyle: { backgroundColor: colors.cream.DEFAULT },
             }}
-          />
+          >
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(onboarding)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="profile" />
+            <Stack.Screen name="edit-profile" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="chat" />
+            <Stack.Screen name="matches" options={{ presentation: 'transparentModal', animation: 'fade' }} />
+            <Stack.Screen name="notifications" />
+            <Stack.Screen name="search" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="premium" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="kyc" />
+            <Stack.Screen name="settings" />
+            <Stack.Screen name="reports" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="blocked-users" />
+            <Stack.Screen name="system" />
+          </Stack>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

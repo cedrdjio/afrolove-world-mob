@@ -1,15 +1,16 @@
 import { View } from 'react-native';
 import { Image } from 'expo-image';
-import { colors } from '@/shared/constants/theme';
+import { PhotoPlaceholder, photoSeedFromString } from './PhotoPlaceholder';
 
 interface AvatarProps {
   source?: string | number;
+  seed?: string;
   size?: number;
   ringColor?: string;
   ringWidth?: number;
 }
 
-export function Avatar({ source, size = 52, ringColor, ringWidth = 2.5 }: AvatarProps) {
+export function Avatar({ source, seed = '', size = 52, ringColor, ringWidth = 2.5 }: AvatarProps) {
   return (
     <View
       style={{
@@ -19,7 +20,6 @@ export function Avatar({ source, size = 52, ringColor, ringWidth = 2.5 }: Avatar
         overflow: 'hidden',
         borderWidth: ringColor ? ringWidth : 0,
         borderColor: ringColor,
-        backgroundColor: colors.cream.bezel2,
       }}
     >
       {source ? (
@@ -29,7 +29,9 @@ export function Avatar({ source, size = 52, ringColor, ringWidth = 2.5 }: Avatar
           contentFit="cover"
           transition={200}
         />
-      ) : null}
+      ) : (
+        <PhotoPlaceholder seed={photoSeedFromString(seed)} style={{ width: size, height: size }} />
+      )}
     </View>
   );
 }

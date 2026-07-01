@@ -6,6 +6,7 @@ export * from './IconButton';
 export * from './Chip';
 export * from './GlassInput';
 export * from './Avatar';
+export * from './PhotoPlaceholder';
 export * from './Badges';
 export * from './ProgressSteps';
 export * from './SettingsRow';
