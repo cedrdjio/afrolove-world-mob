@@ -8,7 +8,11 @@ export function LocationPermissionScreen() {
   const goNext = () => router.push('/(onboarding)/notification-permission');
 
   const handleEnable = async () => {
-    await Location.requestForegroundPermissionsAsync();
+    try {
+      await Location.requestForegroundPermissionsAsync();
+    } catch {
+      // Never let a permission prompt failure block onboarding.
+    }
     goNext();
   };
 

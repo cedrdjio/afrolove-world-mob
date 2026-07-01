@@ -8,7 +8,13 @@ export function NotificationPermissionScreen() {
   const goNext = () => router.push('/(onboarding)/finish');
 
   const handleEnable = async () => {
-    await Notifications.requestPermissionsAsync();
+    try {
+      await Notifications.requestPermissionsAsync();
+    } catch {
+      // expo-notifications' push registration isn't available in Expo Go
+      // on Android (SDK 53+) and can throw on some devices/OS versions —
+      // never let a permission prompt block onboarding.
+    }
     goNext();
   };
 
