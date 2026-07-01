@@ -1,3 +1,3 @@
-import { EditHeightScreen } from '@/modules/edit-profile/screens/EditHeightScreen';
+import { EditHeightScreen } from '@/modules/profile/screens/edit/EditHeightScreen';
 
 export default EditHeightScreen;

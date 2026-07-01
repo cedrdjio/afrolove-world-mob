@@ -32,10 +32,12 @@ export function FinishScreen() {
       {
         userId: user.id,
         firstName: onboarding.firstName,
+        lastName: onboarding.lastName,
         gender: onboarding.gender,
         birthDate: onboarding.birthDate,
         lookingFor: onboarding.lookingFor,
-        interests: onboarding.interests,
+        bio: onboarding.bio,
+        interestIds: onboarding.interestIds,
         lifestyle: onboarding.lifestyle,
         photoUris: onboarding.photos,
       },

@@ -1,3 +1,3 @@
-import { EditJobScreen } from '@/modules/edit-profile/screens/EditJobScreen';
+import { EditJobScreen } from '@/modules/profile/screens/edit/EditJobScreen';
 
 export default EditJobScreen;

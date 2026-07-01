@@ -1,3 +1,3 @@
-import { MyProfileScreen } from '@/modules/edit-profile/screens/MyProfileScreen';
+import { MyProfileScreen } from '@/modules/profile/screens/edit/MyProfileScreen';
 
 export default MyProfileScreen;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
-import { EditScreenLayout } from '@/modules/edit-profile/components/EditScreenLayout';
+import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
 
 const OPTIONS = [
   { key: 'likes', label: 'Likes', description: 'Quand quelqu\'un aime votre profil' },

@@ -1,3 +1,3 @@
-import { EditReligionScreen } from '@/modules/edit-profile/screens/EditReligionScreen';
+import { EditReligionScreen } from '@/modules/profile/screens/edit/EditReligionScreen';
 
 export default EditReligionScreen;

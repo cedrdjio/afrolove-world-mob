@@ -61,7 +61,7 @@ export function BirthdayScreen() {
 
   return (
     <OnboardingLayout orbPosition="topLeft">
-      <OnboardingHeader step={3} />
+      <OnboardingHeader step={3} total={8} />
 
       <View
         className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/70"

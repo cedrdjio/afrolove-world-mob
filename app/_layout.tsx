@@ -10,6 +10,7 @@ import { useAppFonts } from '@/shared/hooks/useAppFonts';
 import { colors } from '@/shared/constants/theme';
 import { queryClient } from '@/shared/services/queryClient';
 import { OfflineOverlay } from '@/shared/components/feedback';
+import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { useInitializeAuth } from '@/modules/auth/hooks/useAuth';
 import { useAuthDeepLink } from '@/modules/auth/hooks/useAuthDeepLink';
 
@@ -38,34 +39,37 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <AppBootstrap />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.cream.DEFAULT },
-            }}
-          >
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(onboarding)" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="discover-filters" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="discover-search" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="discover-like-limit" options={{ presentation: 'transparentModal', animation: 'fade' }} />
-            <Stack.Screen name="profile" />
-            <Stack.Screen name="edit-profile" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="chat" />
-            <Stack.Screen name="matches" options={{ presentation: 'transparentModal', animation: 'fade' }} />
-            <Stack.Screen name="matches-search" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="notifications" />
-            <Stack.Screen name="search" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="premium" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="kyc" />
-            <Stack.Screen name="settings" />
-            <Stack.Screen name="reports" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="blocked-users" />
-            <Stack.Screen name="system" />
-          </Stack>
-          <OfflineOverlay />
+          <ErrorBoundary>
+            <AppBootstrap />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.cream.DEFAULT },
+              }}
+            >
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(onboarding)" />
+              <Stack.Screen name="profile-completion" options={{ animation: 'fade' }} />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="discover-filters" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="discover-search" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="discover-like-limit" options={{ presentation: 'transparentModal', animation: 'fade' }} />
+              <Stack.Screen name="profile" />
+              <Stack.Screen name="edit-profile" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="chat" />
+              <Stack.Screen name="matches" options={{ presentation: 'transparentModal', animation: 'fade' }} />
+              <Stack.Screen name="matches-search" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="notifications" />
+              <Stack.Screen name="search" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="premium" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="kyc" />
+              <Stack.Screen name="settings" />
+              <Stack.Screen name="reports" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="blocked-users" />
+              <Stack.Screen name="system" />
+            </Stack>
+            <OfflineOverlay />
+          </ErrorBoundary>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

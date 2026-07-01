@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Mail, Lock } from 'lucide-react-native';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
-import { EditScreenLayout } from '@/modules/edit-profile/components/EditScreenLayout';
+import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
 
 export function ChangeEmailScreen() {
   const router = useRouter();

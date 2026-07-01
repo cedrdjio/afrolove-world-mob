@@ -19,7 +19,8 @@ export function RequireCompletedOnboarding({ children }: { children: React.React
   if (!profileQuery.data) {
     return profileQuery.isError ? <Redirect href="/system/server-error" /> : <FullScreenLoader />;
   }
-  if (!profileQuery.data.onboarding_completed) return <Redirect href="/(onboarding)/carousel" />;
+  if (!profileQuery.data.onboardingCompleted) return <Redirect href="/(onboarding)/carousel" />;
+  if (!profileQuery.data.profileCompleted) return <Redirect href="/profile-completion" />;
 
   return children;
 }

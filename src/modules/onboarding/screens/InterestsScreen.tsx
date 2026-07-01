@@ -5,21 +5,23 @@ import { OnboardingLayout } from '@/modules/onboarding/components/OnboardingLayo
 import { OnboardingHeader } from '@/modules/onboarding/components/OnboardingHeader';
 import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { Skeleton } from '@/shared/components/feedback';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
-import { INTERESTS as INTEREST_OPTIONS } from '@/shared/constants/interests';
+import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
+import { MIN_INTERESTS } from '@/modules/profile/types/profile';
+import { resolveIcon } from '@/shared/utils/resolveIcon';
 import { colors } from '@/shared/constants/theme';
-
-const MIN_INTERESTS = 3;
 
 export function InterestsScreen() {
   const router = useRouter();
-  const interests = useOnboardingStore((s) => s.interests);
+  const interestIds = useOnboardingStore((s) => s.interestIds);
   const toggleInterest = useOnboardingStore((s) => s.toggleInterest);
-  const isValid = interests.length >= MIN_INTERESTS;
+  const interestsQuery = useInterestsQuery();
+  const isValid = interestIds.length >= MIN_INTERESTS;
 
   return (
     <OnboardingLayout orbPosition="topRight">
-      <OnboardingHeader step={5} />
+      <OnboardingHeader step={5} total={8} />
 
       <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Vos passions</Text>
       <Text className="mb-[18px] font-body text-[12.5px] text-ink-muted">
@@ -27,26 +29,27 @@ export function InterestsScreen() {
       </Text>
 
       <View className="flex-1 flex-row flex-wrap content-start gap-2.5">
-        {INTEREST_OPTIONS.map((interest) => (
-          <Chip
-            key={interest.key}
-            icon={
-              <interest.Icon
-                size={13}
-                color={interests.includes(interest.label) ? '#fff' : colors.brand.DEFAULT}
-              />
-            }
-            label={interest.label}
-            selected={interests.includes(interest.label)}
-            onPress={() => toggleInterest(interest.label)}
-          />
-        ))}
+        {interestsQuery.isPending
+          ? Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} width={90} height={34} radius={17} />)
+          : interestsQuery.data?.map((interest) => {
+              const Icon = resolveIcon(interest.icon);
+              const selected = interestIds.includes(interest.id);
+              return (
+                <Chip
+                  key={interest.id}
+                  icon={<Icon size={13} color={selected ? '#fff' : colors.brand.DEFAULT} />}
+                  label={interest.label}
+                  selected={selected}
+                  onPress={() => toggleInterest(interest.id)}
+                />
+              );
+            })}
       </View>
 
       <View className="my-3.5 flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
           <View className="h-7 w-7 items-center justify-center rounded-full bg-brand">
-            <Text className="font-heading text-[12px] text-white">{interests.length}</Text>
+            <Text className="font-heading text-[12px] text-white">{interestIds.length}</Text>
           </View>
           <Text className="font-body-medium text-[12px] text-ink-muted">sélectionnés</Text>
         </View>
@@ -56,7 +59,7 @@ export function InterestsScreen() {
         </View>
       </View>
 
-      <GradientButton label="Continuer" disabled={!isValid} onPress={() => router.push('/(onboarding)/upload-photos')} />
+      <GradientButton label="Continuer" disabled={!isValid} onPress={() => router.push('/(onboarding)/bio')} />
     </OnboardingLayout>
   );
 }

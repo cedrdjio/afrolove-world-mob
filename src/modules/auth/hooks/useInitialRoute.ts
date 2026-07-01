@@ -22,5 +22,8 @@ export function useInitialRoute(): Href | null {
     return profileQuery.isError && !isOffline ? '/system/server-error' : null;
   }
 
-  return profileQuery.data.onboarding_completed ? '/(tabs)/discover' : '/(onboarding)/carousel';
+  if (!profileQuery.data.onboardingCompleted) return '/(onboarding)/carousel';
+  if (!profileQuery.data.profileCompleted) return '/profile-completion';
+
+  return '/(tabs)/discover';
 }

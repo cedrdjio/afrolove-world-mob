@@ -1,44 +1,53 @@
 import { create } from 'zustand';
+import type { LifestyleValues } from '@/shared/constants/lifestyle';
+import { EMPTY_LIFESTYLE } from '@/shared/constants/lifestyle';
 
 export type Gender = 'femme' | 'homme' | 'non-binaire';
 export type LookingForOption = 'femmes' | 'hommes' | 'les-deux';
 
 interface OnboardingState {
   firstName: string;
+  lastName: string;
   gender: Gender | null;
   birthDate: { day: string; month: string; year: string };
   lookingFor: LookingForOption | null;
-  interests: string[];
-  lifestyle: Record<string, string>;
+  bio: string;
+  interestIds: string[];
+  lifestyle: LifestyleValues;
   photos: string[];
   setFirstName: (value: string) => void;
+  setLastName: (value: string) => void;
   setGender: (value: Gender) => void;
   setBirthDate: (value: Partial<OnboardingState['birthDate']>) => void;
   setLookingFor: (value: LookingForOption) => void;
-  toggleInterest: (value: string) => void;
-  setLifestyleChoice: (category: string, value: string) => void;
+  setBio: (value: string) => void;
+  toggleInterest: (id: string) => void;
+  setLifestyleChoice: <K extends keyof LifestyleValues>(key: K, value: LifestyleValues[K]) => void;
   setPhotos: (value: string[]) => void;
 }
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   firstName: '',
+  lastName: '',
   gender: null,
   birthDate: { day: '', month: '', year: '' },
   lookingFor: null,
-  interests: [],
-  lifestyle: {},
+  bio: '',
+  interestIds: [],
+  lifestyle: EMPTY_LIFESTYLE,
   photos: [],
   setFirstName: (firstName) => set({ firstName }),
+  setLastName: (lastName) => set({ lastName }),
   setGender: (gender) => set({ gender }),
   setBirthDate: (value) => set((state) => ({ birthDate: { ...state.birthDate, ...value } })),
   setLookingFor: (lookingFor) => set({ lookingFor }),
-  toggleInterest: (value) =>
+  setBio: (bio) => set({ bio }),
+  toggleInterest: (id) =>
     set((state) => ({
-      interests: state.interests.includes(value)
-        ? state.interests.filter((i) => i !== value)
-        : [...state.interests, value],
+      interestIds: state.interestIds.includes(id)
+        ? state.interestIds.filter((i) => i !== id)
+        : [...state.interestIds, id],
     })),
-  setLifestyleChoice: (category, value) =>
-    set((state) => ({ lifestyle: { ...state.lifestyle, [category]: value } })),
+  setLifestyleChoice: (key, value) => set((state) => ({ lifestyle: { ...state.lifestyle, [key]: value } })),
   setPhotos: (photos) => set({ photos }),
 }));

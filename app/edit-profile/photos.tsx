@@ -1,3 +1,3 @@
-import { EditPhotosScreen } from '@/modules/edit-profile/screens/EditPhotosScreen';
+import { EditPhotosScreen } from '@/modules/profile/screens/edit/EditPhotosScreen';
 
 export default EditPhotosScreen;

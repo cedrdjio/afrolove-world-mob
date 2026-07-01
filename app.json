@@ -52,6 +52,16 @@
         {
           "photosPermission": "AfroLove World a besoin d'accéder à vos photos pour créer votre profil."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "reactNativeArchitectures": ["arm64-v8a"],
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
       ]
     ],
     "experiments": {

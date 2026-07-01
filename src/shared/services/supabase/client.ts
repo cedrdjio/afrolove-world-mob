@@ -2,6 +2,7 @@ import 'react-native-url-polyfill/auto';
 import { AppState } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
 import { secureStoreAdapter } from '@/shared/services/supabase/secureStoreAdapter';
+import type { Database } from '@/shared/types/supabase';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -23,7 +24,7 @@ function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timeout));
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: secureStoreAdapter,
     autoRefreshToken: true,

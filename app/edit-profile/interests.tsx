@@ -1,3 +1,3 @@
-import { EditInterestsScreen } from '@/modules/edit-profile/screens/EditInterestsScreen';
+import { EditInterestsScreen } from '@/modules/profile/screens/edit/EditInterestsScreen';
 
 export default EditInterestsScreen;

@@ -5,18 +5,18 @@ import { OnboardingHeader } from '@/modules/onboarding/components/OnboardingHead
 import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
-import { LIFESTYLE_CATEGORIES } from '@/shared/constants/lifestyle';
+import { LIFESTYLE_CATEGORIES, isLifestyleComplete } from '@/shared/constants/lifestyle';
 import { colors } from '@/shared/constants/theme';
 
 export function LifestyleScreen() {
   const router = useRouter();
   const lifestyle = useOnboardingStore((s) => s.lifestyle);
   const setLifestyleChoice = useOnboardingStore((s) => s.setLifestyleChoice);
-  const isValid = LIFESTYLE_CATEGORIES.every((c) => Boolean(lifestyle[c.key]));
+  const isValid = isLifestyleComplete(lifestyle);
 
   return (
     <OnboardingLayout orbPosition="bottomRight">
-      <OnboardingHeader step={7} />
+      <OnboardingHeader step={8} total={8} />
 
       <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Votre mode de vie</Text>
       <Text className="mb-[18px] font-body text-[12.5px] text-ink-muted">Aidez-nous à mieux vous faire matcher.</Text>
@@ -33,10 +33,10 @@ export function LifestyleScreen() {
             <View className="flex-row flex-wrap gap-2">
               {category.options.map((option) => (
                 <Chip
-                  key={option}
-                  label={option}
-                  selected={lifestyle[category.key] === option}
-                  onPress={() => setLifestyleChoice(category.key, option)}
+                  key={option.value}
+                  label={option.label}
+                  selected={lifestyle[category.key] === option.value}
+                  onPress={() => setLifestyleChoice(category.key, option.value)}
                 />
               ))}
             </View>
