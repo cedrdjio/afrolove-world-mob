@@ -17,7 +17,7 @@ const REQUEST_TIMEOUT_MS = 30_000;
 // AbortController doesn't reliably support abort(reason), so a plain flag
 // tracks whether *our* timeout fired before re-throwing with a message that
 // errorMapping.ts can recognize even after Supabase wraps the rejection.
-function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
+export function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   const controller = new AbortController();
   let timedOut = false;
   const timeout = setTimeout(() => {
