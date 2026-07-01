@@ -11,3 +11,4 @@ export * from './Badges';
 export * from './ProgressSteps';
 export * from './SettingsRow';
 export * from './ChoiceListEditor';
+export * from './ToggleSwitch';

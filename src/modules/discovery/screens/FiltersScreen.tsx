@@ -5,6 +5,7 @@ import { ScreenBackground } from '@/shared/components/layout';
 import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
+import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
 import { useFiltersStore } from '@/modules/discovery/stores/filtersStore';
 import { colors } from '@/shared/constants/theme';
 
@@ -81,18 +82,10 @@ export function FiltersScreen() {
           />
         </View>
 
-        <Pressable
-          onPress={toggleVerifiedOnly}
-          className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4"
-        >
+        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4">
           <Text className="font-heading-semibold text-[13px] uppercase text-ink">Profils vérifiés uniquement</Text>
-          <View className={`h-7 w-12 rounded-full ${verifiedOnly ? 'bg-brand' : 'bg-ink/10'} justify-center px-1`}>
-            <View
-              className="h-5 w-5 rounded-full bg-white"
-              style={{ marginLeft: verifiedOnly ? 20 : 0, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3 }}
-            />
-          </View>
-        </Pressable>
+          <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
+        </View>
 
         <GradientButton label="Appliquer les filtres" onPress={() => router.back()} />
       </ScrollView>
