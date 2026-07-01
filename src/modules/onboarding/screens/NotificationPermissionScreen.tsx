@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router';
-import * as Notifications from 'expo-notifications';
 import { Bell } from 'lucide-react-native';
 import { PermissionScreen } from '@/modules/onboarding/components/PermissionScreen';
 
@@ -9,11 +8,15 @@ export function NotificationPermissionScreen() {
 
   const handleEnable = async () => {
     try {
+      // Imported lazily: on Android Expo Go (SDK 53+), merely requiring
+      // expo-notifications throws immediately because remote push support
+      // was pulled from Expo Go. Deferring the import into this try/catch
+      // keeps that crash from taking down the whole onboarding screen —
+      // a development build is required for real push registration.
+      const Notifications = await import('expo-notifications');
       await Notifications.requestPermissionsAsync();
     } catch {
-      // expo-notifications' push registration isn't available in Expo Go
-      // on Android (SDK 53+) and can throw on some devices/OS versions —
-      // never let a permission prompt block onboarding.
+      // Never let a permission prompt block onboarding.
     }
     goNext();
   };
