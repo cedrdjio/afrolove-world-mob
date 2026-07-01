@@ -1,4 +1,5 @@
 import '@/shared/styles/global.css';
+import '@/shared/utils/register-css-interop';
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

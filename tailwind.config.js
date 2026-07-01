@@ -38,6 +38,7 @@ module.exports = {
           black: '#070201',
         },
         success: '#4CAF50',
+        danger: '#B41E14',
       },
       fontFamily: {
         display: ['BarlowCondensed-Bold'],
@@ -49,11 +50,6 @@ module.exports = {
         body: ['Montserrat-Regular'],
         'body-medium': ['Montserrat-Medium'],
         'body-semibold': ['Montserrat-SemiBold'],
-      },
-      borderRadius: {
-        xl2: '18px',
-        xl3: '22px',
-        xl4: '24px',
       },
     },
   },
