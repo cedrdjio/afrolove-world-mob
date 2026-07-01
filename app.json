@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "AfroLove World",
+    "slug": "afrolove-world-mob",
+    "scheme": "afrolove",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.afroloveworld.app"
+    },
+    "android": {
+      "package": "com.afroloveworld.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0502",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      "expo-location",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0D0502",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 140
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-foreground.png",
+          "color": "#C86040"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "AfroLove World a besoin d'accéder à vos photos pour créer votre profil."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
