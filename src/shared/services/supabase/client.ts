@@ -13,17 +13,26 @@ const supabaseAnonKey =
 const REQUEST_TIMEOUT_MS = 30_000;
 
 // Every request gets a hard timeout so a stalled connection surfaces as a
-// clear "Timeout" AppError instead of a screen that spins forever. Aborting
-// with an explicit reason keeps the resulting error message identifiable
-// even after Supabase wraps it into its own AuthError/AuthApiError classes.
+// clear "Timeout" AppError instead of a screen that spins forever. RN/Hermes's
+// AbortController doesn't reliably support abort(reason), so a plain flag
+// tracks whether *our* timeout fired before re-throwing with a message that
+// errorMapping.ts can recognize even after Supabase wraps the rejection.
 function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   const controller = new AbortController();
-  const timeout = setTimeout(
-    () => controller.abort(new Error('Request timed out')),
-    REQUEST_TIMEOUT_MS,
-  );
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, REQUEST_TIMEOUT_MS);
 
-  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timeout));
+  return fetch(input, { ...init, signal: controller.signal })
+    .catch((error) => {
+      if (timedOut) {
+        throw new Error('Request timed out');
+      }
+      throw error;
+    })
+    .finally(() => clearTimeout(timeout));
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
