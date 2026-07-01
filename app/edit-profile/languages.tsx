@@ -1,3 +1,3 @@
-import { EditLanguagesScreen } from '@/modules/edit-profile/screens/EditLanguagesScreen';
+import { EditLanguagesScreen } from '@/modules/profile/screens/edit/EditLanguagesScreen';
 
 export default EditLanguagesScreen;

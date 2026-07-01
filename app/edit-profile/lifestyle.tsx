@@ -1,3 +1,3 @@
-import { EditLifestyleScreen } from '@/modules/edit-profile/screens/EditLifestyleScreen';
+import { EditLifestyleScreen } from '@/modules/profile/screens/edit/EditLifestyleScreen';
 
 export default EditLifestyleScreen;

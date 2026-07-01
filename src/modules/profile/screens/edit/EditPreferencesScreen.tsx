@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Chip } from '@/shared/components/ui/Chip';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
-import { EditScreenLayout } from '@/modules/edit-profile/components/EditScreenLayout';
+import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
 import { colors } from '@/shared/constants/theme';
 import { Minus, Plus } from 'lucide-react-native';
 import { Pressable } from 'react-native';

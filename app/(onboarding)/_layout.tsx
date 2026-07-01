@@ -13,6 +13,7 @@ export default function OnboardingLayout() {
         <Stack.Screen name="location-permission" />
         <Stack.Screen name="notification-permission" />
         <Stack.Screen name="interests" />
+        <Stack.Screen name="bio" />
         <Stack.Screen name="lifestyle" />
         <Stack.Screen name="upload-photos" />
         <Stack.Screen name="finish" options={{ animation: 'fade' }} />

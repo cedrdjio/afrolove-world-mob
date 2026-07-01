@@ -47,6 +47,7 @@ export default function RootLayout() {
           >
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(onboarding)" />
+            <Stack.Screen name="profile-completion" options={{ animation: 'fade' }} />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="discover-filters" options={{ presentation: 'modal' }} />
             <Stack.Screen name="discover-search" options={{ presentation: 'modal' }} />

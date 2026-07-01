@@ -1,3 +1,3 @@
-import { EditBioScreen } from '@/modules/edit-profile/screens/EditBioScreen';
+import { EditBioScreen } from '@/modules/profile/screens/edit/EditBioScreen';
 
 export default EditBioScreen;

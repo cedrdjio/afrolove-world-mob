@@ -1,3 +1,3 @@
-import { EditProfileHubScreen } from '@/modules/edit-profile/screens/EditProfileHubScreen';
+import { EditProfileHubScreen } from '@/modules/profile/screens/edit/EditProfileHubScreen';
 
 export default EditProfileHubScreen;

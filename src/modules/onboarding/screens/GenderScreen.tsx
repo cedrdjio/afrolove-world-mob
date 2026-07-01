@@ -22,7 +22,7 @@ export function GenderScreen() {
 
   return (
     <OnboardingLayout orbPosition="bottomLeft">
-      <OnboardingHeader step={2} />
+      <OnboardingHeader step={2} total={8} />
 
       <View className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/70">
         <Sparkles size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />

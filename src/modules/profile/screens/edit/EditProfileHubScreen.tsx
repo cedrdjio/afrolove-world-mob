@@ -1,18 +1,20 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
   Images, FileText, Sparkles, HeartPulse, Languages as LanguagesIcon,
-  Church, GraduationCap, Briefcase, Ruler, SlidersHorizontal, ArrowLeft,
+  Church, GraduationCap, Briefcase, Ruler, SlidersHorizontal, ArrowLeft, IdCard, Eye, ChevronRight,
 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { SettingsRow } from '@/shared/components/ui/SettingsRow';
-import { colors } from '@/shared/constants/theme';
+import { colors, gradients } from '@/shared/constants/theme';
 
 const SECTIONS = [
   {
     title: 'Profil',
     rows: [
+      { icon: IdCard, label: 'Informations de base', href: '/edit-profile/basic-info' },
       { icon: Images, label: 'Photos', href: '/edit-profile/photos' },
       { icon: FileText, label: 'Bio', href: '/edit-profile/bio' },
     ],
@@ -57,6 +59,23 @@ export function EditProfileHubScreen() {
           <Text className="font-display text-[20px] uppercase text-ink">Modifier le profil</Text>
           <View style={{ width: 44 }} />
         </View>
+
+        <Pressable onPress={() => router.push('/edit-profile/preview')} className="mb-6">
+          <LinearGradient
+            colors={gradients.brand}
+            style={{ borderRadius: 20, padding: 16 }}
+            className="flex-row items-center gap-3"
+          >
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
+              <Eye size={18} color="#fff" />
+            </View>
+            <View className="flex-1">
+              <Text className="font-heading text-[13px] uppercase text-white">Aperçu du profil</Text>
+              <Text className="font-body text-[11.5px] text-white/70">Voyez ce que les autres voient</Text>
+            </View>
+            <ChevronRight size={16} color="#fff" />
+          </LinearGradient>
+        </Pressable>
 
         {SECTIONS.map((section) => (
           <View key={section.title} className="mb-5">

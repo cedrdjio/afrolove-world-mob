@@ -12,7 +12,9 @@ export function RequireAuthForOnboarding({ children }: { children: React.ReactNo
   if (status === 'idle') return <FullScreenLoader />;
   if (status === 'unauthenticated') return <Redirect href="/(auth)/welcome" />;
   if (profileQuery.isPending) return <FullScreenLoader />;
-  if (profileQuery.data?.onboarding_completed) return <Redirect href="/(tabs)/discover" />;
+  if (profileQuery.data?.onboardingCompleted) {
+    return <Redirect href={profileQuery.data.profileCompleted ? '/(tabs)/discover' : '/profile-completion'} />;
+  }
 
   return children;
 }
