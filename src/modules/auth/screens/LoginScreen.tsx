@@ -15,13 +15,14 @@ import { colors } from '@/shared/constants/theme';
 import { loginSchema, type LoginFormValues } from '@/modules/auth/types/schemas';
 import { useLogin } from '@/modules/auth/hooks/useLogin';
 import { useGoogleAuth } from '@/modules/auth/hooks/useGoogleAuth';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function LoginScreen() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
   const googleAuth = useGoogleAuth();
+  const loginError = useAppError(login.error);
   const {
     control,
     handleSubmit,
@@ -55,9 +56,9 @@ export function LoginScreen() {
           <Text className="mb-1.5 font-display text-[38px] uppercase leading-none text-ink">Bon retour</Text>
           <Text className="mb-7 font-body text-[13px] text-ink-muted">Ravis de vous revoir parmi nous.</Text>
 
-          {login.isError ? (
+          {loginError ? (
             <View className="mb-4">
-              <ErrorState error={mapToAppError(login.error)} variant="inline" onRetry={handleSubmit(onSubmit)} />
+              <ErrorState error={loginError} variant="inline" onRetry={handleSubmit(onSubmit)} />
             </View>
           ) : null}
 

@@ -19,7 +19,7 @@ import { colors } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { usePhotoManagement } from '@/modules/profile/hooks/usePhotoManagement';
 import { MIN_PHOTOS, MAX_PHOTOS, type ProfilePhoto } from '@/modules/profile/types/profile';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 const GRID_GAP = 10;
 const COLUMNS = 3;
@@ -189,6 +189,7 @@ export function EditPhotosScreen() {
   };
 
   const mutationError = addPhoto.error ?? replacePhoto.error ?? deletePhoto.error ?? reorderPhotos.error;
+  const appError = useAppError(mutationError);
 
   return (
     <EditScreenLayout
@@ -198,9 +199,9 @@ export function EditPhotosScreen() {
       saveDisabled={!isValid}
       scrollable={false}
     >
-      {mutationError ? (
+      {appError ? (
         <View className="mb-3">
-          <ErrorState error={mapToAppError(mutationError)} variant="inline" />
+          <ErrorState error={appError} variant="inline" />
         </View>
       ) : null}
 

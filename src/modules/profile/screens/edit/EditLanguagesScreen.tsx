@@ -7,13 +7,14 @@ import { Skeleton, ErrorState } from '@/shared/components/feedback';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useLanguagesQuery } from '@/modules/profile/hooks/useReferenceData';
 import { useUpdateLanguages } from '@/modules/profile/hooks/useUpdateProfile';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function EditLanguagesScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const languagesQuery = useLanguagesQuery();
   const updateLanguages = useUpdateLanguages();
+  const updateLanguagesError = useAppError(updateLanguages.error);
   const [selected, setSelected] = useState<string[]>([]);
   const [initialized, setInitialized] = useState(false);
 
@@ -40,9 +41,9 @@ export function EditLanguagesScreen() {
       saveDisabled={selected.length === 0}
       saveLabel={updateLanguages.isPending ? 'Enregistrement…' : 'Enregistrer'}
     >
-      {updateLanguages.isError ? (
+      {updateLanguagesError ? (
         <View className="mb-4">
-          <ErrorState error={mapToAppError(updateLanguages.error)} variant="inline" onRetry={handleSave} />
+          <ErrorState error={updateLanguagesError} variant="inline" onRetry={handleSave} />
         </View>
       ) : null}
 

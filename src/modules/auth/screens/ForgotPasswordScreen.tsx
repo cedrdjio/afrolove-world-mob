@@ -11,12 +11,13 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { colors } from '@/shared/constants/theme';
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from '@/modules/auth/types/schemas';
 import { useForgotPassword } from '@/modules/auth/hooks/useForgotPassword';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function ForgotPasswordScreen() {
   const router = useRouter();
   const [sent, setSent] = useState(false);
   const forgotPassword = useForgotPassword();
+  const forgotPasswordError = useAppError(forgotPassword.error);
   const {
     control,
     handleSubmit,
@@ -65,13 +66,9 @@ export function ForgotPasswordScreen() {
               <Text className="mb-7 font-body text-[13.5px] leading-[21px] text-ink-muted">
                 Indiquez votre email, nous vous enverrons un lien de réinitialisation.
               </Text>
-              {forgotPassword.isError ? (
+              {forgotPasswordError ? (
                 <View className="mb-4">
-                  <ErrorState
-                    error={mapToAppError(forgotPassword.error)}
-                    variant="inline"
-                    onRetry={handleSubmit(onSubmit)}
-                  />
+                  <ErrorState error={forgotPasswordError} variant="inline" onRetry={handleSubmit(onSubmit)} />
                 </View>
               ) : null}
               <Controller

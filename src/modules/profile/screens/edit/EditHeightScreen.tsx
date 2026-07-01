@@ -8,12 +8,13 @@ import { Skeleton, ErrorState } from '@/shared/components/feedback';
 import { colors } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function EditHeightScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const updateProfile = useUpdateProfile();
+  const updateProfileError = useAppError(updateProfile.error);
   const [height, setHeight] = useState(168);
   const [initialized, setInitialized] = useState(false);
 
@@ -36,9 +37,9 @@ export function EditHeightScreen() {
       saveLabel={updateProfile.isPending ? 'Enregistrement…' : 'Enregistrer'}
       scrollable={false}
     >
-      {updateProfile.isError ? (
+      {updateProfileError ? (
         <View className="mb-4">
-          <ErrorState error={mapToAppError(updateProfile.error)} variant="inline" onRetry={handleSave} />
+          <ErrorState error={updateProfileError} variant="inline" onRetry={handleSave} />
         </View>
       ) : null}
 

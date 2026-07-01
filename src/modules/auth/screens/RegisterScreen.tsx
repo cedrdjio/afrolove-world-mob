@@ -15,12 +15,13 @@ import { images } from '@/shared/constants/images';
 import { colors, gradients } from '@/shared/constants/theme';
 import { registerSchema, type RegisterFormValues } from '@/modules/auth/types/schemas';
 import { useRegister } from '@/modules/auth/hooks/useRegister';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function RegisterScreen() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const register = useRegister();
+  const registerError = useAppError(register.error);
   const {
     control,
     handleSubmit,
@@ -34,13 +35,8 @@ export function RegisterScreen() {
 
   const accepted = watch('acceptedTerms');
   const onSubmit = (values: RegisterFormValues) => {
-    console.log('[RegisterScreen] onSubmit', { email: values.email, firstName: values.firstName });
     register.mutate(values, {
-      onSuccess: () => {
-        console.log('[RegisterScreen] navigating to verify-email');
-        router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } });
-      },
-      onError: (error) => console.error('[RegisterScreen] register failed', error),
+      onSuccess: () => router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } }),
     });
   };
 
@@ -68,9 +64,9 @@ export function RegisterScreen() {
             Créez votre compte en quelques instants.
           </Text>
 
-          {register.isError ? (
+          {registerError ? (
             <View className="mb-4">
-              <ErrorState error={mapToAppError(register.error)} variant="inline" onRetry={handleSubmit(onSubmit)} />
+              <ErrorState error={registerError} variant="inline" onRetry={handleSubmit(onSubmit)} />
             </View>
           ) : null}
 

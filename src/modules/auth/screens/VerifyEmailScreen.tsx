@@ -8,15 +8,17 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { OtpInput } from '@/modules/auth/components/OtpInput';
 import { colors } from '@/shared/constants/theme';
 import { useVerifySignupOtp, useResendSignupEmail } from '@/modules/auth/hooks/useVerifyEmail';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function VerifyEmailScreen() {
   const router = useRouter();
   const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState('');
   const [resendConfirmed, setResendConfirmed] = useState(false);
+  const [resendCount, setResendCount] = useState(0);
   const verifyOtp = useVerifySignupOtp();
   const resendEmail = useResendSignupEmail();
+  const verifyError = useAppError(verifyOtp.error);
 
   const MIN_CODE_LENGTH = 4;
   const handleVerify = () => {
@@ -26,7 +28,16 @@ export function VerifyEmailScreen() {
 
   const handleResend = () => {
     if (!email) return;
-    resendEmail.mutate(email, { onSuccess: () => setResendConfirmed(true) });
+    resendEmail.mutate(email, {
+      onSuccess: () => {
+        // Resending invalidates the previous code, so clear whatever the
+        // user already typed — submitting it now would just fail with
+        // "Token has expired or is invalid" instead of the new one.
+        setCode('');
+        setResendCount((n) => n + 1);
+        setResendConfirmed(true);
+      },
+    });
   };
 
   return (
@@ -51,13 +62,13 @@ export function VerifyEmailScreen() {
           email.
         </Text>
 
-        {verifyOtp.isError ? (
+        {verifyError ? (
           <View className="mb-5">
-            <ErrorState error={mapToAppError(verifyOtp.error)} variant="inline" onRetry={handleVerify} />
+            <ErrorState error={verifyError} variant="inline" onRetry={handleVerify} />
           </View>
         ) : null}
 
-        <OtpInput onComplete={setCode} />
+        <OtpInput key={resendCount} onComplete={setCode} />
 
         <Text className="my-6 text-center font-body text-[12.5px] text-ink-muted">
           {resendConfirmed

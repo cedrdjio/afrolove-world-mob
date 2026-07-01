@@ -7,12 +7,13 @@ import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout'
 import { Skeleton, ErrorState } from '@/shared/components/feedback';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function EditJobScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const updateProfile = useUpdateProfile();
+  const updateProfileError = useAppError(updateProfile.error);
   const [job, setJob] = useState('');
   const [initialized, setInitialized] = useState(false);
 
@@ -34,9 +35,9 @@ export function EditJobScreen() {
       saveLabel={updateProfile.isPending ? 'Enregistrement…' : 'Enregistrer'}
       scrollable={false}
     >
-      {updateProfile.isError ? (
+      {updateProfileError ? (
         <View className="mb-4">
-          <ErrorState error={mapToAppError(updateProfile.error)} variant="inline" onRetry={handleSave} />
+          <ErrorState error={updateProfileError} variant="inline" onRetry={handleSave} />
         </View>
       ) : null}
 

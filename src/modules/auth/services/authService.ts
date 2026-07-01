@@ -9,17 +9,12 @@ export interface EmailCredentials {
 }
 
 async function signUpWithEmail({ email, password, firstName }: EmailCredentials & { firstName: string }) {
-  console.log('[authService] signUpWithEmail →', { email, firstName });
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { first_name: firstName } },
   });
-  if (error) {
-    console.error('[authService] signUpWithEmail ✗', error);
-    throw error;
-  }
-  console.log('[authService] signUpWithEmail ✓', { userId: data.user?.id, session: !!data.session });
+  if (error) throw error;
   return data;
 }
 

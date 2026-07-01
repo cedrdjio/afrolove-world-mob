@@ -11,12 +11,13 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { colors } from '@/shared/constants/theme';
 import { resetPasswordSchema, type ResetPasswordFormValues } from '@/modules/auth/types/schemas';
 import { useResetPassword } from '@/modules/auth/hooks/useResetPassword';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function ResetPasswordScreen() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const resetPassword = useResetPassword();
+  const resetPasswordError = useAppError(resetPassword.error);
   const {
     control,
     handleSubmit,
@@ -54,9 +55,9 @@ export function ResetPasswordScreen() {
             Choisissez un nouveau mot de passe pour votre compte.
           </Text>
 
-          {resetPassword.isError ? (
+          {resetPasswordError ? (
             <View className="mb-4">
-              <ErrorState error={mapToAppError(resetPassword.error)} variant="inline" onRetry={handleSubmit(onSubmit)} />
+              <ErrorState error={resetPasswordError} variant="inline" onRetry={handleSubmit(onSubmit)} />
             </View>
           ) : null}
 

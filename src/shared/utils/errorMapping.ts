@@ -80,7 +80,17 @@ function isAbortOrTimeout(error: Error): boolean {
   );
 }
 
-function resolveAppError(error: unknown): AppError {
+/**
+ * Normalizes any error thrown by Supabase, fetch, or React Query into a
+ * single AppError shape so every screen renders the same illustration +
+ * title + message + retry affordance for a given failure kind. Pure — no
+ * logging here. Call sites that render this during React render (which is
+ * every one of them, via `<ErrorState error={mapToAppError(x.error)} />`)
+ * would otherwise re-run this on every re-render while the error is
+ * displayed; use the `useAppError` hook instead if you also want the raw
+ * error logged once per occurrence.
+ */
+export function mapToAppError(error: unknown): AppError {
   // GoTrue wraps the raw fetch/AbortError into its own AuthError/AuthApiError
   // subclasses, so this check must run before the class-specific branches
   // below or an aborted request falls through to the raw-message 'unknown'
@@ -133,8 +143,12 @@ function resolveAppError(error: unknown): AppError {
  * name, message, stack, Supabase code/status, cause) next to the AppError
  * kind it resolved to. Dev-only — this is what to grep the Metro/device
  * logs for when a friendly message on screen isn't enough to debug with.
+ * Exported for `useAppError` to call once per error occurrence (see there
+ * for why this must not run on every render).
  */
-function logAppErrorDetails(error: unknown, resolved: AppError): void {
+export function logAppErrorDetails(error: unknown, resolved: AppError): void {
+  if (!__DEV__) return;
+
   const details: Record<string, unknown> = {
     resolvedKind: resolved.kind,
     constructor: error?.constructor?.name,
@@ -153,19 +167,4 @@ function logAppErrorDetails(error: unknown, resolved: AppError): void {
 
   // eslint-disable-next-line no-console
   console.error('[AppError]', details);
-}
-
-/**
- * Normalizes any error thrown by Supabase, fetch, or React Query into a
- * single AppError shape so every screen renders the same illustration +
- * title + message + retry affordance for a given failure kind.
- */
-export function mapToAppError(error: unknown): AppError {
-  const resolved = resolveAppError(error);
-
-  if (__DEV__) {
-    logAppErrorDetails(error, resolved);
-  }
-
-  return resolved;
 }

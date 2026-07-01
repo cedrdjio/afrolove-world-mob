@@ -7,13 +7,14 @@ import { Skeleton, ErrorState } from '@/shared/components/feedback';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useEducationLevelsQuery } from '@/modules/profile/hooks/useReferenceData';
 import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function EditEducationScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const educationLevelsQuery = useEducationLevelsQuery();
   const updateProfile = useUpdateProfile();
+  const updateProfileError = useAppError(updateProfile.error);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
@@ -42,9 +43,9 @@ export function EditEducationScreen() {
       onSave={handleSave}
       saveLabel={updateProfile.isPending ? 'Enregistrement…' : 'Enregistrer'}
     >
-      {updateProfile.isError ? (
+      {updateProfileError ? (
         <View className="mb-4">
-          <ErrorState error={mapToAppError(updateProfile.error)} variant="inline" onRetry={handleSave} />
+          <ErrorState error={updateProfileError} variant="inline" onRetry={handleSave} />
         </View>
       ) : null}
 

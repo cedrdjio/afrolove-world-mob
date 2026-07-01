@@ -11,13 +11,14 @@ import { gradients } from '@/shared/constants/theme';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
 import { useCompleteOnboarding } from '@/modules/onboarding/hooks/useCompleteOnboarding';
 import { useAuth } from '@/modules/auth/hooks/useAuth';
-import { mapToAppError } from '@/shared/utils/errorMapping';
+import { useAppError } from '@/shared/hooks/useAppError';
 
 export function FinishScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const onboarding = useOnboardingStore();
   const completeOnboarding = useCompleteOnboarding();
+  const completeOnboardingError = useAppError(completeOnboarding.error);
   const scale = useSharedValue(0);
 
   useEffect(() => {
@@ -79,14 +80,9 @@ export function FinishScreen() {
           Votre profil AfroLove World est prêt.{'\n'}Il est temps de faire de belles rencontres.
         </Text>
 
-        {completeOnboarding.isError ? (
+        {completeOnboardingError ? (
           <View className="mb-6 w-full">
-            <ErrorState
-              error={mapToAppError(completeOnboarding.error)}
-              variant="inline"
-              tone="onDark"
-              onRetry={handleFinish}
-            />
+            <ErrorState error={completeOnboardingError} variant="inline" tone="onDark" onRetry={handleFinish} />
           </View>
         ) : null}
 
