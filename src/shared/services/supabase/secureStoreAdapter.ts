@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 /**
@@ -8,6 +9,21 @@ import * as SecureStore from 'expo-secure-store';
  * AsyncStorage or any other unencrypted storage.
  */
 const CHUNK_SIZE = 1800;
+
+// expo-secure-store has no web implementation (SecureStore.getItemAsync
+// throws "getValueWithKeyAsync is not a function" there), so the web build
+// falls back to localStorage instead of crashing the whole session load.
+const webStorageAdapter = {
+  async getItem(key: string): Promise<string | null> {
+    return globalThis.localStorage?.getItem(key) ?? null;
+  },
+  async setItem(key: string, value: string): Promise<void> {
+    globalThis.localStorage?.setItem(key, value);
+  },
+  async removeItem(key: string): Promise<void> {
+    globalThis.localStorage?.removeItem(key);
+  },
+};
 
 function chunkKey(key: string, index: number) {
   return `${key}_chunk_${index}`;
@@ -39,7 +55,7 @@ async function clearChunked(key: string): Promise<void> {
   await SecureStore.deleteItemAsync(key);
 }
 
-export const secureStoreAdapter = {
+const nativeStorageAdapter = {
   getItem: readChunked,
   async setItem(key: string, value: string): Promise<void> {
     await clearChunked(key);
@@ -58,3 +74,5 @@ export const secureStoreAdapter = {
   },
   removeItem: clearChunked,
 };
+
+export const secureStoreAdapter = Platform.OS === 'web' ? webStorageAdapter : nativeStorageAdapter;
