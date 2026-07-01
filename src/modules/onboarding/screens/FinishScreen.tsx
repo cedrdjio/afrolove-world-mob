@@ -1,0 +1,65 @@
+import { useEffect } from 'react';
+import { View, Text } from 'react-native';
+import { useRouter } from 'expo-router';
+import { PartyPopper } from 'lucide-react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDelay } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
+import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { gradients } from '@/shared/constants/theme';
+import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
+
+export function FinishScreen() {
+  const router = useRouter();
+  const firstName = useOnboardingStore((s) => s.firstName);
+  const scale = useSharedValue(0);
+
+  useEffect(() => {
+    scale.value = withDelay(150, withSpring(1, { damping: 9, stiffness: 120 }));
+  }, [scale]);
+
+  const iconStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <View className="flex-1">
+      <ScreenBackground theme="deep">
+        <GlowOrb size={280} color="rgba(201,134,42,0.2)" top={110} right={-50} duration={9000} />
+        <GlowOrb size={220} color="rgba(200,96,64,0.18)" bottom={160} left={-30} duration={11000} delay={1000} />
+      </ScreenBackground>
+
+      <View className="flex-1 items-center justify-center px-8">
+        <Animated.View style={iconStyle} className="mb-7">
+          <LinearGradient
+            colors={gradients.brand}
+            style={{
+              width: 96,
+              height: 96,
+              borderRadius: 48,
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: '#C86040',
+              shadowOpacity: 0.45,
+              shadowRadius: 30,
+              shadowOffset: { width: 0, height: 14 },
+            }}
+          >
+            <PartyPopper size={42} color="#fff" strokeWidth={1.8} />
+          </LinearGradient>
+        </Animated.View>
+
+        <Text className="mb-3 text-center font-display-black text-[32px] uppercase text-white">
+          Profil complet{firstName ? `, ${firstName}` : ''} !
+        </Text>
+        <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">
+          Votre profil AfroLove World est prêt.{'\n'}Il est temps de faire de belles rencontres.
+        </Text>
+
+        <GradientButton
+          label="Découvrir l'application"
+          onPress={() => router.replace('/(tabs)/discover')}
+          style={{ width: '100%' }}
+        />
+      </View>
+    </View>
+  );
+}
