@@ -1,4 +1,4 @@
-import { QueryClient, QueryCache, onlineManager } from '@tanstack/react-query';
+import { QueryClient, QueryCache, MutationCache, onlineManager } from '@tanstack/react-query';
 import NetInfo from '@react-native-community/netinfo';
 import { supabase } from '@/shared/services/supabase/client';
 import { mapToAppError } from '@/shared/utils/errorMapping';
@@ -19,10 +19,19 @@ export const queryClient = new QueryClient({
       staleTime: 30_000,
     },
   },
-  // Any query hitting an expired/invalid refresh token forces a sign-out
-  // from one place, so every screen's auth guard picks it up and redirects
-  // to Welcome instead of showing stale, unauthorized data.
+  // Any query or mutation hitting an expired/invalid refresh token forces a
+  // sign-out from one place, so every screen's auth guard picks it up and
+  // redirects to Welcome instead of showing stale, unauthorized data or a
+  // dead-end "session expired" banner with no way back to login. Mutations
+  // need their own cache here — QueryCache's onError only covers queries.
   queryCache: new QueryCache({
+    onError: (error) => {
+      if (mapToAppError(error).kind === 'session_expired') {
+        supabase.auth.signOut().catch(() => {});
+      }
+    },
+  }),
+  mutationCache: new MutationCache({
     onError: (error) => {
       if (mapToAppError(error).kind === 'session_expired') {
         supabase.auth.signOut().catch(() => {});
