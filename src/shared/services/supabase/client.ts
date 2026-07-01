@@ -8,13 +8,20 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://xhpwmondzar
 const supabaseAnonKey =
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? 'sb_publishable_m7deqa--hK3BofZbiTzcuQ_6Q1wrzyn';
 
-const REQUEST_TIMEOUT_MS = 15_000;
+// Signup/login can trigger server-side email sending and take longer than a
+// typical read, so the client timeout has headroom above GoTrue's own budget.
+const REQUEST_TIMEOUT_MS = 30_000;
 
 // Every request gets a hard timeout so a stalled connection surfaces as a
-// clear "Timeout" AppError instead of a screen that spins forever.
+// clear "Timeout" AppError instead of a screen that spins forever. Aborting
+// with an explicit reason keeps the resulting error message identifiable
+// even after Supabase wraps it into its own AuthError/AuthApiError classes.
 function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeout = setTimeout(
+    () => controller.abort(new Error('Request timed out')),
+    REQUEST_TIMEOUT_MS,
+  );
 
   return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timeout));
 }

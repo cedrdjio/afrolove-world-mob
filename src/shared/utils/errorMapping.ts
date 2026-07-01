@@ -75,7 +75,25 @@ function buildError(kind: AppErrorKind, overrideMessage?: string): AppError {
  * single AppError shape so every screen renders the same illustration +
  * title + message + retry affordance for a given failure kind.
  */
+function isAbortOrTimeout(error: Error): boolean {
+  const message = error.message.toLowerCase();
+  return (
+    error.name === 'AbortError' ||
+    message.includes('abort') ||
+    message.includes('timeout') ||
+    message.includes('timed out')
+  );
+}
+
 export function mapToAppError(error: unknown): AppError {
+  // GoTrue wraps the raw fetch/AbortError into its own AuthError/AuthApiError
+  // subclasses, so this check must run before the class-specific branches
+  // below or an aborted request falls through to the raw-message 'unknown'
+  // case instead of the friendly 'timeout' one.
+  if (error instanceof Error && isAbortOrTimeout(error)) {
+    return buildError('timeout');
+  }
+
   if (error instanceof AuthApiError || error instanceof AuthError) {
     const code = 'code' in error ? (error as { code?: string }).code : undefined;
     const status = 'status' in error ? (error as { status?: number }).status : undefined;
@@ -103,14 +121,10 @@ export function mapToAppError(error: unknown): AppError {
   }
 
   if (error instanceof Error) {
-    const message = error.message.toLowerCase();
-    if (error.name === 'AbortError' || message.includes('timeout') || message.includes('timed out')) {
-      return buildError('timeout');
-    }
     if (
-      message.includes('network request failed') ||
-      message.includes('fetch failed') ||
-      message.includes('failed to fetch')
+      error.message.toLowerCase().includes('network request failed') ||
+      error.message.toLowerCase().includes('fetch failed') ||
+      error.message.toLowerCase().includes('failed to fetch')
     ) {
       return buildError('no_internet');
     }
