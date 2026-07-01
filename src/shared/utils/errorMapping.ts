@@ -1,4 +1,4 @@
-import { AuthApiError, AuthError } from '@supabase/supabase-js';
+import { AuthApiError, AuthError, StorageApiError } from '@supabase/supabase-js';
 
 export type AppErrorKind =
   | 'no_internet'
@@ -97,6 +97,17 @@ export function mapToAppError(error: unknown): AppError {
   // case instead of the friendly 'timeout' one.
   if (error instanceof Error && isAbortOrTimeout(error)) {
     return buildError('timeout');
+  }
+
+  if (error instanceof StorageApiError) {
+    const message = error.message.toLowerCase();
+    if (message.includes('row-level security') || message.includes('permission denied')) {
+      return buildError('session_expired');
+    }
+    if (error.status >= 500) {
+      return buildError('server_error');
+    }
+    return buildError('unknown', error.message);
   }
 
   if (error instanceof AuthApiError || error instanceof AuthError) {

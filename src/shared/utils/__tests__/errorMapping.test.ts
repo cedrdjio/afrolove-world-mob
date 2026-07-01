@@ -1,4 +1,4 @@
-import { AuthApiError, AuthRetryableFetchError } from '@supabase/supabase-js';
+import { AuthApiError, AuthRetryableFetchError, StorageApiError } from '@supabase/supabase-js';
 import { mapToAppError } from '@/shared/utils/errorMapping';
 
 describe('mapToAppError', () => {
@@ -63,6 +63,25 @@ describe('mapToAppError', () => {
 
     expect(result.kind).toBe('unknown');
     expect(result.message).not.toMatch(/totally unexpected/i);
+  });
+
+  // Regression test for the photo-upload bug: a Storage RLS violation (3
+  // parallel uploads racing supabase-js's session resolution during
+  // onboarding) came back as StorageApiError with no dedicated handling,
+  // falling into 'unknown' with the raw Postgres message on screen.
+  it('classifies a Storage row-level security violation as session_expired', () => {
+    const error = new StorageApiError('new row violates row-level security policy for table "objects"', 403, '403');
+
+    const result = mapToAppError(error);
+
+    expect(result.kind).toBe('session_expired');
+    expect(result.message).not.toMatch(/row-level security/i);
+  });
+
+  it('classifies a 5xx Storage error as server_error', () => {
+    const error = new StorageApiError('Internal server error', 500, '500');
+
+    expect(mapToAppError(error).kind).toBe('server_error');
   });
 
   it('falls back to unknown for non-Error values', () => {
