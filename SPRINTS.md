@@ -55,14 +55,14 @@ Suivi vivant : cocher au fur et à mesure. Un sprint = un lot livrable et testab
 - [x] Favoris visibles dans l'onglet Matches : "Qui vous a aimé" (compteur réel, profils dévoilés si premium) + "Mes favoris" (mes likes en attente)
 - [ ] Intégration Moneroo/Stripe réelle (VOTRE action : validation compte Google + clés Moneroo/Stripe)
 
-## 🟣 Sprint 5 — Production & stores
+## ✅ Sprint 5 — Production (terminé côté code — voir STORE_CHECKLIST.md)
 
-- [ ] SMTP custom (votre serveur mail + DNS) — templates déjà prêts
-- [ ] Sentry (crashs) + analytics de base
-- [ ] Captcha Turnstile sur l'inscription + rate limiting BD
-- [ ] Texte légal final de l'avocat collé dans `legal_documents` (dashboard)
-- [ ] Logo dans le bucket `branding`, protection mots de passe compromis (dashboard)
-- [ ] Build production AAB + fiches stores (Data Safety, privacy manifest, 18+, screenshots)
+- [x] OTA updates (expo-updates + runtimeVersion) : correctifs sans re-soumission stores
+- [x] Sentry installé et initialisé (inerte tant que `EXPO_PUBLIC_SENTRY_DSN` absent — collez le DSN dans les secrets EAS)
+- [x] Rate limiting BD anti-bots : messages (30/min) et signalements (10/jour) — likes déjà limités
+- [x] Textes de permission iOS (localisation/caméra/photos) en français — exigés App Store
+- [x] STORE_CHECKLIST.md : Data Safety pré-rempli, actions dashboard, assets, commandes build/submit
+- [ ] VOS actions : captcha Turnstile (dashboard), texte légal final, logo branding, DSN Sentry, SMTP custom plus tard
 
 ## ⚪ Sprint 6 — Dashboard admin NestJS (chantier séparé, étape par étape)
 

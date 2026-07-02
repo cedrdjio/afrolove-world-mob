@@ -14,8 +14,10 @@ import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { useInitializeAuth } from '@/modules/auth/hooks/useAuth';
 import { useAuthDeepLink } from '@/modules/auth/hooks/useAuthDeepLink';
 import { usePushNavigation } from '@/modules/notifications/hooks/usePush';
+import { initMonitoring } from '@/shared/services/monitoring';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+initMonitoring();
 
 function AppBootstrap() {
   useInitializeAuth();

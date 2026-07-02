@@ -8,9 +8,21 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e1f490c0-a466-49d8-9cbf-5b1bd58c051d",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.afroloveworld.app"
+      "bundleIdentifier": "com.afroloveworld.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "AfroLove World utilise votre position pour vous proposer des rencontres près de chez vous. Elle n'est jamais montrée aux autres membres.",
+        "NSCameraUsageDescription": "La caméra sert à prendre vos photos de profil et à vérifier votre identité (badge vérifié).",
+        "NSPhotoLibraryUsageDescription": "Vos photos servent à composer votre profil AfroLove World."
+      }
     },
     "android": {
       "package": "com.afroloveworld.app",
@@ -55,7 +67,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "AfroLove World a besoin d'accéder à vos photos pour créer votre profil."
+          "photosPermission": "AfroLove World a besoin d'accéder à vos photos pour créer votre profil.",
+          "cameraPermission": "La caméra sert à prendre vos photos de profil et à vérifier votre identité."
         }
       ],
       [
@@ -70,7 +83,8 @@
             "enableMinifyInReleaseBuilds": true
           }
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true
