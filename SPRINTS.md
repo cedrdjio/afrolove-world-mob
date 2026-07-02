@@ -45,12 +45,15 @@ Suivi vivant : cocher au fur et à mesure. Un sprint = un lot livrable et testab
 - [ ] Corrections des retours du premier test réel
 - [ ] Préférences de notifications réelles (écran settings branché)
 
-## 🟢 Sprint 4 — Monétisation
+## ✅ Sprint 4 — Monétisation, logique métier complète (terminé — paiement simulé)
 
-- [ ] Compte RevenueCat + produits IAP (VOTRE action : comptes Apple/Google développeur)
-- [ ] SDK react-native-purchases + table `subscriptions` + webhook RevenueCat
-- [ ] Gating réel : limite de likes quotidienne en BD, "qui vous a aimé", super likes, boost
-- [ ] Écrans premium branchés sur les vrais achats
+- [x] Tables `premium_plans` (catalogue éditable dashboard) + `subscriptions` (historique, provider-agnostique)
+- [x] Activation via `grant_subscription()` partagé : le stub dev l'appelle aujourd'hui, le webhook Moneroo/Stripe l'appellera demain (une seule ligne à révoquer pour couper le stub)
+- [x] Contraintes réelles en BD : gratuit = 5 likes/jour, 0 super like ; premium = illimité + 5 super likes/jour (trigger inviolable)
+- [x] Écran tarifs branché sur les plans BD, achat → succès/échec, prolongation si déjà premium
+- [x] Limite quotidienne : vrai compte à rebours jusqu'à minuit, redirection auto quand la limite est atteinte
+- [x] Favoris visibles dans l'onglet Matches : "Qui vous a aimé" (compteur réel, profils dévoilés si premium) + "Mes favoris" (mes likes en attente)
+- [ ] Intégration Moneroo/Stripe réelle (VOTRE action : validation compte Google + clés Moneroo/Stripe)
 
 ## 🟣 Sprint 5 — Production & stores
 

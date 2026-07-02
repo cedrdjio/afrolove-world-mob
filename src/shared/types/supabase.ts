@@ -207,6 +207,93 @@ export type Database = {
           },
         ];
       };
+      premium_plans: {
+        Row: {
+          currency: string;
+          description: string | null;
+          duration_days: number;
+          is_active: boolean;
+          key: string;
+          label: string;
+          price_cents: number;
+          provider_product_ids: Json;
+          sort_order: number;
+        };
+        Insert: {
+          currency?: string;
+          description?: string | null;
+          duration_days: number;
+          is_active?: boolean;
+          key: string;
+          label: string;
+          price_cents: number;
+          provider_product_ids?: Json;
+          sort_order?: number;
+        };
+        Update: {
+          currency?: string;
+          description?: string | null;
+          duration_days?: number;
+          is_active?: boolean;
+          key?: string;
+          label?: string;
+          price_cents?: number;
+          provider_product_ids?: Json;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
+      subscriptions: {
+        Row: {
+          created_at: string;
+          expires_at: string | null;
+          id: string;
+          plan_key: string;
+          profile_id: string;
+          provider: string;
+          provider_ref: string | null;
+          starts_at: string | null;
+          status: string;
+        };
+        Insert: {
+          created_at?: string;
+          expires_at?: string | null;
+          id?: string;
+          plan_key: string;
+          profile_id: string;
+          provider?: string;
+          provider_ref?: string | null;
+          starts_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string | null;
+          id?: string;
+          plan_key?: string;
+          profile_id?: string;
+          provider?: string;
+          provider_ref?: string | null;
+          starts_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'subscriptions_plan_key_fkey';
+            columns: ['plan_key'];
+            isOneToOne: false;
+            referencedRelation: 'premium_plans';
+            referencedColumns: ['key'];
+          },
+          {
+            foreignKeyName: 'subscriptions_profile_id_fkey';
+            columns: ['profile_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profile_interests: {
         Row: {
           interest_id: string;
@@ -709,6 +796,55 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_my_entitlements: {
+        Args: never;
+        Returns: {
+          is_premium: boolean;
+          likers_count: number;
+          likes_limit: number | null;
+          likes_used_today: number;
+          plan_label: string | null;
+          premium_until: string | null;
+          super_likes_limit: number;
+          super_likes_used_today: number;
+        }[];
+      };
+      get_my_favorites: {
+        Args: never;
+        Returns: {
+          action: string;
+          avatar_url: string | null;
+          city: string | null;
+          first_name: string | null;
+          is_matched: boolean;
+          is_verified: boolean;
+          liked_at: string;
+          profile_id: string;
+        }[];
+      };
+      get_my_likers: {
+        Args: never;
+        Returns: {
+          action: string;
+          avatar_url: string | null;
+          city: string | null;
+          first_name: string | null;
+          is_verified: boolean;
+          liked_at: string;
+          profile_id: string;
+        }[];
+      };
+      has_active_premium: {
+        Args: { p_profile_id: string };
+        Returns: boolean;
+      };
+      purchase_subscription_dev: {
+        Args: { p_plan_key: string };
+        Returns: {
+          premium_until: string;
+          subscription_id: string;
+        }[];
+      };
       get_my_blocked_profiles: {
         Args: never;
         Returns: {

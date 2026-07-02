@@ -6,6 +6,17 @@ import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { gradients } from '@/shared/constants/theme';
 
+/** The DB limit resets at local midnight (date_trunc('day') in the swipe
+ *  guard trigger) — show the real time remaining, not a hardcoded value. */
+function timeUntilMidnight(): string {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const minutes = Math.max(1, Math.round((midnight.getTime() - now.getTime()) / 60000));
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h > 0 ? `${h}h ${String(m).padStart(2, '0')}min` : `${m} min`;
+}
+
 export function DailyLikeLimitScreen() {
   const router = useRouter();
 
@@ -47,7 +58,7 @@ export function DailyLikeLimitScreen() {
           Vous avez utilisé tous vos likes gratuits pour aujourd'hui.
         </Text>
         <Text className="mb-10 font-heading-semibold text-[12px] uppercase tracking-widest text-gold">
-          Réinitialisation dans 6h 24min
+          Réinitialisation dans {timeUntilMidnight()}
         </Text>
 
         <GradientButton label="Likes illimités avec Premium" onPress={() => router.replace('/premium')} style={{ width: '100%', marginBottom: 12 }} />

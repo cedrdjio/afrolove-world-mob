@@ -62,6 +62,16 @@ export function SwipeScreen() {
             });
           }
         },
+        onError: (error) => {
+          // Free-tier limits are enforced by the DB swipe trigger — the raised
+          // exception codes arrive in the error message.
+          const message = error instanceof Error ? error.message : '';
+          if (message.includes('LIKE_LIMIT_REACHED')) {
+            router.push('/discover-like-limit');
+          } else if (message.includes('SUPER_LIKE_PREMIUM_ONLY') || message.includes('SUPER_LIKE_LIMIT_REACHED')) {
+            router.push('/premium');
+          }
+        },
       },
     );
   };

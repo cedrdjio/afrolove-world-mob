@@ -37,8 +37,12 @@ export function useSwipe() {
       return discoveryService.swipe(user.id, targetId, action);
     },
     onSuccess: (result) => {
+      // A swipe consumes quota and feeds "Mes favoris".
+      queryClient.invalidateQueries({ queryKey: ['entitlements'] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
       if (result.isMatch) {
         queryClient.invalidateQueries({ queryKey: ['matches'] });
+        queryClient.invalidateQueries({ queryKey: ['conversations'] });
       }
     },
   });
