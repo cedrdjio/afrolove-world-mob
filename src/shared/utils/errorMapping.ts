@@ -101,13 +101,19 @@ export function mapToAppError(error: unknown): AppError {
 
   if (error instanceof StorageApiError) {
     const message = error.message.toLowerCase();
+    // A storage policy rejection is not proof the user's session expired —
+    // conflating the two used to trigger an automatic sign-out (see
+    // queryClient.ts) on every RLS hiccup, which is what actually produced
+    // the "session expired" loop on onboarding. Surface it as a retryable
+    // server-side problem instead; only a real GoTrue session/token error
+    // (handled below) should ever force a sign-out.
     if (message.includes('row-level security') || message.includes('permission denied')) {
-      return buildError('session_expired');
+      return buildError('server_error');
     }
     if (error.status >= 500) {
       return buildError('server_error');
     }
-    return buildError('unknown', error.message);
+    return buildError('unknown');
   }
 
   if (error instanceof AuthApiError || error instanceof AuthError) {
@@ -133,7 +139,10 @@ export function mapToAppError(error: unknown): AppError {
     if (status && status >= 500) {
       return buildError('server_error');
     }
-    return buildError('unknown', error.message);
+    // Never surface the raw GoTrue message here — it's an internal/API
+    // string, not user-facing copy. logAppErrorDetails already captures it
+    // for the console; the UI only ever gets the generic friendly message.
+    return buildError('unknown');
   }
 
   if (error instanceof Error) {

@@ -46,6 +46,9 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       }
     });
 
-    return () => subscription.subscription.unsubscribe();
+    return () => {
+      subscription.subscription.unsubscribe();
+      initialized = false;
+    };
   },
 }));
