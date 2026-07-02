@@ -13,6 +13,7 @@ interface EditScreenLayoutProps {
   onSave: () => void;
   saveLabel?: string;
   saveDisabled?: boolean;
+  saving?: boolean;
   scrollable?: boolean;
 }
 
@@ -23,6 +24,7 @@ export function EditScreenLayout({
   onSave,
   saveLabel = 'Enregistrer',
   saveDisabled = false,
+  saving = false,
   scrollable = true,
 }: EditScreenLayoutProps) {
   const router = useRouter();
@@ -51,7 +53,13 @@ export function EditScreenLayout({
           {children}
         </Container>
 
-        <GradientButton label={saveLabel} onPress={onSave} disabled={saveDisabled} style={{ marginTop: 16 }} />
+        <GradientButton
+          label={saveLabel}
+          onPress={onSave}
+          disabled={saveDisabled}
+          loading={saving}
+          style={{ marginTop: 16 }}
+        />
       </View>
     </View>
   );

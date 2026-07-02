@@ -261,6 +261,39 @@ export type Database = {
           },
         ];
       };
+      blocks: {
+        Row: {
+          blocked_id: string;
+          blocker_id: string;
+          created_at: string;
+        };
+        Insert: {
+          blocked_id: string;
+          blocker_id: string;
+          created_at?: string;
+        };
+        Update: {
+          blocked_id?: string;
+          blocker_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'blocks_blocked_id_fkey';
+            columns: ['blocked_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'blocks_blocker_id_fkey';
+            columns: ['blocker_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       legal_documents: {
         Row: {
           content: string;
@@ -460,6 +493,54 @@ export type Database = {
           },
         ];
       };
+      reports: {
+        Row: {
+          created_at: string;
+          details: string | null;
+          id: string;
+          reason: string;
+          reported_id: string;
+          reporter_id: string;
+          reviewed_at: string | null;
+          status: string;
+        };
+        Insert: {
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          reason: string;
+          reported_id: string;
+          reporter_id: string;
+          reviewed_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          reason?: string;
+          reported_id?: string;
+          reporter_id?: string;
+          reviewed_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reports_reported_id_fkey';
+            columns: ['reported_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reports_reporter_id_fkey';
+            columns: ['reporter_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       relationship_goals: {
         Row: {
           id: string;
@@ -558,6 +639,19 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_my_blocked_profiles: {
+        Args: never;
+        Returns: {
+          avatar_url: string | null;
+          blocked_at: string;
+          blocked_id: string;
+          first_name: string | null;
+        }[];
+      };
+      is_blocked_between: {
+        Args: { a: string; b: string };
+        Returns: boolean;
+      };
       get_my_conversations: {
         Args: never;
         Returns: {

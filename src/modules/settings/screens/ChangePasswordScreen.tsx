@@ -1,25 +1,53 @@
 import { useState } from 'react';
+import { View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
 import { Lock } from 'lucide-react-native';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
+import { useAppError } from '@/shared/hooks/useAppError';
 import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
+import { supabase } from '@/shared/services/supabase/client';
+import { authService } from '@/modules/auth/services/authService';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
 
 export function ChangePasswordScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
 
-  const isValid = current.length > 0 && next.length >= 6 && next === confirm;
+  const changePassword = useMutation({
+    mutationFn: async () => {
+      // Re-authenticate with the current password first: updateUser alone
+      // would let anyone with an unlocked phone change the password.
+      if (!user?.email) throw new Error('Session invalide');
+      await authService.signInWithEmail({ email: user.email, password: current });
+      const { error } = await supabase.auth.updateUser({ password: next });
+      if (error) throw error;
+    },
+    onSuccess: () => router.back(),
+  });
+  const changeError = useAppError(changePassword.error);
+
+  const isValid =
+    current.length > 0 && next.length >= 8 && /[a-zA-Z]/.test(next) && /[0-9]/.test(next) && next === confirm;
 
   return (
     <EditScreenLayout
       title="Mot de passe"
-      onSave={() => router.back()}
+      onSave={() => changePassword.mutate()}
       saveLabel="Mettre à jour"
       saveDisabled={!isValid}
+      saving={changePassword.isPending}
       scrollable={false}
     >
+      {changeError ? (
+        <View className="mb-4">
+          <ErrorState error={changeError} variant="inline" />
+        </View>
+      ) : null}
       <GlassInput
         label="Mot de passe actuel"
         icon={<Lock size={15} color="rgba(44,20,8,0.26)" />}
@@ -33,6 +61,11 @@ export function ChangePasswordScreen() {
         secureTextEntry
         value={next}
         onChangeText={setNext}
+        error={
+          next.length > 0 && (next.length < 8 || !/[a-zA-Z]/.test(next) || !/[0-9]/.test(next))
+            ? 'Au moins 8 caractères, avec lettres et chiffres'
+            : undefined
+        }
       />
       <GlassInput
         label="Confirmer le mot de passe"

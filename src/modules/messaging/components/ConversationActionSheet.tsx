@@ -1,9 +1,10 @@
 import { forwardRef, useCallback, useMemo } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
-import { Archive, Trash2, Flag } from 'lucide-react-native';
+import { Ban, Trash2, Flag } from 'lucide-react-native';
 import { colors } from '@/shared/constants/theme';
+import { useBlockUser, useUnmatch } from '@/modules/reports/hooks/useModeration';
 import type { Conversation } from '@/modules/messaging/types/messaging';
 
 interface ConversationActionSheetProps {
@@ -13,7 +14,13 @@ interface ConversationActionSheetProps {
 export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActionSheetProps>(
   ({ conversation }, ref) => {
     const router = useRouter();
+    const blockUser = useBlockUser();
+    const unmatch = useUnmatch();
     const snapPoints = useMemo(() => ['34%'], []);
+
+    const close = useCallback(() => {
+      (ref as React.RefObject<BottomSheet | null>)?.current?.close();
+    }, [ref]);
 
     const renderBackdrop = useCallback(
       (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
@@ -23,6 +30,14 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
     );
 
     if (!conversation) return null;
+
+    const handleBlock = () => {
+      blockUser.mutate(conversation.partnerId, { onSettled: close });
+    };
+
+    const handleUnmatch = () => {
+      unmatch.mutate(conversation.matchId, { onSettled: close });
+    };
 
     return (
       <BottomSheet
@@ -38,14 +53,25 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
           <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/35">
             {conversation.partnerFirstName}
           </Text>
-          <Pressable className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4">
-            <View className="h-9 w-9 items-center justify-center rounded-full bg-brand/10">
-              <Archive size={16} color={colors.brand.DEFAULT} />
+          <Pressable
+            onPress={handleBlock}
+            disabled={blockUser.isPending}
+            className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4"
+          >
+            <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">
+              {blockUser.isPending ? (
+                <ActivityIndicator size="small" color={colors.danger} />
+              ) : (
+                <Ban size={16} color={colors.danger} />
+              )}
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Archiver</Text>
+            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Bloquer</Text>
           </Pressable>
           <Pressable
-            onPress={() => router.push(`/reports/${conversation.partnerId}`)}
+            onPress={() => {
+              close();
+              router.push(`/reports/${conversation.partnerId}`);
+            }}
             className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4"
           >
             <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">
@@ -53,9 +79,17 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
             </View>
             <Text className="font-heading-semibold text-[14px] uppercase text-ink">Signaler</Text>
           </Pressable>
-          <Pressable className="flex-row items-center gap-3.5 py-4">
+          <Pressable
+            onPress={handleUnmatch}
+            disabled={unmatch.isPending}
+            className="flex-row items-center gap-3.5 py-4"
+          >
             <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">
-              <Trash2 size={16} color={colors.danger} />
+              {unmatch.isPending ? (
+                <ActivityIndicator size="small" color={colors.danger} />
+              ) : (
+                <Trash2 size={16} color={colors.danger} />
+              )}
             </View>
             <Text className="font-heading-semibold text-[14px] uppercase text-danger">
               Supprimer la conversation

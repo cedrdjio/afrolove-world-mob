@@ -6,7 +6,10 @@ import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { Avatar } from '@/shared/components/ui/Avatar';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
+import { useAppError } from '@/shared/hooks/useAppError';
 import { REPORT_REASONS } from '@/modules/reports/constants/reasons';
+import { useSubmitReport } from '@/modules/reports/hooks/useModeration';
 import { colors } from '@/shared/constants/theme';
 
 export function ReportUserScreen() {
@@ -14,6 +17,16 @@ export function ReportUserScreen() {
   const router = useRouter();
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [details, setDetails] = useState('');
+  const submitReport = useSubmitReport();
+  const submitError = useAppError(submitReport.error);
+
+  const handleSubmit = () => {
+    if (!id || !selectedReason) return;
+    submitReport.mutate(
+      { reportedId: id, reason: selectedReason, details: details.trim() || null },
+      { onSuccess: () => router.replace('/reports/confirmation') },
+    );
+  };
 
   return (
     <View className="flex-1">
@@ -73,10 +86,17 @@ export function ReportUserScreen() {
           style={{ minHeight: 80, textAlignVertical: 'top' }}
         />
 
+        {submitError ? (
+          <View className="mb-3">
+            <ErrorState error={submitError} variant="inline" onRetry={handleSubmit} />
+          </View>
+        ) : null}
+
         <GradientButton
           label="Envoyer le signalement"
-          disabled={!selectedReason}
-          onPress={() => router.replace('/reports/confirmation')}
+          disabled={!selectedReason || !id}
+          loading={submitReport.isPending}
+          onPress={handleSubmit}
         />
       </View>
     </View>

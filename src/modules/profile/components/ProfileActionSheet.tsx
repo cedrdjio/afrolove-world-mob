@@ -1,8 +1,9 @@
 import { forwardRef, useCallback, useMemo } from 'react';
-import { View, Text, Pressable, Share } from 'react-native';
+import { View, Text, Pressable, Share, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Flag, UserX, Share2 } from 'lucide-react-native';
+import { useBlockUser } from '@/modules/reports/hooks/useModeration';
 import { colors } from '@/shared/constants/theme';
 
 interface ProfileActionSheetProps {
@@ -13,6 +14,7 @@ interface ProfileActionSheetProps {
 export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProps>(
   ({ profileId, profileName }, ref) => {
     const router = useRouter();
+    const blockUser = useBlockUser();
     const snapPoints = useMemo(() => ['32%'], []);
 
     const renderBackdrop = useCallback(
@@ -47,11 +49,21 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
             <Text className="font-heading-semibold text-[14px] uppercase text-ink">Signaler</Text>
           </Pressable>
           <Pressable
-            onPress={() => router.push(`/blocked-users?block=${profileId}`)}
+            onPress={() =>
+              blockUser.mutate(profileId, {
+                // Leave the now-hidden profile once the block is effective.
+                onSuccess: () => router.back(),
+              })
+            }
+            disabled={blockUser.isPending}
             className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4"
           >
             <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">
-              <UserX size={16} color={colors.danger} />
+              {blockUser.isPending ? (
+                <ActivityIndicator size="small" color={colors.danger} />
+              ) : (
+                <UserX size={16} color={colors.danger} />
+              )}
             </View>
             <Text className="font-heading-semibold text-[14px] uppercase text-ink">Bloquer</Text>
           </Pressable>
