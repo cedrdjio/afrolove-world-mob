@@ -16,6 +16,25 @@ function mapPhoto(row: { id: string; url: string; position: number; is_primary: 
   return { id: row.id, url: row.url, position: row.position, isPrimary: row.is_primary };
 }
 
+// Storage uploads have intermittently failed with a row-level security
+// violation even though the RLS policies themselves are confirmed correct
+// (verified directly against the database, bypassing the app entirely).
+// That points at the client not attaching a valid access token to the
+// upload request specifically. Logging the session state right before the
+// call — dev-only — turns the next occurrence into hard evidence instead
+// of another guess.
+async function logSessionBeforeUpload(label: string): Promise<void> {
+  if (!__DEV__) return;
+  const { data, error } = await supabase.auth.getSession();
+  // eslint-disable-next-line no-console
+  console.log(`[photoService] ${label} session check`, {
+    hasSession: !!data.session,
+    hasAccessToken: !!data.session?.access_token,
+    expiresAt: data.session?.expires_at,
+    error: error?.message,
+  });
+}
+
 async function fetchPhotos(profileId: string): Promise<ProfilePhoto[]> {
   const { data, error } = await supabase
     .from('profile_photos')
@@ -42,6 +61,7 @@ async function addPhoto(
   onProgress?.(55);
 
   const path = `${profileId}/${Date.now()}.jpg`;
+  await logSessionBeforeUpload('addPhoto');
   const { error: uploadError } = await supabase.storage
     .from(PHOTOS_BUCKET)
     .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true });
@@ -82,6 +102,7 @@ async function replacePhoto(photoId: string, localUri: string, onProgress?: (per
   if (fetchError) throw fetchError;
 
   const path = `${existing.profile_id}/${Date.now()}.jpg`;
+  await logSessionBeforeUpload('replacePhoto');
   const { error: uploadError } = await supabase.storage
     .from(PHOTOS_BUCKET)
     .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true });
