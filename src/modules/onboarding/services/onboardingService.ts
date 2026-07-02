@@ -1,6 +1,5 @@
 import { photoService } from '@/modules/profile/services/photoService';
 import { profileService } from '@/modules/profile/services/profileService';
-import { supabase } from '@/shared/services/supabase/client';
 import type { LifestyleValues } from '@/shared/constants/lifestyle';
 import type { Gender, LookingForOption } from '@/modules/onboarding/stores/onboardingStore';
 
@@ -25,20 +24,14 @@ function toIsoBirthDate({ day, month, year }: CompleteOnboardingInput['birthDate
 }
 
 async function completeOnboarding(input: CompleteOnboardingInput): Promise<void> {
-  // Storage's RLS check depends on the request actually carrying the
-  // signed-in user's access token. Firing the photo uploads in parallel via
-  // Promise.all let 3 storage requests race supabase-js's internal session
-  // resolution at the exact same tick, occasionally sending one without a
-  // valid Authorization header and tripping "new row violates row-level
-  // security policy for table objects". Confirming a live session up front
-  // and uploading one at a time removes the race entirely.
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !sessionData.session) {
-    throw new Error('Session invalide : merci de vous reconnecter avant de terminer votre profil.');
-  }
-
+  // Uploaded one at a time (not Promise.all): the enforce_single_primary
+  // and sync_profile_avatar triggers on profile_photos touch sibling rows,
+  // so parallel inserts here risk lock contention. Each call checks its own
+  // session (see photoService.getUploadAuthHeaders) and the object write
+  // itself goes through the upload-photo Edge Function's S3 credentials
+  // rather than the per-request JWT/RLS path.
   for (const [index, uri] of input.photoUris.entries()) {
-    await photoService.addPhoto(input.userId, uri, index);
+    await photoService.addPhoto(uri, index);
   }
   await profileService.setInterests(input.userId, input.interestIds);
 
