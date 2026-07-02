@@ -1,6 +1,8 @@
 import { useRouter } from 'expo-router';
 import { Bell } from 'lucide-react-native';
 import { PermissionScreen } from '@/modules/onboarding/components/PermissionScreen';
+import { useAuthStore } from '@/modules/auth/stores/authStore';
+import { pushService } from '@/modules/notifications/services/pushService';
 
 export function NotificationPermissionScreen() {
   const router = useRouter();
@@ -14,7 +16,13 @@ export function NotificationPermissionScreen() {
       // keeps that crash from taking down the whole onboarding screen —
       // a development build is required for real push registration.
       const Notifications = await import('expo-notifications');
-      await Notifications.requestPermissionsAsync();
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status === 'granted') {
+        // Register right away (fire-and-forget) so the very first match
+        // already lands as a push, without waiting for the next app start.
+        const userId = useAuthStore.getState().user?.id;
+        if (userId) pushService.registerDevice(userId);
+      }
     } catch {
       // Never let a permission prompt block onboarding.
     }
