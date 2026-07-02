@@ -4,11 +4,25 @@ import { AlertTriangle } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GhostButton } from '@/shared/components/ui/GhostButton';
+import { useKycSubmission } from '@/modules/kyc/hooks/useKyc';
+import { useKycStore } from '@/modules/kyc/stores/kycStore';
 
-const REASONS = ['Document illisible ou flou', "Le visage n'est pas clairement visible", 'Informations incohérentes'];
+const FALLBACK_REASONS = [
+  'Document illisible ou flou',
+  "Le visage n'est pas clairement visible",
+  'Informations incohérentes',
+];
 
 export function KycRejectedScreen() {
   const router = useRouter();
+  const submission = useKycSubmission();
+  const resetDraft = useKycStore((s) => s.reset);
+
+  // The admin's reason (kyc_submissions.rejection_reason) takes precedence;
+  // the generic list is only a fallback when none was given.
+  const reasons = submission.data?.rejectionReason
+    ? [submission.data.rejectionReason]
+    : FALLBACK_REASONS;
 
   return (
     <View className="flex-1">
@@ -29,7 +43,7 @@ export function KycRejectedScreen() {
         </Text>
 
         <View className="mb-9 w-full gap-2.5 rounded-2xl border border-white/[0.14] bg-white/[0.08] p-4">
-          {REASONS.map((reason, i) => (
+          {reasons.map((reason, i) => (
             <View key={reason} className="flex-row items-start gap-2.5">
               <View className="mt-1.5 h-1.5 w-1.5 rounded-full bg-danger" />
               <Text className={`flex-1 font-body text-[12.5px] leading-[18px] ${i === 0 ? 'text-white/85' : 'text-white/40'}`}>
@@ -39,7 +53,14 @@ export function KycRejectedScreen() {
           ))}
         </View>
 
-        <GradientButton label="Soumettre un nouveau dossier" onPress={() => router.replace('/kyc/upload-id')} style={{ width: '100%', marginBottom: 12 }} />
+        <GradientButton
+          label="Soumettre un nouveau dossier"
+          onPress={() => {
+            resetDraft();
+            router.replace('/kyc/upload-id');
+          }}
+          style={{ width: '100%', marginBottom: 12 }}
+        />
         <GhostButton label="Contacter le support" tone="onDark" onPress={() => router.back()} />
       </View>
     </View>

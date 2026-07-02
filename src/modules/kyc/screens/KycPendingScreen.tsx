@@ -12,12 +12,21 @@ import Animated, {
 } from 'react-native-reanimated';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
+import { useKycSubmission } from '@/modules/kyc/hooks/useKyc';
 import { colors } from '@/shared/constants/theme';
 
 export function KycPendingScreen() {
   const router = useRouter();
+  const submission = useKycSubmission();
   const float = useSharedValue(0);
   const pulse = useSharedValue(0.4);
+
+  const checkStatus = async () => {
+    const { data } = await submission.refetch();
+    if (data?.status === 'approved') router.replace('/kyc/approved');
+    else if (data?.status === 'rejected') router.replace('/kyc/rejected');
+    // Still pending: stay here, the copy already says "sous 48h".
+  };
 
   useEffect(() => {
     float.value = withRepeat(
@@ -95,8 +104,10 @@ export function KycPendingScreen() {
           onPress={() => router.replace('/(tabs)/discover')}
           style={{ width: '100%', marginBottom: 12 }}
         />
-        <Pressable onPress={() => router.push('/kyc/approved')}>
-          <Text className="font-body-medium text-[13px] text-white/60">Voir le statut de mon dossier</Text>
+        <Pressable onPress={checkStatus} disabled={submission.isRefetching}>
+          <Text className="font-body-medium text-[13px] text-white/60">
+            {submission.isRefetching ? 'Vérification…' : 'Voir le statut de mon dossier'}
+          </Text>
         </Pressable>
       </View>
     </View>

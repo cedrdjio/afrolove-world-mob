@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { KycHeader } from '@/modules/kyc/components/KycHeader';
+import { useKycStore } from '@/modules/kyc/stores/kycStore';
+import { useKycSubmission } from '@/modules/kyc/hooks/useKyc';
 import { colors, gradients } from '@/shared/constants/theme';
 
 const DOCUMENT_TYPES: { key: 'cni' | 'passport' | 'license'; label: string; Icon: LucideIcon }[] = [
@@ -25,9 +27,15 @@ const TIPS = [
 
 export function UploadIdScreen() {
   const router = useRouter();
-  const [docType, setDocType] = useState<(typeof DOCUMENT_TYPES)[number]['key']>('cni');
-  const [frontUri, setFrontUri] = useState<string | null>(null);
-  const [backUri, setBackUri] = useState<string | null>(null);
+  const { docType, frontUri, backUri, setDocType, setFrontUri, setBackUri } = useKycStore();
+  const submission = useKycSubmission();
+
+  // A file already under review (or approved) must not be re-opened — land
+  // on the status screen instead of letting the user re-capture for nothing.
+  useEffect(() => {
+    if (submission.data?.status === 'pending') router.replace('/kyc/pending');
+    else if (submission.data?.status === 'approved') router.replace('/kyc/approved');
+  }, [submission.data?.status, router]);
 
   const pickImage = async (side: 'front' | 'back') => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();

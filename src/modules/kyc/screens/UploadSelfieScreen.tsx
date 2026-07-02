@@ -1,19 +1,38 @@
 import { useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Check, RotateCcw } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import * as Haptics from 'expo-haptics';
+import { Image } from 'expo-image';
 import Animated, {
+  FadeIn,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { useKycStore } from '@/modules/kyc/stores/kycStore';
 import { colors } from '@/shared/constants/theme';
 
 export function UploadSelfieScreen() {
   const router = useRouter();
+  const { selfieUri, setSelfieUri } = useKycStore();
   const scanY = useSharedValue(0);
+
+  const captureSelfie = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) return;
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 0.85,
+      cameraType: ImagePicker.CameraType.front,
+    });
+    if (!result.canceled && result.assets[0]) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      setSelfieUri(result.assets[0].uri);
+    }
+  };
 
   useEffect(() => {
     scanY.value = withRepeat(withSequence(withTiming(1, { duration: 2000 }), withTiming(0, { duration: 0 })), -1, false);
@@ -28,15 +47,21 @@ export function UploadSelfieScreen() {
     <View className="flex-1 bg-deep">
       <View className="relative flex-1 items-center justify-center overflow-hidden bg-deep">
         <View
-          className="items-center justify-center rounded-full border-[2.5px] border-brand/70"
+          className="items-center justify-center overflow-hidden rounded-full border-[2.5px] border-brand/70"
           style={{ width: 220, height: 290 }}
         >
-          <Animated.View
-            style={[
-              { position: 'absolute', width: 180, height: 2, backgroundColor: 'rgba(200,96,64,0.8)' },
-              scanStyle,
-            ]}
-          />
+          {selfieUri ? (
+            <Animated.View entering={FadeIn.duration(280)} style={{ position: 'absolute', inset: 0 }}>
+              <Image source={{ uri: selfieUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+            </Animated.View>
+          ) : (
+            <Animated.View
+              style={[
+                { position: 'absolute', width: 180, height: 2, backgroundColor: 'rgba(200,96,64,0.8)' },
+                scanStyle,
+              ]}
+            />
+          )}
         </View>
 
         {/* Corner markers */}
@@ -67,12 +92,33 @@ export function UploadSelfieScreen() {
           Votre visage <Text className="text-white/75">+ votre pièce d'identité</Text>
           {'\n'}doivent être visibles simultanément.
         </Text>
-        <Pressable
-          onPress={() => router.push('/kyc/recap')}
-          className="h-[72px] w-[72px] items-center justify-center rounded-full border-[3px] border-white/30"
-        >
-          <View className="h-[58px] w-[58px] rounded-full bg-white/90" />
-        </Pressable>
+        {selfieUri ? (
+          <View className="flex-row items-center gap-5">
+            <Pressable
+              onPress={captureSelfie}
+              className="h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/[0.12] active:opacity-70"
+              accessibilityLabel="Reprendre la photo"
+            >
+              <RotateCcw size={18} color="rgba(255,255,255,0.8)" strokeWidth={2} />
+            </Pressable>
+            <Pressable
+              onPress={() => router.push('/kyc/recap')}
+              className="h-[72px] w-[72px] items-center justify-center rounded-full bg-brand active:opacity-85"
+              accessibilityLabel="Valider cette photo"
+            >
+              <Check size={30} color="#fff" strokeWidth={2.6} />
+            </Pressable>
+            <View style={{ width: 48 }} />
+          </View>
+        ) : (
+          <Pressable
+            onPress={captureSelfie}
+            className="h-[72px] w-[72px] items-center justify-center rounded-full border-[3px] border-white/30 active:opacity-80"
+            accessibilityLabel="Prendre le selfie"
+          >
+            <View className="h-[58px] w-[58px] rounded-full bg-white/90" />
+          </Pressable>
+        )}
       </View>
     </View>
   );

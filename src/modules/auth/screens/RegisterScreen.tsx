@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -66,12 +67,14 @@ export function RegisterScreen() {
             <View style={{ width: 44 }} />
           </View>
 
-          <Text className="mb-1 font-display text-[36px] uppercase leading-none text-ink">
-            Rejoindre AfroLove
-          </Text>
-          <Text className="mb-[22px] font-body text-[13px] text-ink-muted">
-            Créez votre compte en quelques instants.
-          </Text>
+          <Animated.View entering={FadeInDown.duration(420).springify().damping(17)}>
+            <Text className="mb-1 font-display text-[36px] uppercase leading-none text-ink">
+              Rejoindre AfroLove
+            </Text>
+            <Text className="mb-[22px] font-body text-[13px] text-ink-muted">
+              Créez votre compte en quelques instants.
+            </Text>
+          </Animated.View>
 
           {registerError ? (
             <View className="mb-4">
@@ -79,6 +82,7 @@ export function RegisterScreen() {
             </View>
           ) : null}
 
+          <Animated.View entering={FadeInDown.delay(90).duration(420).springify().damping(17)}>
           <Controller
             control={control}
             name="firstName"
@@ -159,7 +163,9 @@ export function RegisterScreen() {
           {errors.acceptedTerms ? (
             <Text className="mb-2 font-body text-[11px] text-danger">{errors.acceptedTerms.message}</Text>
           ) : null}
+          </Animated.View>
 
+          <Animated.View entering={FadeInDown.delay(180).duration(420).springify().damping(17)}>
           <GradientButton
             label="Créer mon compte"
             loading={register.isPending}
@@ -173,6 +179,7 @@ export function RegisterScreen() {
               Se connecter
             </Text>
           </Text>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

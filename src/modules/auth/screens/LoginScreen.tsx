@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -63,8 +64,10 @@ export function LoginScreen() {
             <View style={{ width: 44 }} />
           </View>
 
-          <Text className="mb-1.5 font-display text-[38px] uppercase leading-none text-ink">Bon retour</Text>
-          <Text className="mb-7 font-body text-[13px] text-ink-muted">Ravis de vous revoir parmi nous.</Text>
+          <Animated.View entering={FadeInDown.duration(420).springify().damping(17)}>
+            <Text className="mb-1.5 font-display text-[38px] uppercase leading-none text-ink">Bon retour</Text>
+            <Text className="mb-7 font-body text-[13px] text-ink-muted">Ravis de vous revoir parmi nous.</Text>
+          </Animated.View>
 
           {loginError ? (
             <View className="mb-4">
@@ -76,6 +79,7 @@ export function LoginScreen() {
             </View>
           ) : null}
 
+          <Animated.View entering={FadeInDown.delay(90).duration(420).springify().damping(17)}>
           <Controller
             control={control}
             name="email"
@@ -126,7 +130,9 @@ export function LoginScreen() {
               Mot de passe oublié ?
             </Text>
           </View>
+          </Animated.View>
 
+          <Animated.View entering={FadeInDown.delay(180).duration(420).springify().damping(17)}>
           <GradientButton
             label="Se connecter"
             loading={login.isPending}
@@ -164,6 +170,7 @@ export function LoginScreen() {
               Créer un compte
             </Text>
           </Text>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

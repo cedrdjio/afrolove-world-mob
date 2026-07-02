@@ -52,6 +52,9 @@ export interface Profile {
   wantsChildren: WantsChildren | null;
   onboardingCompleted: boolean;
   profileCompleted: boolean;
+  isVerified: boolean;
+  lastActiveAt: string | null;
+  locationUpdatedAt: string | null;
   photos: ProfilePhoto[];
   interestIds: string[];
   languageIds: string[];

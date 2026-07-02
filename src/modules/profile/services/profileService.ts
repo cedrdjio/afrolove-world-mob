@@ -39,6 +39,9 @@ function mapProfileRow(row: any): Profile {
     wantsChildren: row.wants_children,
     onboardingCompleted: row.onboarding_completed,
     profileCompleted: row.profile_completed,
+    isVerified: row.is_verified ?? false,
+    lastActiveAt: row.last_active_at ?? null,
+    locationUpdatedAt: row.location_updated_at ?? null,
     photos: (row.profile_photos ?? [])
       .map((p: any) => ({ id: p.id, url: p.url, position: p.position, isPrimary: p.is_primary }))
       .sort((a: { position: number }, b: { position: number }) => a.position - b.position),
