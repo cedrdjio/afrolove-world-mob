@@ -18,7 +18,7 @@ export function usePhotoManagement() {
   const addPhoto = useMutation({
     mutationFn: ({ localUri, position }: { localUri: string; position: number }) => {
       setUploadProgress(0);
-      return photoService.addPhoto(user!.id, localUri, position, setUploadProgress);
+      return photoService.addPhoto(localUri, position, setUploadProgress);
     },
     onSettled: () => setUploadProgress(null),
     onSuccess: invalidate,

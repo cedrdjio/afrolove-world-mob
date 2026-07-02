@@ -2,7 +2,7 @@ import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { supabase } from '@/shared/services/supabase/client';
 import type { ProfilePhoto } from '@/modules/profile/types/profile';
 
-const PHOTOS_BUCKET = 'profile-photos';
+const UPLOAD_PHOTO_FUNCTION = 'upload-photo';
 const MAX_DIMENSION = 1080;
 const COMPRESSION_QUALITY = 0.75;
 
@@ -16,15 +16,16 @@ function mapPhoto(row: { id: string; url: string; position: number; is_primary: 
   return { id: row.id, url: row.url, position: row.position, isPrimary: row.is_primary };
 }
 
-// Storage uploads have intermittently failed with a row-level security
-// violation even with a confirmed-valid session (hasSession/hasAccessToken
-// both true right before the call) and RLS policies verified correct
-// directly against the database. supabase-js normally attaches the access
-// token to every request itself (via a wrapping fetch that calls
-// getSession() again internally), which should be equivalent — but since
-// that implicit path is evidently not reliable for this specific request
-// type on this platform, set the Authorization header explicitly instead
-// of trusting it to happen automatically.
+// Direct storage.upload() calls have intermittently failed with a row-level
+// security violation even with a confirmed-valid session and RLS policies
+// verified correct directly against the database — the wire request
+// evidently doesn't always carry the token supabase-js believes it
+// attached. The actual object write is now delegated to the upload-photo
+// Edge Function, which authorizes it via the S3 protocol (credentials that
+// never leave the server) instead of the per-request JWT/RLS path. This
+// still needs a valid session — set the Authorization header explicitly
+// rather than trusting functions.invoke()'s implicit attachment, since
+// that shares the same underlying mechanism suspected of dropping it.
 async function getUploadAuthHeaders(label: string): Promise<Record<string, string>> {
   const { data, error } = await supabase.auth.getSession();
   if (__DEV__) {
@@ -52,10 +53,12 @@ async function fetchPhotos(profileId: string): Promise<ProfilePhoto[]> {
   return data.map(mapPhoto);
 }
 
-/** Compresses, uploads, and inserts a new photo row in one call, reporting
- *  0-100 upload progress via onProgress for the caller's progress bar. */
+/** Compresses and uploads a new photo via the upload-photo Edge Function
+ *  (which does the Storage write and the profile_photos insert in one
+ *  call), reporting 0-100 upload progress via onProgress for the caller's
+ *  progress bar. The profile is always the calling user's own — the
+ *  function derives it from their JWT, not from anything the client sends. */
 async function addPhoto(
-  profileId: string,
   localUri: string,
   position: number,
   onProgress?: (percent: number) => void,
@@ -67,23 +70,13 @@ async function addPhoto(
   const arrayBuffer = await fetch(compressedUri).then((res) => res.arrayBuffer());
   onProgress?.(55);
 
-  const path = `${profileId}/${Date.now()}.jpg`;
   const authHeaders = await getUploadAuthHeaders('addPhoto');
-  const { error: uploadError } = await supabase.storage
-    .from(PHOTOS_BUCKET)
-    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true, headers: authHeaders });
-  if (uploadError) throw uploadError;
-  onProgress?.(85);
-
-  const publicUrl = supabase.storage.from(PHOTOS_BUCKET).getPublicUrl(path).data.publicUrl;
-
-  const { data, error } = await supabase
-    .from('profile_photos')
-    .insert({ profile_id: profileId, url: publicUrl, position, is_primary: position === 0 })
-    .select('id, url, position, is_primary')
-    .single();
+  const { data, error } = await supabase.functions.invoke(UPLOAD_PHOTO_FUNCTION, {
+    headers: { ...authHeaders, 'x-upload-mode': 'add', 'x-upload-position': String(position) },
+    body: arrayBuffer,
+  });
   if (error) throw error;
-
+  onProgress?.(85);
   onProgress?.(100);
   return mapPhoto(data);
 }
@@ -101,31 +94,13 @@ async function replacePhoto(photoId: string, localUri: string, onProgress?: (per
   const arrayBuffer = await fetch(compressedUri).then((res) => res.arrayBuffer());
   onProgress?.(55);
 
-  const { data: existing, error: fetchError } = await supabase
-    .from('profile_photos')
-    .select('profile_id')
-    .eq('id', photoId)
-    .single();
-  if (fetchError) throw fetchError;
-
-  const path = `${existing.profile_id}/${Date.now()}.jpg`;
   const authHeaders = await getUploadAuthHeaders('replacePhoto');
-  const { error: uploadError } = await supabase.storage
-    .from(PHOTOS_BUCKET)
-    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true, headers: authHeaders });
-  if (uploadError) throw uploadError;
-  onProgress?.(85);
-
-  const publicUrl = supabase.storage.from(PHOTOS_BUCKET).getPublicUrl(path).data.publicUrl;
-
-  const { data, error } = await supabase
-    .from('profile_photos')
-    .update({ url: publicUrl })
-    .eq('id', photoId)
-    .select('id, url, position, is_primary')
-    .single();
+  const { data, error } = await supabase.functions.invoke(UPLOAD_PHOTO_FUNCTION, {
+    headers: { ...authHeaders, 'x-upload-mode': 'replace', 'x-upload-photo-id': photoId },
+    body: arrayBuffer,
+  });
   if (error) throw error;
-
+  onProgress?.(85);
   onProgress?.(100);
   return mapPhoto(data);
 }
