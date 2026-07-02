@@ -3,7 +3,7 @@ import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform, Activ
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { Send, Smile, Image as ImageIcon, MoreHorizontal, ArrowLeft } from 'lucide-react-native';
+import { Send, Smile, MoreHorizontal, ArrowLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
@@ -15,6 +15,7 @@ import {
   useSendMessage,
   useMarkConversationRead,
 } from '@/modules/messaging/hooks/useMessaging';
+import { useChatComposerStore } from '@/modules/messaging/stores/chatComposerStore';
 import { formatMessageTime } from '@/modules/messaging/utils/time';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import type { ChatMessage } from '@/modules/messaging/types/messaging';
@@ -34,6 +35,16 @@ export function ChatScreen() {
   const messages = messagesQuery.data ?? [];
 
   useMarkConversationRead(matchId, conversation?.unreadCount);
+
+  // Emoji chosen in the picker route lands in the draft.
+  const pendingEmoji = useChatComposerStore((s) => s.pendingEmoji);
+  const setPendingEmoji = useChatComposerStore((s) => s.setPendingEmoji);
+  useEffect(() => {
+    if (pendingEmoji) {
+      setDraft((current) => current + pendingEmoji);
+      setPendingEmoji(null);
+    }
+  }, [pendingEmoji, setPendingEmoji]);
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -143,11 +154,8 @@ export function ChatScreen() {
 
       <GlassSurface variant="lightStrong" radius={0}>
         <View className="flex-row items-center gap-2.5 px-[18px] py-3.5" style={{ paddingBottom: 26 }}>
-          <Pressable onPress={() => router.push(`/chat/${matchId}/emoji-picker`)}>
+          <Pressable onPress={() => router.push(`/chat/${matchId}/emoji-picker`)} hitSlop={6}>
             <Smile size={20} color="rgba(26,8,4,0.35)" />
-          </Pressable>
-          <Pressable onPress={() => router.push(`/chat/${matchId}/gif-picker`)}>
-            <ImageIcon size={20} color="rgba(26,8,4,0.35)" />
           </Pressable>
           <View className="flex-1 rounded-full border-[1.5px] border-white/90 bg-white/[0.68] px-[18px] py-3">
             <TextInput

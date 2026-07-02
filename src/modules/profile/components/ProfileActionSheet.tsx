@@ -25,7 +25,7 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
     );
 
     const handleShare = () => {
-      Share.share({ message: `Découvre le profil de ${profileName} sur AfroLove World.` }).catch(() => {});
+      Share.share({ message: `Découvre le profil de ${profileName} sur AfriLove World.` }).catch(() => {});
     };
 
     return (

@@ -35,7 +35,7 @@ export function ReportConfirmationScreen() {
           Signalement envoyé
         </Text>
         <Text className="mb-9 text-center font-body text-[13px] leading-[20px] text-ink-muted">
-          Merci de nous aider à garder AfroLove World sûr. Notre équipe va examiner ce signalement rapidement.
+          Merci de nous aider à garder AfriLove World sûr. Notre équipe va examiner ce signalement rapidement.
         </Text>
 
         <GradientButton label="Retour" onPress={() => router.replace('/(tabs)/discover')} style={{ width: '100%' }} />

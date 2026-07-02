@@ -35,7 +35,7 @@ export function PremiumLandingScreen() {
             <Crown size={40} color={colors.gold.DEFAULT} strokeWidth={1.6} />
           </View>
           <Text className="text-center font-display-black text-[38px] uppercase leading-none text-white">
-            AfroLove{'\n'}
+            AfriLove{'\n'}
             <Text className="text-gold">Premium</Text>
           </Text>
           <View className="mt-3 rounded-full border border-gold/40 bg-gold/[0.22] px-4 py-2">

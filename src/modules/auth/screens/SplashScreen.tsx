@@ -86,7 +86,7 @@ export function SplashScreen() {
             />
           </View>
         </Animated.View>
-        <Text className="font-display-black text-[40px] uppercase tracking-[3px] text-white">AfroLove</Text>
+        <Text className="font-display-black text-[40px] uppercase tracking-[3px] text-white">AfriLove</Text>
         <Text className="mt-1.5 font-heading text-[11px] uppercase tracking-[9px] text-gold">World</Text>
         <Text className="mt-5 text-center font-body italic text-[14px] leading-6 text-white/30">
           L'amour authentique,{'\n'}enraciné dans nos valeurs.

@@ -29,7 +29,7 @@ export function LookingForScreen() {
       </View>
       <Text className="mb-2 font-display text-[36px] uppercase leading-none text-ink">Je recherche…</Text>
       <Text className="mb-6 font-body text-[13px] leading-5 text-ink-muted">
-        Qui souhaitez-vous rencontrer sur AfroLove World ?
+        Qui souhaitez-vous rencontrer sur AfriLove World ?
       </Text>
 
       <View className="flex-1 gap-3">

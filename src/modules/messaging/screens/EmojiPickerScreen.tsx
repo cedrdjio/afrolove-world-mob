@@ -2,6 +2,7 @@ import { View, Text, Pressable } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
+import { useChatComposerStore } from '@/modules/messaging/stores/chatComposerStore';
 import { colors } from '@/shared/constants/theme';
 
 const EMOJIS = [
@@ -12,6 +13,12 @@ const EMOJIS = [
 
 export function EmojiPickerScreen() {
   const router = useRouter();
+  const setPendingEmoji = useChatComposerStore((s) => s.setPendingEmoji);
+
+  const pick = (emoji: string) => {
+    setPendingEmoji(emoji);
+    router.back();
+  };
 
   return (
     <View className="flex-1 bg-cream">
@@ -30,7 +37,7 @@ export function EmojiPickerScreen() {
         keyExtractor={(item, i) => `${item}-${i}`}
         contentContainerClassName="px-4 pb-8"
         renderItem={({ item }) => (
-          <Pressable onPress={() => router.back()} className="flex-1 items-center justify-center py-3">
+          <Pressable onPress={() => pick(item)} className="flex-1 items-center justify-center py-3 active:opacity-60">
             <Text style={{ fontSize: 28 }}>{item}</Text>
           </Pressable>
         )}

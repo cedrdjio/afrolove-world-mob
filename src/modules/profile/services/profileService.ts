@@ -42,6 +42,8 @@ function mapProfileRow(row: any): Profile {
     accountStatus: (row.account_status as Profile['accountStatus']) ?? 'active',
     statusReason: row.status_reason ?? null,
     isVerified: row.is_verified ?? false,
+    notificationPrefs: (row.notification_prefs ?? {}) as Record<string, boolean>,
+    privacyPrefs: (row.privacy_prefs ?? {}) as Record<string, boolean>,
     lastActiveAt: row.last_active_at ?? null,
     locationUpdatedAt: row.location_updated_at ?? null,
     photos: (row.profile_photos ?? [])
@@ -105,6 +107,8 @@ async function fetchPublicProfile(profileId: string): Promise<Profile> {
     accountStatus: 'active',
     statusReason: null,
     isVerified: row.is_verified,
+    notificationPrefs: {},
+    privacyPrefs: {},
     lastActiveAt: row.last_active_at,
     locationUpdatedAt: null,
     photos: (row.photo_urls ?? []).map((url: string, index: number) => ({

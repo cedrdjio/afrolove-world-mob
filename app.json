@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "AfroLove World",
+    "name": "AfriLove World",
     "slug": "afrolove-world-mob",
     "scheme": "afrolove",
     "version": "1.0.0",
@@ -19,9 +19,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.afroloveworld.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "AfroLove World utilise votre position pour vous proposer des rencontres près de chez vous. Elle n'est jamais montrée aux autres membres.",
+        "NSLocationWhenInUseUsageDescription": "AfriLove World utilise votre position pour vous proposer des rencontres près de chez vous. Elle n'est jamais montrée aux autres membres.",
         "NSCameraUsageDescription": "La caméra sert à prendre vos photos de profil et à vérifier votre identité (badge vérifié).",
-        "NSPhotoLibraryUsageDescription": "Vos photos servent à composer votre profil AfroLove World."
+        "NSPhotoLibraryUsageDescription": "Vos photos servent à composer votre profil AfriLove World."
       }
     },
     "android": {
@@ -67,7 +67,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "AfroLove World a besoin d'accéder à vos photos pour créer votre profil.",
+          "photosPermission": "AfriLove World a besoin d'accéder à vos photos pour créer votre profil.",
           "cameraPermission": "La caméra sert à prendre vos photos de profil et à vérifier votre identité."
         }
       ],

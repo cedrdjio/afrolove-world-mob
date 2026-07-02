@@ -28,7 +28,7 @@ export function LogoutScreen() {
           Se déconnecter ?
         </Text>
         <Text className="mb-9 text-center font-body text-[13px] leading-[20px] text-ink-muted">
-          Vous devrez vous reconnecter pour accéder à votre compte AfroLove World.
+          Vous devrez vous reconnecter pour accéder à votre compte AfriLove World.
         </Text>
 
         <GradientButton

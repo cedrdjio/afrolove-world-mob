@@ -14,7 +14,7 @@ export function NoInternetScreen() {
     <SystemStateScreen
       Icon={CloudOff}
       title="Pas de connexion"
-      description="AfroLove World a besoin d'internet pour trouver vos prochaines rencontres. Vérifiez votre connexion."
+      description="AfriLove World a besoin d'internet pour trouver vos prochaines rencontres. Vérifiez votre connexion."
       actionLabel={checking ? 'Vérification…' : 'Réessayer'}
       onAction={handleRetry}
     />

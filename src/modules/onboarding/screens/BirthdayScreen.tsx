@@ -80,7 +80,7 @@ export function BirthdayScreen() {
         <Text className="text-brand">de naissance</Text>
       </Text>
       <Text className="mb-7 font-body text-[13.5px] leading-[21px] text-ink-muted">
-        Vous devez avoir au moins 18 ans pour utiliser AfroLove World.
+        Vous devez avoir au moins 18 ans pour utiliser AfriLove World.
       </Text>
 
       <View className="flex-1">

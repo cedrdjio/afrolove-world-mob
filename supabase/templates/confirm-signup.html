@@ -1,48 +1,69 @@
-<!-- Supabase Auth template: "Confirm signup".
+<!-- AfriLove World — Confirm signup.
      Coller dans Dashboard → Authentication → Emails → Confirm signup.
      Variables Supabase : {{ .ConfirmationURL }} (lien) et {{ .Token }} (code OTP). -->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF3EB;padding:32px 12px;font-family:Arial,Helvetica,sans-serif;">
+<div style="display:none;max-height:0;overflow:hidden;">Confirmez votre email pour activer votre compte AfriLove World — votre code : {{ .Token }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F4E9DD;padding:0;margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;">
   <tr>
-    <td align="center">
-      <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
+    <td align="center" style="padding:36px 14px 44px;">
+      <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;">
+
+        <!-- Hero band -->
         <tr>
-          <td align="center" style="padding-bottom:24px;">
-            <img src="https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo.png" width="56" height="56" alt="AfroLove World" style="border-radius:16px;display:block;" />
+          <td style="background:linear-gradient(115deg,#2C1408,#7A3010 55%,#C86040);background-color:#5A2410;border-radius:28px 28px 0 0;padding:38px 36px 60px;" align="center">
+            <img src="https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo.png" width="64" height="64" alt="AfriLove World" style="border-radius:18px;display:block;margin-bottom:16px;" />
+            <div style="font-size:13px;letter-spacing:5px;color:#E8B27D;text-transform:uppercase;font-weight:600;">AfriLove World</div>
+            <div style="font-size:30px;line-height:1.15;color:#ffffff;text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-top:10px;">
+              Bienvenue dans<br />la communauté
+            </div>
           </td>
         </tr>
+
+        <!-- Card -->
         <tr>
-          <td style="background-color:#ffffff;border-radius:24px;padding:36px 32px;box-shadow:0 8px 30px rgba(44,20,8,0.08);">
-            <h1 style="margin:0 0 6px;font-size:24px;line-height:1.2;color:#2C1408;text-transform:uppercase;letter-spacing:1px;">Bienvenue&nbsp;!</h1>
-            <p style="margin:0 0 22px;font-size:14px;line-height:22px;color:#8A6B5A;">
-              Plus qu'une étape pour rejoindre la communauté AfroLove World. Confirmez votre adresse email pour activer votre compte.
-            </p>
-            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <td style="padding:0 14px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:22px;margin-top:-34px;box-shadow:0 14px 40px rgba(44,20,8,0.14);">
               <tr>
-                <td align="center" style="padding-bottom:26px;">
-                  <a href="{{ .ConfirmationURL }}"
-                     style="display:inline-block;background:linear-gradient(100deg,#C86040,#C9862A);background-color:#C86040;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;padding:16px 38px;border-radius:16px;">
-                    Confirmer mon email
-                  </a>
+                <td style="padding:38px 34px 34px;">
+                  <p style="margin:0 0 26px;font-size:15px;line-height:24px;color:#6E5546;text-align:center;">
+                    Plus qu'une étape&nbsp;: confirmez votre adresse email<br />pour activer votre compte et commencer les rencontres.
+                  </p>
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                      <td align="center" style="padding-bottom:30px;">
+                        <a href="{{ .ConfirmationURL }}"
+                           style="display:inline-block;background:linear-gradient(100deg,#C86040,#C9862A);background-color:#C86040;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:17px 46px;border-radius:999px;box-shadow:0 8px 22px rgba(200,96,64,0.35);">
+                          Confirmer mon email
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#FAF3EB;border:1.5px dashed rgba(200,96,64,0.35);border-radius:16px;">
+                    <tr>
+                      <td align="center" style="padding:18px 16px;">
+                        <div style="font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:#A88A74;font-weight:600;margin-bottom:8px;">Ou saisissez ce code dans l'application</div>
+                        <div style="font-size:32px;letter-spacing:10px;font-weight:800;color:#C86040;">{{ .Token }}</div>
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="margin:26px 0 0;font-size:11.5px;line-height:17px;color:#B3A093;text-align:center;">
+                    Ce lien et ce code expirent sous 24&nbsp;heures.<br />
+                    Vous n'êtes pas à l'origine de cette inscription&nbsp;? Ignorez simplement cet email.
+                  </p>
                 </td>
               </tr>
             </table>
-            <p style="margin:0 0 10px;font-size:12.5px;line-height:19px;color:#8A6B5A;text-align:center;">
-              Ou saisissez ce code dans l'application&nbsp;:
-            </p>
-            <p style="margin:0 0 24px;text-align:center;">
-              <span style="display:inline-block;background-color:#FAF3EB;border:1.5px solid rgba(200,96,64,0.25);border-radius:14px;padding:12px 26px;font-size:26px;letter-spacing:8px;font-weight:bold;color:#C86040;">{{ .Token }}</span>
-            </p>
-            <p style="margin:0;font-size:11.5px;line-height:17px;color:#B3A093;text-align:center;">
-              Ce lien et ce code expirent sous 24&nbsp;heures. Si vous n'êtes pas à l'origine de cette inscription, ignorez simplement cet email.
-            </p>
           </td>
         </tr>
+
+        <!-- Footer -->
         <tr>
-          <td align="center" style="padding-top:22px;">
-            <p style="margin:0;font-size:11px;line-height:16px;color:#B3A093;">
-              AfroLove World — Des rencontres sincères, des valeurs partagées.<br />
-              www.afriloveworld.com
-            </p>
+          <td align="center" style="padding-top:26px;">
+            <div style="font-size:12px;color:#8A6B5A;font-weight:600;margin-bottom:4px;">AfriLove World</div>
+            <div style="font-size:11px;line-height:17px;color:#B3A093;">
+              Des rencontres sincères, des valeurs partagées.<br />
+              <a href="https://www.afriloveworld.com" style="color:#C86040;text-decoration:none;">www.afriloveworld.com</a>
+              &nbsp;·&nbsp; support@afriloveworld.com
+            </div>
           </td>
         </tr>
       </table>

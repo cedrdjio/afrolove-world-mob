@@ -3,27 +3,34 @@ import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
 import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
+import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
+import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
 
+// These keys are read by the search/profile RPCs in the database —
+// switching one off has a real effect on what other members see.
 const OPTIONS = [
-  { key: 'showOnDiscovery', label: 'Visible sur Découvrir', description: "Votre profil apparaît dans les suggestions" },
+  { key: 'showOnDiscovery', label: 'Visible sur Découvrir', description: 'Votre profil apparaît dans les suggestions' },
   { key: 'showDistance', label: 'Afficher la distance', description: 'Montrer votre distance approximative' },
   { key: 'showOnline', label: 'Statut en ligne', description: 'Afficher quand vous êtes actif(ve)' },
   { key: 'showAge', label: "Afficher l'âge", description: 'Montrer votre âge sur votre profil' },
-  { key: 'readReceipts', label: 'Accusés de lecture', description: 'Montrer quand vous avez lu un message' },
 ];
 
 export function PrivacySettingsScreen() {
   const router = useRouter();
-  const [settings, setSettings] = useState<Record<string, boolean>>({
-    showOnDiscovery: true,
-    showDistance: true,
-    showOnline: true,
-    showAge: true,
-    readReceipts: false,
+  const profileQuery = useProfileQuery();
+  const updateProfile = useUpdateProfile();
+
+  const [settings, setSettings] = useState<Record<string, boolean>>(() => {
+    const stored = profileQuery.data?.privacyPrefs ?? {};
+    return Object.fromEntries(OPTIONS.map((o) => [o.key, stored[o.key] ?? true]));
   });
 
+  const save = () => {
+    updateProfile.mutate({ privacy_prefs: settings }, { onSuccess: () => router.back() });
+  };
+
   return (
-    <EditScreenLayout title="Visibilité" onSave={() => router.back()}>
+    <EditScreenLayout title="Visibilité" onSave={save} saving={updateProfile.isPending}>
       <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">
         {OPTIONS.map((option, i) => (
           <View

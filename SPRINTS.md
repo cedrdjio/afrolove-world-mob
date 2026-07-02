@@ -1,4 +1,4 @@
-# AfroLove World — Plan de sprints vers la mise en ligne
+# AfriLove World — Plan de sprints vers la mise en ligne
 
 Suivi vivant : cocher au fur et à mesure. Un sprint = un lot livrable et testable.
 

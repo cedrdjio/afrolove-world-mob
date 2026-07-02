@@ -55,6 +55,10 @@ export interface Profile {
   accountStatus: 'active' | 'banned' | 'deleted';
   statusReason: string | null;
   isVerified: boolean;
+  /** Push notification toggles (absent key = enabled) — honored by the DB push trigger. */
+  notificationPrefs: Record<string, boolean>;
+  /** Visibility toggles (absent key = enabled) — honored by the search/profile RPCs. */
+  privacyPrefs: Record<string, boolean>;
   lastActiveAt: string | null;
   locationUpdatedAt: string | null;
   photos: ProfilePhoto[];

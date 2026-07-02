@@ -44,7 +44,7 @@ export function PremiumLockedScreen() {
           Fonctionnalité{'\n'}Premium
         </Text>
         <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">
-          Découvrez qui vous a déjà aimé(e) et bien plus encore avec AfroLove World Premium.
+          Découvrez qui vous a déjà aimé(e) et bien plus encore avec AfriLove World Premium.
         </Text>
 
         <GradientButton label="Débloquer Premium" onPress={() => router.replace('/premium')} style={{ width: '100%', marginBottom: 12 }} />

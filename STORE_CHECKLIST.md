@@ -1,4 +1,4 @@
-# Checklist de soumission stores — AfroLove World
+# Checklist de soumission stores — AfriLove World
 
 App de rencontre = catégorie sensible : les stores vérifient ces points à la main.
 

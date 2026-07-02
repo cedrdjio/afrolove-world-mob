@@ -514,7 +514,9 @@ export type Database = {
           location_updated_at: string | null;
           longitude: number | null;
           looking_for: string | null;
+          notification_prefs: Json;
           onboarding_completed: boolean;
+          privacy_prefs: Json;
           profession: string | null;
           profile_completed: boolean;
           relationship_goal_id: string | null;
@@ -550,7 +552,9 @@ export type Database = {
           location_updated_at?: string | null;
           longitude?: number | null;
           looking_for?: string | null;
+          notification_prefs?: Json;
           onboarding_completed?: boolean;
+          privacy_prefs?: Json;
           profession?: string | null;
           profile_completed?: boolean;
           relationship_goal_id?: string | null;
@@ -586,7 +590,9 @@ export type Database = {
           location_updated_at?: string | null;
           longitude?: number | null;
           looking_for?: string | null;
+          notification_prefs?: Json;
           onboarding_completed?: boolean;
+          privacy_prefs?: Json;
           profession?: string | null;
           profile_completed?: boolean;
           relationship_goal_id?: string | null;

@@ -1,6 +1,6 @@
 /**
- * AfroLove World — design tokens
- * Extracted from the source design (AfroLove App Screens.dc.html).
+ * AfriLove World — design tokens
+ * Extracted from the source design (AfriLove App Screens.dc.html).
  * Warm terracotta / gold palette, glassmorphism surfaces, dual light+dark themes.
  */
 

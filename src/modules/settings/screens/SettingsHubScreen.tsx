@@ -5,10 +5,21 @@ import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { GhostButton } from '@/shared/components/ui/GhostButton';
 import { SettingsRow } from '@/shared/components/ui/SettingsRow';
+import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
+import { calculateAge } from '@/modules/profile/types/profile';
 import { colors } from '@/shared/constants/theme';
 
 export function SettingsHubScreen() {
   const router = useRouter();
+  const profile = useProfileQuery().data;
+
+  const displayName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ') || 'Mon profil';
+  const subtitle = [
+    [profile?.city, profile?.country].filter(Boolean).join(', '),
+    profile?.birthDate ? `${calculateAge(profile.birthDate)} ans` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <View className="flex-1">
@@ -20,10 +31,10 @@ export function SettingsHubScreen() {
         <Text className="mb-5 font-display text-[28px] uppercase text-ink">Paramètres</Text>
 
         <View className="mb-[22px] flex-row items-center gap-3.5 rounded-3xl border-[1.5px] border-white/[0.92] bg-white/[0.78] px-5 py-[18px]">
-          <Avatar seed="Amira" size={62} />
+          <Avatar source={profile?.avatarUrl ?? undefined} seed={profile?.firstName ?? ''} size={62} />
           <View className="flex-1">
-            <Text className="mb-0.5 font-heading text-[17px] uppercase text-ink">Amira Diallo</Text>
-            <Text className="font-body text-[12px] text-ink-muted">Lagos, Nigeria · 26 ans</Text>
+            <Text className="mb-0.5 font-heading text-[17px] uppercase text-ink">{displayName}</Text>
+            {subtitle ? <Text className="font-body text-[12px] text-ink-muted">{subtitle}</Text> : null}
           </View>
           <Pressable onPress={() => router.push('/edit-profile')} className="rounded-xl bg-brand/10 px-3.5 py-2">
             <Text className="font-heading text-[11px] uppercase text-brand">Modifier</Text>

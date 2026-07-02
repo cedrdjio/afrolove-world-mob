@@ -7,7 +7,7 @@ export function MaintenanceScreen() {
     <SystemStateScreen
       Icon={Wrench}
       title="Maintenance en cours"
-      description="AfroLove World est en cours de mise à jour pour vous offrir une meilleure expérience. Revenez dans quelques instants."
+      description="AfriLove World est en cours de mise à jour pour vous offrir une meilleure expérience. Revenez dans quelques instants."
       iconColors={gradients.gold}
     />
   );

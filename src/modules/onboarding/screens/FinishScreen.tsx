@@ -77,7 +77,7 @@ export function FinishScreen() {
           Profil complet{onboarding.firstName ? `, ${onboarding.firstName}` : ''} !
         </Text>
         <Text className="mb-8 text-center font-body text-[13.5px] leading-[21px] text-white/50">
-          Votre profil AfroLove World est prêt.{'\n'}Il est temps de faire de belles rencontres.
+          Votre profil AfriLove World est prêt.{'\n'}Il est temps de faire de belles rencontres.
         </Text>
 
         {completeOnboardingError ? (

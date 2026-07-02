@@ -20,7 +20,7 @@ export function OfflineOverlay() {
       <SystemStateScreen
         Icon={WifiOff}
         title="Vous êtes hors ligne"
-        description="AfroLove World a besoin d'internet. La connexion sera vérifiée automatiquement."
+        description="AfriLove World a besoin d'internet. La connexion sera vérifiée automatiquement."
         actionLabel="Vérifier la connexion"
         onAction={() => NetInfo.fetch()}
       />

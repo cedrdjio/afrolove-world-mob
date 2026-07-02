@@ -49,7 +49,7 @@ export function AuthSuccessScreen() {
           Compte vérifié !
         </Text>
         <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">
-          Bienvenue dans la communauté AfroLove World.{'\n'}Configurons votre profil.
+          Bienvenue dans la communauté AfriLove World.{'\n'}Configurons votre profil.
         </Text>
 
         <GradientButton

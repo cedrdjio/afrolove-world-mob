@@ -32,7 +32,7 @@ export function WelcomeScreen() {
         <View className="mb-4 flex-row items-center gap-2 self-start rounded-full border border-white/[0.22] bg-white/[0.12] px-3.5 py-2">
           <Image source={images.logoDark} style={{ width: 22, height: 22, borderRadius: 6 }} contentFit="cover" />
           <Text className="font-display-semibold text-[14px] uppercase tracking-wide text-white">
-            AfroLove World
+            AfriLove World
           </Text>
         </View>
         <Text className="mb-2.5 font-display text-[34px] uppercase leading-[1.15] text-white">

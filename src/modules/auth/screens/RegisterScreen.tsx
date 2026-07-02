@@ -81,7 +81,7 @@ export function RegisterScreen() {
 
           <Animated.View entering={FadeInDown.duration(420).springify().damping(17)}>
             <Text className="mb-1 font-display text-[36px] uppercase leading-none text-ink">
-              Rejoindre AfroLove
+              Rejoindre AfriLove
             </Text>
             <Text className="mb-[22px] font-body text-[13px] text-ink-muted">
               Créez votre compte en quelques instants.
@@ -181,7 +181,7 @@ export function RegisterScreen() {
               >
                 Politique de confidentialité
               </Text>{' '}
-              d'AfroLove World
+              d'AfriLove World
             </Text>
           </Pressable>
           {errors.acceptedTerms ? (

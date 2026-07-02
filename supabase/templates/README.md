@@ -1,6 +1,6 @@
 # Templates email Supabase Auth
 
-Templates HTML brandés AfroLove World (fond crème, bouton dégradé brand,
+Templates HTML brandés AfriLove World (fond crème, bouton dégradé brand,
 logo distant). À coller manuellement dans le dashboard Supabase :
 
 **Dashboard → Authentication → Emails (Templates)**
@@ -21,14 +21,14 @@ https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo.
 
 Uploadez votre logo (PNG carré, idéalement 112×112 px pour le retina) dans
 **Storage → branding → logo.png**. Tant que le fichier n'existe pas, les
-clients email affichent le texte alternatif « AfroLove World ».
+clients email affichent le texte alternatif « AfriLove World ».
 Si vous passez plus tard par un CDN, remplacez simplement l'URL de l'image
 dans les trois fichiers avant de les recoller dans le dashboard.
 
 ## Objets d'email conseillés (champ "Subject")
 
-- Confirm signup : `Bienvenue sur AfroLove World — confirmez votre email`
-- Reset password : `Réinitialisation de votre mot de passe AfroLove World`
+- Confirm signup : `Bienvenue sur AfriLove World — confirmez votre email`
+- Reset password : `Réinitialisation de votre mot de passe AfriLove World`
 - Change email : `Confirmez votre nouvelle adresse email`
 
 ## SMTP

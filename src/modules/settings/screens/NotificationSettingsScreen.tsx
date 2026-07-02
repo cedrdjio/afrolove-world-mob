@@ -3,29 +3,35 @@ import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
 import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
+import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
+import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
 
 const OPTIONS = [
-  { key: 'likes', label: 'Likes', description: 'Quand quelqu\'un aime votre profil' },
-  { key: 'matches', label: 'Nouveaux matches', description: "Quand vous obtenez un nouveau match" },
+  { key: 'likes', label: 'Likes', description: "Quand quelqu'un aime votre profil" },
+  { key: 'matches', label: 'Nouveaux matches', description: 'Quand vous obtenez un nouveau match' },
   { key: 'messages', label: 'Messages', description: 'Nouveaux messages reçus' },
   { key: 'kyc', label: 'Vérification', description: 'Statut de votre dossier KYC' },
   { key: 'premium', label: 'Offres Premium', description: 'Promotions et rappels' },
-  { key: 'marketing', label: 'Actualités AfroLove', description: "Nouveautés de l'application" },
+  { key: 'marketing', label: 'Actualités AfriLove', description: "Nouveautés de l'application" },
 ];
 
 export function NotificationSettingsScreen() {
   const router = useRouter();
-  const [settings, setSettings] = useState<Record<string, boolean>>({
-    likes: true,
-    matches: true,
-    messages: true,
-    kyc: true,
-    premium: true,
-    marketing: false,
+  const profileQuery = useProfileQuery();
+  const updateProfile = useUpdateProfile();
+
+  // Absent key = enabled, mirroring the DB push trigger's default.
+  const [settings, setSettings] = useState<Record<string, boolean>>(() => {
+    const stored = profileQuery.data?.notificationPrefs ?? {};
+    return Object.fromEntries(OPTIONS.map((o) => [o.key, stored[o.key] ?? o.key !== 'marketing']));
   });
 
+  const save = () => {
+    updateProfile.mutate({ notification_prefs: settings }, { onSuccess: () => router.back() });
+  };
+
   return (
-    <EditScreenLayout title="Notifications" onSave={() => router.back()}>
+    <EditScreenLayout title="Notifications" onSave={save} saving={updateProfile.isPending}>
       <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">
         {OPTIONS.map((option, i) => (
           <View
