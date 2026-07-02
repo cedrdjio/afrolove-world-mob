@@ -65,17 +65,30 @@ describe('mapToAppError', () => {
     expect(result.message).not.toMatch(/totally unexpected/i);
   });
 
-  // Regression test for the photo-upload bug: a Storage RLS violation (3
-  // parallel uploads racing supabase-js's session resolution during
-  // onboarding) came back as StorageApiError with no dedicated handling,
-  // falling into 'unknown' with the raw Postgres message on screen.
-  it('classifies a Storage row-level security violation as session_expired', () => {
+  // Regression test: a Storage RLS violation was previously classified as
+  // 'session_expired', which queryClient.ts treats as grounds to force a
+  // sign-out — so a single rejected photo upload silently logged the user
+  // out and bounced them back through onboarding ("session expired" on
+  // every arrival). It's a retryable server-side problem, not proof the
+  // session is invalid, so it must never trigger a sign-out.
+  it('classifies a Storage row-level security violation as a retryable server_error, not session_expired', () => {
     const error = new StorageApiError('new row violates row-level security policy for table "objects"', 403, '403');
 
     const result = mapToAppError(error);
 
-    expect(result.kind).toBe('session_expired');
+    expect(result.kind).toBe('server_error');
     expect(result.message).not.toMatch(/row-level security/i);
+  });
+
+  // Regression test: unmatched AuthApiError/AuthError codes leaked the raw
+  // GoTrue message straight into the UI instead of the generic copy.
+  it('never leaks the raw message for an unmatched AuthApiError', () => {
+    const error = new AuthApiError('some obscure internal gotrue detail', 400, 'weird_unmapped_code');
+
+    const result = mapToAppError(error);
+
+    expect(result.kind).toBe('unknown');
+    expect(result.message).not.toMatch(/obscure internal gotrue/i);
   });
 
   it('classifies a 5xx Storage error as server_error', () => {
