@@ -10,7 +10,7 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 import type BottomSheet from '@gorhom/bottom-sheet';
-import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye } from 'lucide-react-native';
+import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
@@ -90,10 +90,31 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
             style={{ position: 'absolute', inset: 0 }}
           />
 
+          {/* Tap zones first, indicators and buttons above them — the previous
+              full-hero "open gallery" overlay swallowed every touch, making
+              the photos impossible to browse. Left half = previous photo,
+              right half = next; the gallery has its own button below. */}
+          {profile.photos.length > 1 ? (
+            <View style={{ position: 'absolute', inset: 0, flexDirection: 'row' }}>
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => setActivePhoto((i) => Math.max(0, i - 1))}
+                accessibilityLabel="Photo précédente"
+              />
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => setActivePhoto((i) => Math.min(profile.photos.length - 1, i + 1))}
+                accessibilityLabel="Photo suivante"
+              />
+            </View>
+          ) : (
+            <Pressable onPress={onGalleryPress} style={{ position: 'absolute', inset: 0 }} />
+          )}
+
           {profile.photos.length > 1 ? (
             <View className="absolute inset-x-[18px] flex-row gap-1.5" style={{ top: 108 }}>
               {profile.photos.map((photo, i) => (
-                <Pressable key={photo.id} onPress={() => setActivePhoto(i)} className="flex-1">
+                <Pressable key={photo.id} onPress={() => setActivePhoto(i)} className="flex-1" hitSlop={8}>
                   <View className={`h-[3px] rounded-full ${i === activePhoto ? 'bg-white/90' : 'bg-white/35'}`} />
                 </Pressable>
               ))}
@@ -109,7 +130,19 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
             </View>
           ) : null}
 
-          <Pressable onPress={onGalleryPress} style={{ position: 'absolute', inset: 0 }} />
+          {profile.photos.length > 0 ? (
+            <Pressable
+              onPress={onGalleryPress}
+              className="absolute bottom-14 right-[18px]"
+              accessibilityLabel="Ouvrir la galerie"
+            >
+              <GlassSurface variant="dark" radius={13} style={{ width: 40, height: 40 }}>
+                <View className="h-10 w-10 items-center justify-center">
+                  <Expand size={16} color="#fff" strokeWidth={2} />
+                </View>
+              </GlassSurface>
+            </Pressable>
+          ) : null}
         </View>
 
         <View className="rounded-t-[32px] bg-cream px-6 pb-10 pt-6" style={{ marginTop: -32 }}>
@@ -118,7 +151,7 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
               <Text className="font-display text-[32px] text-ink">{displayName},</Text>
               <Text className="font-display-semibold text-[26px] text-ink-muted">{displayData.age ?? '—'}</Text>
             </View>
-            <VerifiedBadge tone="chip" />
+            {profile.isVerified ? <VerifiedBadge tone="chip" /> : null}
           </View>
           {profile.city ? (
             <View className="mb-5 flex-row items-center gap-1.5">

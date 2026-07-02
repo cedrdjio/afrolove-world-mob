@@ -1,28 +1,55 @@
 import { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { Bell, ArrowLeft, HelpCircle } from 'lucide-react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { Bell, ArrowLeft, Heart, MessageCircle, Star, ShieldCheck } from 'lucide-react-native';
+import type { LucideIcon } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { Chip } from '@/shared/components/ui/Chip';
-import { Avatar } from '@/shared/components/ui/Avatar';
 import { EmptyState } from '@/shared/components/feedback';
-import {
-  MOCK_NOTIFICATIONS,
-  NOTIFICATION_FILTERS,
-  type NotificationCategory,
-} from '@/modules/notifications/constants/mockNotifications';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
+import { useAppError } from '@/shared/hooks/useAppError';
+import { useNotificationsQuery, useMarkAllNotificationsRead } from '@/modules/notifications/hooks/useNotifications';
+import type { AppNotification, NotificationType } from '@/modules/notifications/services/notificationsService';
+import { formatConversationTime } from '@/modules/messaging/utils/time';
 import { colors } from '@/shared/constants/theme';
+
+const FILTERS: { key: 'all' | NotificationType; label: string }[] = [
+  { key: 'all', label: 'Tous' },
+  { key: 'match', label: 'Matches' },
+  { key: 'message', label: 'Messages' },
+  { key: 'like', label: 'Likes' },
+  { key: 'kyc', label: 'Vérification' },
+];
+
+const TYPE_STYLE: Record<NotificationType, { Icon: LucideIcon; accent: string }> = {
+  match: { Icon: Heart, accent: colors.brand.DEFAULT },
+  message: { Icon: MessageCircle, accent: colors.gold.DEFAULT },
+  like: { Icon: Star, accent: '#C9862A' },
+  kyc: { Icon: ShieldCheck, accent: colors.success },
+};
 
 export function NotificationsScreen() {
   const router = useRouter();
-  const [filter, setFilter] = useState<'all' | NotificationCategory>('all');
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [filter, setFilter] = useState<'all' | NotificationType>('all');
+  const notificationsQuery = useNotificationsQuery();
+  const markAllRead = useMarkAllNotificationsRead();
+  const notificationsError = useAppError(notificationsQuery.error);
 
-  const filtered = filter === 'all' ? notifications : notifications.filter((n) => n.category === filter);
+  const notifications = notificationsQuery.data ?? [];
+  const filtered = filter === 'all' ? notifications : notifications.filter((n) => n.type === filter);
+  const hasUnread = notifications.some((n) => !n.read);
 
-  const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const openNotification = (notification: AppNotification) => {
+    const matchId = notification.data.match_id;
+    if ((notification.type === 'message' || notification.type === 'match') && typeof matchId === 'string') {
+      router.push(`/chat/${matchId}`);
+    } else if (notification.type === 'kyc') {
+      router.push('/kyc/pending');
+    }
+  };
 
   return (
     <View className="flex-1">
@@ -36,15 +63,25 @@ export function NotificationsScreen() {
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[22px] uppercase text-ink">Notifications</Text>
-          <Pressable onPress={markAllRead} className="rounded-full bg-brand/10 px-3.5 py-2">
-            <Text className="font-heading text-[10.5px] uppercase text-brand">Tout lire</Text>
-          </Pressable>
+          {hasUnread ? (
+            <Pressable
+              onPress={() => markAllRead.mutate()}
+              disabled={markAllRead.isPending}
+              className="rounded-full bg-brand/10 px-3.5 py-2"
+            >
+              <Text className="font-heading text-[10.5px] uppercase text-brand">
+                {markAllRead.isPending ? '…' : 'Tout lire'}
+              </Text>
+            </Pressable>
+          ) : (
+            <View style={{ width: 44 }} />
+          )}
         </View>
 
         <FlashList
           horizontal
           showsHorizontalScrollIndicator={false}
-          data={NOTIFICATION_FILTERS}
+          data={FILTERS}
           keyExtractor={(item) => item.key}
           contentContainerClassName="pb-5"
           renderItem={({ item }) => (
@@ -55,7 +92,15 @@ export function NotificationsScreen() {
         />
       </View>
 
-      {filtered.length === 0 ? (
+      {notificationsQuery.isLoading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
+        </View>
+      ) : notificationsError ? (
+        <View className="flex-1 justify-center px-6">
+          <ErrorState error={notificationsError} variant="inline" onRetry={() => notificationsQuery.refetch()} />
+        </View>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={<Bell size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
           title="Aucune notification"
@@ -66,40 +111,40 @@ export function NotificationsScreen() {
           data={filtered}
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-6 pb-8"
-          renderItem={({ item }) => (
-            <View
-              className={`mb-2 flex-row items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 ${
-                item.category === 'premium'
-                  ? 'border-brand/[0.18] bg-brand/[0.08]'
-                  : item.read
-                    ? 'border-white/[0.85] bg-white/[0.65]'
-                    : 'border-white/[0.92] bg-white/[0.78]'
-              }`}
-              style={!item.read ? { borderLeftWidth: 3.5, borderLeftColor: item.accentColor } : undefined}
-            >
-              {item.photoSeed !== undefined ? (
-                <Avatar seed={`n${item.photoSeed}`} size={46} />
-              ) : (
-                <View
-                  className="h-[46px] w-[46px] items-center justify-center rounded-full"
-                  style={{ backgroundColor: `${item.accentColor}1A` }}
+          renderItem={({ item, index }) => {
+            const { Icon, accent } = TYPE_STYLE[item.type];
+            return (
+              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 40).springify().damping(17)}>
+                <Pressable
+                  onPress={() => openNotification(item)}
+                  className={`mb-2 flex-row items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 active:opacity-85 ${
+                    item.read ? 'border-white/[0.85] bg-white/[0.65]' : 'border-white/[0.92] bg-white/[0.78]'
+                  }`}
+                  style={!item.read ? { borderLeftWidth: 3.5, borderLeftColor: accent } : undefined}
                 >
-                  {item.Icon ? (
-                    <item.Icon size={22} color={item.accentColor} />
-                  ) : (
-                    <HelpCircle size={22} color={item.accentColor} />
-                  )}
-                </View>
-              )}
-              <View className="flex-1">
-                <Text className="mb-0.5 font-heading-medium text-[13px] leading-[17px] text-ink">
-                  {item.highlight ? <Text style={{ color: item.accentColor }}>{item.highlight} </Text> : null}
-                  {item.title}
-                </Text>
-                <Text className="font-body text-[11px] text-ink/[0.38]">{item.timeAgo}</Text>
-              </View>
-            </View>
-          )}
+                  <View
+                    className="h-[46px] w-[46px] items-center justify-center rounded-full"
+                    style={{ backgroundColor: `${accent}1A` }}
+                  >
+                    <Icon size={22} color={accent} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="mb-0.5 font-heading-medium text-[13px] leading-[17px] text-ink">
+                      {item.title}
+                    </Text>
+                    {item.body ? (
+                      <Text numberOfLines={1} className="mb-0.5 font-body text-[11.5px] text-ink-muted">
+                        {item.body}
+                      </Text>
+                    ) : null}
+                    <Text className="font-body text-[11px] text-ink/[0.38]">
+                      {formatConversationTime(item.createdAt)}
+                    </Text>
+                  </View>
+                </Pressable>
+              </Animated.View>
+            );
+          }}
         />
       )}
     </View>

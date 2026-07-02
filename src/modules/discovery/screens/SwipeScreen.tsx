@@ -11,6 +11,7 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
 import { useDiscoveryFeed, useSwipe } from '@/modules/discovery/hooks/useDiscovery';
+import { useHasUnreadNotifications } from '@/modules/notifications/hooks/useNotifications';
 import type { DiscoveryFeedMode, DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
 import { SwipeCard, type SwipeDirection } from '@/modules/discovery/components/SwipeCard';
 import { ActionButtons } from '@/modules/discovery/components/ActionButtons';
@@ -35,6 +36,7 @@ export function SwipeScreen() {
   const feed = useDiscoveryFeed(mode);
   const swipe = useSwipe();
   const feedError = useAppError(feed.error);
+  const hasUnreadNotifications = useHasUnreadNotifications();
 
   const profiles = feed.data ?? [];
 
@@ -86,7 +88,9 @@ export function SwipeScreen() {
           <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
             <View className="h-11 w-11 items-center justify-center">
               <Bell size={18} color={colors.ink.DEFAULT} />
-              <View className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-cream bg-brand" />
+              {hasUnreadNotifications ? (
+                <View className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-cream bg-brand" />
+              ) : null}
             </View>
           </GlassSurface>
         </Pressable>

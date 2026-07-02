@@ -1,23 +1,28 @@
 import { useMemo, useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Search as SearchIcon, X } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { EmptyState } from '@/shared/components/feedback';
-import { MOCK_CONVERSATIONS } from '@/modules/matches/constants/mockMatches';
+import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
+import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import { colors } from '@/shared/constants/theme';
 
 export function MatchesSearchScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const conversationsQuery = useConversationsQuery();
 
   const results = useMemo(() => {
-    if (!query.trim()) return MOCK_CONVERSATIONS;
-    return MOCK_CONVERSATIONS.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase()));
-  }, [query]);
+    const matches = conversationsQuery.data ?? [];
+    if (!query.trim()) return matches;
+    const needle = query.trim().toLowerCase();
+    return matches.filter((m) => m.partnerFirstName.toLowerCase().includes(needle));
+  }, [conversationsQuery.data, query]);
 
   return (
     <View className="flex-1">
@@ -44,25 +49,44 @@ export function MatchesSearchScreen() {
         </Pressable>
       </View>
 
-      {results.length === 0 ? (
+      {conversationsQuery.isLoading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
+        </View>
+      ) : results.length === 0 ? (
         <EmptyState
           icon={<SearchIcon size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
           title="Aucun résultat"
-          description={`Aucun match ne correspond à "${query}".`}
+          description={
+            query.trim() ? `Aucun match ne correspond à "${query}".` : "Vous n'avez pas encore de match."
+          }
         />
       ) : (
         <FlashList
           data={results}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.matchId}
           contentContainerClassName="px-6 pb-8"
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => router.push(`/chat/${item.id}`)}
-              className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5"
-            >
-              <Avatar seed={item.name} size={48} />
-              <Text className="font-heading text-[14px] uppercase text-ink">{item.name}</Text>
-            </Pressable>
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item, index }) => (
+            <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45).springify().damping(17)}>
+              <Pressable
+                onPress={() => router.push(`/chat/${item.matchId}`)}
+                className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5 active:opacity-85"
+              >
+                <Avatar
+                  source={item.partnerAvatarUrl ?? undefined}
+                  seed={item.partnerFirstName}
+                  size={48}
+                  ringColor={isRecentlyOnline(item.partnerLastActiveAt) ? colors.success : undefined}
+                />
+                <View className="flex-1">
+                  <Text className="mb-0.5 font-heading text-[14px] uppercase text-ink">{item.partnerFirstName}</Text>
+                  <Text numberOfLines={1} className="font-body text-[12px] text-ink-muted">
+                    {item.lastMessage ?? 'Nouveau match'}
+                  </Text>
+                </View>
+              </Pressable>
+            </Animated.View>
           )}
         />
       )}

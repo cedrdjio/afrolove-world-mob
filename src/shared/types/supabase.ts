@@ -166,6 +166,47 @@ export type Database = {
           },
         ];
       };
+      notifications: {
+        Row: {
+          body: string | null;
+          created_at: string;
+          data: Json;
+          id: string;
+          profile_id: string;
+          read_at: string | null;
+          title: string;
+          type: string;
+        };
+        Insert: {
+          body?: string | null;
+          created_at?: string;
+          data?: Json;
+          id?: string;
+          profile_id: string;
+          read_at?: string | null;
+          title: string;
+          type: string;
+        };
+        Update: {
+          body?: string | null;
+          created_at?: string;
+          data?: Json;
+          id?: string;
+          profile_id?: string;
+          read_at?: string | null;
+          title?: string;
+          type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_profile_id_fkey';
+            columns: ['profile_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profile_interests: {
         Row: {
           interest_id: string;
