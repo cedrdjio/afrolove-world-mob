@@ -17,22 +17,29 @@ function mapPhoto(row: { id: string; url: string; position: number; is_primary: 
 }
 
 // Storage uploads have intermittently failed with a row-level security
-// violation even though the RLS policies themselves are confirmed correct
-// (verified directly against the database, bypassing the app entirely).
-// That points at the client not attaching a valid access token to the
-// upload request specifically. Logging the session state right before the
-// call — dev-only — turns the next occurrence into hard evidence instead
-// of another guess.
-async function logSessionBeforeUpload(label: string): Promise<void> {
-  if (!__DEV__) return;
+// violation even with a confirmed-valid session (hasSession/hasAccessToken
+// both true right before the call) and RLS policies verified correct
+// directly against the database. supabase-js normally attaches the access
+// token to every request itself (via a wrapping fetch that calls
+// getSession() again internally), which should be equivalent — but since
+// that implicit path is evidently not reliable for this specific request
+// type on this platform, set the Authorization header explicitly instead
+// of trusting it to happen automatically.
+async function getUploadAuthHeaders(label: string): Promise<Record<string, string>> {
   const { data, error } = await supabase.auth.getSession();
-  // eslint-disable-next-line no-console
-  console.log(`[photoService] ${label} session check`, {
-    hasSession: !!data.session,
-    hasAccessToken: !!data.session?.access_token,
-    expiresAt: data.session?.expires_at,
-    error: error?.message,
-  });
+  if (__DEV__) {
+    // eslint-disable-next-line no-console
+    console.log(`[photoService] ${label} session check`, {
+      hasSession: !!data.session,
+      hasAccessToken: !!data.session?.access_token,
+      expiresAt: data.session?.expires_at,
+      error: error?.message,
+    });
+  }
+  if (!data.session?.access_token) {
+    throw new Error('Session invalide : merci de vous reconnecter avant de continuer.');
+  }
+  return { Authorization: `Bearer ${data.session.access_token}` };
 }
 
 async function fetchPhotos(profileId: string): Promise<ProfilePhoto[]> {
@@ -61,10 +68,10 @@ async function addPhoto(
   onProgress?.(55);
 
   const path = `${profileId}/${Date.now()}.jpg`;
-  await logSessionBeforeUpload('addPhoto');
+  const authHeaders = await getUploadAuthHeaders('addPhoto');
   const { error: uploadError } = await supabase.storage
     .from(PHOTOS_BUCKET)
-    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true });
+    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true, headers: authHeaders });
   if (uploadError) throw uploadError;
   onProgress?.(85);
 
@@ -102,10 +109,10 @@ async function replacePhoto(photoId: string, localUri: string, onProgress?: (per
   if (fetchError) throw fetchError;
 
   const path = `${existing.profile_id}/${Date.now()}.jpg`;
-  await logSessionBeforeUpload('replacePhoto');
+  const authHeaders = await getUploadAuthHeaders('replacePhoto');
   const { error: uploadError } = await supabase.storage
     .from(PHOTOS_BUCKET)
-    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true });
+    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true, headers: authHeaders });
   if (uploadError) throw uploadError;
   onProgress?.(85);
 
