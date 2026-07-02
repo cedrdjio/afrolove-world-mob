@@ -4,10 +4,10 @@ import { useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Archive, Trash2, Flag } from 'lucide-react-native';
 import { colors } from '@/shared/constants/theme';
-import type { MockConversation } from '@/modules/matches/constants/mockMatches';
+import type { Conversation } from '@/modules/messaging/types/messaging';
 
 interface ConversationActionSheetProps {
-  conversation: MockConversation | null;
+  conversation: Conversation | null;
 }
 
 export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActionSheetProps>(
@@ -36,7 +36,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
       >
         <BottomSheetView className="px-6 pb-8 pt-2">
           <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/35">
-            {conversation.name}
+            {conversation.partnerFirstName}
           </Text>
           <Pressable className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4">
             <View className="h-9 w-9 items-center justify-center rounded-full bg-brand/10">
@@ -45,7 +45,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
             <Text className="font-heading-semibold text-[14px] uppercase text-ink">Archiver</Text>
           </Pressable>
           <Pressable
-            onPress={() => router.push(`/reports/${conversation.id}`)}
+            onPress={() => router.push(`/reports/${conversation.partnerId}`)}
             className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4"
           >
             <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">

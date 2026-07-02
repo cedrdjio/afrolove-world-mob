@@ -1,13 +1,20 @@
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
 import { AlertTriangle, ArrowLeft } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
+import { useAppError } from '@/shared/hooks/useAppError';
+import { queryClient } from '@/shared/services/queryClient';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
+import { authService } from '@/modules/auth/services/authService';
+import { accountService } from '@/modules/settings/services/accountService';
 import { colors } from '@/shared/constants/theme';
 
 const CONSEQUENCES = [
-  'Votre profil sera supprimé définitivement',
+  'Votre profil ne sera plus visible par les autres membres',
   'Vos matches et conversations seront perdus',
   'Votre abonnement Premium sera annulé sans remboursement',
 ];
@@ -16,8 +23,22 @@ const CONFIRM_WORD = 'SUPPRIMER';
 
 export function DeleteAccountScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [confirmText, setConfirmText] = useState('');
   const canDelete = confirmText.trim().toUpperCase() === CONFIRM_WORD;
+
+  const deleteAccount = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error('Session invalide');
+      await accountService.deactivateAccount(user.id);
+      await authService.signOut();
+    },
+    onSuccess: () => {
+      queryClient.clear();
+      router.replace('/(auth)/welcome');
+    },
+  });
+  const deleteError = useAppError(deleteAccount.error);
 
   return (
     <View className="flex-1">
@@ -64,15 +85,25 @@ export function DeleteAccountScreen() {
           className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-white/70 px-5 py-4 font-heading text-[15px] uppercase tracking-wide text-ink"
         />
 
+        {deleteError ? (
+          <View className="mb-4">
+            <ErrorState error={deleteError} variant="inline" onRetry={() => deleteAccount.mutate()} />
+          </View>
+        ) : null}
+
         <Pressable
-          disabled={!canDelete}
-          onPress={() => router.replace('/(auth)/welcome')}
+          disabled={!canDelete || deleteAccount.isPending}
+          onPress={() => deleteAccount.mutate()}
           className="w-full items-center rounded-2xl bg-danger py-4"
           style={{ opacity: canDelete ? 1 : 0.4 }}
         >
-          <Text className="font-heading text-[14px] uppercase tracking-wide text-white">
-            Supprimer définitivement mon compte
-          </Text>
+          {deleteAccount.isPending ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text className="font-heading text-[14px] uppercase tracking-wide text-white">
+              Supprimer définitivement mon compte
+            </Text>
+          )}
         </Pressable>
       </View>
     </View>

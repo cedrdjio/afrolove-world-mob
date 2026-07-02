@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import { useLegalConsentStore } from '@/modules/legal/stores/legalConsentStore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Mail, Lock, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react-native';
@@ -35,6 +36,17 @@ export function RegisterScreen() {
   });
 
   const accepted = watch('acceptedTerms');
+  const acceptedFromModal = useLegalConsentStore((s) => s.acceptedFromModal);
+  const setAcceptedFromModal = useLegalConsentStore((s) => s.setAcceptedFromModal);
+
+  // "J'ai lu et j'accepte" inside the CGU/privacy modal checks the box here.
+  useEffect(() => {
+    if (acceptedFromModal) {
+      setValue('acceptedTerms', true as const, { shouldValidate: true });
+      setAcceptedFromModal(false);
+    }
+  }, [acceptedFromModal, setValue, setAcceptedFromModal]);
+
   const onSubmit = (values: RegisterFormValues) => {
     register.mutate(values, {
       onSuccess: (data) => {
@@ -155,9 +167,21 @@ export function RegisterScreen() {
               <View className="h-[22px] w-[22px] rounded-[7px] border-[1.5px] border-ink/20" />
             )}
             <Text className="flex-1 font-body text-[11.5px] leading-[17px] text-ink-muted">
-              J'accepte les <Text className="font-heading-semibold text-brand">CGU</Text> et la{' '}
-              <Text className="font-heading-semibold text-brand">Politique de confidentialité</Text> d'AfroLove
-              World
+              J'accepte les{' '}
+              <Text
+                onPress={() => router.push('/legal/terms')}
+                className="font-heading-semibold text-brand underline"
+              >
+                CGU
+              </Text>{' '}
+              et la{' '}
+              <Text
+                onPress={() => router.push('/legal/privacy')}
+                className="font-heading-semibold text-brand underline"
+              >
+                Politique de confidentialité
+              </Text>{' '}
+              d'AfroLove World
             </Text>
           </Pressable>
           {errors.acceptedTerms ? (

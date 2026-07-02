@@ -261,8 +261,75 @@ export type Database = {
           },
         ];
       };
+      legal_documents: {
+        Row: {
+          content: string;
+          key: string;
+          title: string;
+          updated_at: string;
+          version: number;
+        };
+        Insert: {
+          content: string;
+          key: string;
+          title: string;
+          updated_at?: string;
+          version?: number;
+        };
+        Update: {
+          content?: string;
+          key?: string;
+          title?: string;
+          updated_at?: string;
+          version?: number;
+        };
+        Relationships: [];
+      };
+      messages: {
+        Row: {
+          content: string;
+          created_at: string;
+          id: string;
+          match_id: string;
+          read_at: string | null;
+          sender_id: string;
+        };
+        Insert: {
+          content: string;
+          created_at?: string;
+          id?: string;
+          match_id: string;
+          read_at?: string | null;
+          sender_id: string;
+        };
+        Update: {
+          content?: string;
+          created_at?: string;
+          id?: string;
+          match_id?: string;
+          read_at?: string | null;
+          sender_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'messages_match_id_fkey';
+            columns: ['match_id'];
+            isOneToOne: false;
+            referencedRelation: 'matches';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'messages_sender_id_fkey';
+            columns: ['sender_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
+          account_status: string;
           avatar_url: string | null;
           bio: string | null;
           birth_date: string | null;
@@ -292,10 +359,13 @@ export type Database = {
           relationship_goal_id: string | null;
           religion_id: string | null;
           smoking: string | null;
+          status_changed_at: string | null;
+          status_reason: string | null;
           updated_at: string;
           wants_children: string | null;
         };
         Insert: {
+          account_status?: string;
           avatar_url?: string | null;
           bio?: string | null;
           birth_date?: string | null;
@@ -325,10 +395,13 @@ export type Database = {
           relationship_goal_id?: string | null;
           religion_id?: string | null;
           smoking?: string | null;
+          status_changed_at?: string | null;
+          status_reason?: string | null;
           updated_at?: string;
           wants_children?: string | null;
         };
         Update: {
+          account_status?: string;
           avatar_url?: string | null;
           bio?: string | null;
           birth_date?: string | null;
@@ -358,6 +431,8 @@ export type Database = {
           relationship_goal_id?: string | null;
           religion_id?: string | null;
           smoking?: string | null;
+          status_changed_at?: string | null;
+          status_reason?: string | null;
           updated_at?: string;
           wants_children?: string | null;
         };
@@ -483,6 +558,26 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_my_conversations: {
+        Args: never;
+        Returns: {
+          last_message: string | null;
+          last_message_at: string | null;
+          last_message_sender_id: string | null;
+          match_id: string;
+          matched_at: string;
+          partner_avatar_url: string | null;
+          partner_first_name: string | null;
+          partner_id: string;
+          partner_is_verified: boolean;
+          partner_last_active_at: string | null;
+          unread_count: number;
+        }[];
+      };
+      mark_messages_read: {
+        Args: { p_match_id: string };
+        Returns: undefined;
+      };
       get_my_profile_stats: {
         Args: never;
         Returns: {
@@ -500,15 +595,23 @@ export type Database = {
           city: string;
           country: string;
           distance_km: number;
+          drinking: string;
+          education_level_id: string;
           first_name: string;
           gender: string;
+          gym_habit: string;
+          has_pets: string;
           height_cm: number;
           id: string;
-          interest_names: string[];
+          interest_ids: string[];
           is_verified: boolean;
+          language_ids: string[];
           last_active_at: string;
           photo_urls: string[];
           profession: string;
+          religion_id: string;
+          smoking: string;
+          wants_children: string;
         }[];
       };
       search_profiles: {

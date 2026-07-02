@@ -1,36 +1,56 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Send, Smile, Image as ImageIcon, MoreHorizontal, ArrowLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { Avatar } from '@/shared/components/ui/Avatar';
-import { getConversationById } from '@/modules/matches/constants/mockMatches';
-import { INITIAL_MESSAGES, type MockMessage } from '@/modules/messaging/constants/mockMessages';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
+import {
+  useConversationsQuery,
+  useMessagesQuery,
+  useSendMessage,
+  useMarkConversationRead,
+} from '@/modules/messaging/hooks/useMessaging';
+import { formatMessageTime } from '@/modules/messaging/utils/time';
+import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
+import type { ChatMessage } from '@/modules/messaging/types/messaging';
 import { colors, gradients } from '@/shared/constants/theme';
 
 export function ChatScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const conversation = getConversationById(id ?? '1');
-  const [messages, setMessages] = useState<MockMessage[]>(INITIAL_MESSAGES);
+  const { user } = useAuth();
+  const conversationsQuery = useConversationsQuery();
+  const messagesQuery = useMessagesQuery(matchId);
+  const sendMessage = useSendMessage(matchId);
   const [draft, setDraft] = useState('');
-  const listRef = useRef<FlashListRef<MockMessage>>(null);
+  const listRef = useRef<FlashListRef<ChatMessage>>(null);
+
+  const conversation = conversationsQuery.data?.find((c) => c.matchId === matchId);
+  const messages = messagesQuery.data ?? [];
+
+  useMarkConversationRead(matchId, conversation?.unreadCount);
 
   useEffect(() => {
-    requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: false }));
+    if (messages.length === 0) return;
+    requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: true }));
   }, [messages.length]);
 
   const handleSend = () => {
-    if (!draft.trim()) return;
-    setMessages((prev) => [
-      ...prev,
-      { id: `${prev.length + 1}`, text: draft.trim(), fromMe: true, timestamp: 'Maintenant' },
-    ]);
+    const content = draft.trim();
+    if (!content || sendMessage.isPending) return;
     setDraft('');
+    sendMessage.mutate(content, {
+      onError: () => setDraft(content), // give the text back rather than losing it
+    });
   };
+
+  const partnerName = conversation?.partnerFirstName ?? '';
+  const online = isRecentlyOnline(conversation?.partnerLastActiveAt ?? null);
 
   return (
     <KeyboardAvoidingView
@@ -49,54 +69,84 @@ export function ChatScreen() {
               <ArrowLeft size={17} color={colors.ink.DEFAULT} strokeWidth={2} />
             </View>
           </Pressable>
-          <Avatar seed={conversation.name} size={48} />
+          <Avatar source={conversation?.partnerAvatarUrl ?? undefined} seed={partnerName} size={48} />
           <View className="flex-1">
-            <Text className="mb-0.5 font-heading text-[16px] uppercase text-ink">{conversation.name}</Text>
-            {conversation.isOnline ? (
+            <Text className="mb-0.5 font-heading text-[16px] uppercase text-ink">{partnerName}</Text>
+            {online ? (
               <View className="flex-row items-center gap-1.5">
                 <View className="h-1.5 w-1.5 rounded-full bg-success" />
                 <Text className="font-body-medium text-[11px] text-success">En ligne</Text>
               </View>
             ) : null}
           </View>
-          <Pressable onPress={() => router.push(`/profile/${conversation.id}`)}>
-            <MoreHorizontal size={18} color="rgba(26,8,4,0.35)" />
-          </Pressable>
+          {conversation ? (
+            <Pressable onPress={() => router.push(`/profile/${conversation.partnerId}`)}>
+              <MoreHorizontal size={18} color="rgba(26,8,4,0.35)" />
+            </Pressable>
+          ) : null}
         </View>
       </GlassSurface>
 
-      <FlashList
-        ref={listRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        contentContainerClassName="px-[18px] py-4"
-        renderItem={({ item }) => (
-          <View className={`mb-2.5 ${item.fromMe ? 'items-end' : 'items-start'}`}>
-            {item.fromMe ? (
-              <LinearGradient
-                colors={gradients.brand}
-                style={{ maxWidth: '77%', borderRadius: 18, borderBottomRightRadius: 5, padding: 13 }}
+      {messagesQuery.isLoading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
+        </View>
+      ) : (
+        <FlashList
+          ref={listRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          contentContainerClassName="px-[18px] py-4"
+          ListEmptyComponent={
+            <View className="items-center pt-16">
+              <Text className="text-center font-body text-[13px] leading-[20px] text-ink-muted">
+                C'est un match avec {partnerName || 'ce profil'} !{'\n'}Envoyez le premier message. 💬
+              </Text>
+            </View>
+          }
+          renderItem={({ item }) => {
+            const fromMe = item.senderId === user?.id;
+            return (
+              <Animated.View
+                entering={FadeInUp.springify().damping(18)}
+                className={`mb-2.5 ${fromMe ? 'items-end' : 'items-start'}`}
               >
-                <Text className="font-body text-[13.5px] leading-[19px] text-white">{item.text}</Text>
-              </LinearGradient>
-            ) : (
-              <View className="flex-row items-end gap-2" style={{ maxWidth: '80%' }}>
-                <Avatar seed={conversation.name} size={26} />
-                <View className="rounded-[18px] border-[1.5px] border-white/90 bg-white/75 p-3.5" style={{ borderBottomLeftRadius: 5 }}>
-                  <Text className="font-body text-[13.5px] leading-[19px] text-ink">{item.text}</Text>
-                </View>
-              </View>
-            )}
-          </View>
-        )}
-      />
+                {fromMe ? (
+                  <LinearGradient
+                    colors={gradients.brand}
+                    style={{ maxWidth: '77%', borderRadius: 18, borderBottomRightRadius: 5, padding: 13 }}
+                  >
+                    <Text className="font-body text-[13.5px] leading-[19px] text-white">{item.content}</Text>
+                    <Text className="mt-1 text-right font-body text-[9.5px] text-white/60">
+                      {formatMessageTime(item.createdAt)}
+                    </Text>
+                  </LinearGradient>
+                ) : (
+                  <View className="flex-row items-end gap-2" style={{ maxWidth: '80%' }}>
+                    <Avatar source={conversation?.partnerAvatarUrl ?? undefined} seed={partnerName} size={26} />
+                    <View
+                      className="rounded-[18px] border-[1.5px] border-white/90 bg-white/75 p-3.5"
+                      style={{ borderBottomLeftRadius: 5 }}
+                    >
+                      <Text className="font-body text-[13.5px] leading-[19px] text-ink">{item.content}</Text>
+                      <Text className="mt-1 font-body text-[9.5px] text-ink/30">
+                        {formatMessageTime(item.createdAt)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+              </Animated.View>
+            );
+          }}
+        />
+      )}
 
       <GlassSurface variant="lightStrong" radius={0}>
         <View className="flex-row items-center gap-2.5 px-[18px] py-3.5" style={{ paddingBottom: 26 }}>
-          <Pressable onPress={() => router.push(`/chat/${conversation.id}/emoji-picker`)}>
+          <Pressable onPress={() => router.push(`/chat/${matchId}/emoji-picker`)}>
             <Smile size={20} color="rgba(26,8,4,0.35)" />
           </Pressable>
-          <Pressable onPress={() => router.push(`/chat/${conversation.id}/gif-picker`)}>
+          <Pressable onPress={() => router.push(`/chat/${matchId}/gif-picker`)}>
             <ImageIcon size={20} color="rgba(26,8,4,0.35)" />
           </Pressable>
           <View className="flex-1 rounded-full border-[1.5px] border-white/90 bg-white/[0.68] px-[18px] py-3">
@@ -106,14 +156,23 @@ export function ChatScreen() {
               placeholder="Écrire un message…"
               placeholderTextColor="rgba(26,8,4,0.28)"
               className="font-body text-[13px] text-ink"
+              multiline
+              maxLength={2000}
             />
           </View>
-          <Pressable onPress={handleSend}>
+          <Pressable onPress={handleSend} disabled={!draft.trim() || sendMessage.isPending}>
             <LinearGradient
               colors={gradients.brand}
-              style={{ width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' }}
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 23,
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: draft.trim() ? 1 : 0.5,
+              }}
             >
-              <Send size={18} color="#fff" />
+              {sendMessage.isPending ? <ActivityIndicator size="small" color="#fff" /> : <Send size={18} color="#fff" />}
             </LinearGradient>
           </Pressable>
         </View>

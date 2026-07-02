@@ -39,6 +39,8 @@ function mapProfileRow(row: any): Profile {
     wantsChildren: row.wants_children,
     onboardingCompleted: row.onboarding_completed,
     profileCompleted: row.profile_completed,
+    accountStatus: (row.account_status as Profile['accountStatus']) ?? 'active',
+    statusReason: row.status_reason ?? null,
     isVerified: row.is_verified ?? false,
     lastActiveAt: row.last_active_at ?? null,
     locationUpdatedAt: row.location_updated_at ?? null,
@@ -58,10 +60,64 @@ async function fetchOwnProfile(userId: string): Promise<Profile> {
   return mapProfileRow(data);
 }
 
-async function fetchProfileById(profileId: string): Promise<Profile> {
-  const { data, error } = await supabase.from('profiles').select(PROFILE_SELECT).eq('id', profileId).single();
+/**
+ * Another member's profile, through the get_public_profile RPC — profiles
+ * RLS is owner-only, so a direct select on someone else's row returns
+ * nothing. The RPC exposes a vetted column list (no email, no coordinates,
+ * age instead of birth date) and only active, completed profiles.
+ */
+async function fetchPublicProfile(profileId: string): Promise<Profile> {
+  const { data, error } = await supabase.rpc('get_public_profile', { p_profile_id: profileId });
   if (error) throw error;
-  return mapProfileRow(data);
+  const row = data?.[0];
+  if (!row) throw new Error('Profil introuvable ou indisponible.');
+
+  // January 1st of (currentYear - age) always re-derives exactly `age`,
+  // letting the shared display pipeline work without the real birth date.
+  const syntheticBirthDate = row.age != null ? `${new Date().getFullYear() - row.age}-01-01` : null;
+
+  return {
+    id: row.id,
+    email: null,
+    firstName: row.first_name,
+    lastName: null,
+    gender: row.gender,
+    lookingFor: null,
+    birthDate: syntheticBirthDate,
+    bio: row.bio,
+    heightCm: row.height_cm,
+    profession: row.profession,
+    country: row.country,
+    city: row.city,
+    latitude: null,
+    longitude: null,
+    avatarUrl: row.avatar_url,
+    educationLevelId: row.education_level_id,
+    religionId: row.religion_id,
+    relationshipGoalId: null,
+    smoking: (row.smoking as Profile['smoking']) ?? null,
+    drinking: (row.drinking as Profile['drinking']) ?? null,
+    gymHabit: (row.gym_habit as Profile['gymHabit']) ?? null,
+    hasPets: (row.has_pets as Profile['hasPets']) ?? null,
+    wantsChildren: (row.wants_children as Profile['wantsChildren']) ?? null,
+    onboardingCompleted: true,
+    profileCompleted: true,
+    accountStatus: 'active',
+    statusReason: null,
+    isVerified: row.is_verified,
+    lastActiveAt: row.last_active_at,
+    locationUpdatedAt: null,
+    photos: (row.photo_urls ?? []).map((url: string, index: number) => ({
+      id: url,
+      url,
+      position: index,
+      isPrimary: index === 0,
+    })),
+    interestIds: row.interest_ids ?? [],
+    languageIds: row.language_ids ?? [],
+    createdAt: '',
+    updatedAt: '',
+  };
 }
 
 async function updateProfile(userId: string, patch: TablesUpdate<'profiles'>): Promise<void> {
@@ -93,7 +149,7 @@ async function setLanguages(userId: string, languageIds: string[]): Promise<void
 
 export const profileService = {
   fetchOwnProfile,
-  fetchProfileById,
+  fetchPublicProfile,
   updateProfile,
   setInterests,
   setLanguages,

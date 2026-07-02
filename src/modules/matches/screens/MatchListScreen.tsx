@@ -1,15 +1,22 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Search as SearchIcon, Heart } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { EmptyState } from '@/shared/components/feedback';
-import { NEW_MATCHES } from '@/modules/matches/constants/mockMatches';
+import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
+import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import { colors } from '@/shared/constants/theme';
 
 export function MatchListScreen() {
   const router = useRouter();
+  const conversationsQuery = useConversationsQuery();
+
+  const matches = conversationsQuery.data ?? [];
+  // "Nouveaux" = matches where nobody has spoken yet.
+  const newMatchesCount = matches.filter((m) => !m.lastMessage).length;
 
   return (
     <View className="flex-1">
@@ -20,9 +27,11 @@ export function MatchListScreen() {
       <View className="px-[22px]" style={{ paddingTop: 64 }}>
         <View className="mb-[18px] flex-row items-center justify-between">
           <Text className="font-display text-[30px] uppercase text-ink">Mes Matches</Text>
-          <View className="rounded-full bg-brand/10 px-3 py-1.5">
-            <Text className="font-heading text-[11.5px] uppercase text-brand">{NEW_MATCHES.length} nouveaux</Text>
-          </View>
+          {newMatchesCount > 0 ? (
+            <View className="rounded-full bg-brand/10 px-3 py-1.5">
+              <Text className="font-heading text-[11.5px] uppercase text-brand">{newMatchesCount} nouveaux</Text>
+            </View>
+          ) : null}
         </View>
 
         <Pressable
@@ -34,7 +43,11 @@ export function MatchListScreen() {
         </Pressable>
       </View>
 
-      {NEW_MATCHES.length === 0 ? (
+      {conversationsQuery.isLoading ? (
+        <View className="items-center pt-10">
+          <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
+        </View>
+      ) : matches.length === 0 ? (
         <EmptyState
           icon={<Heart size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
           title="Pas encore de match"
@@ -44,26 +57,29 @@ export function MatchListScreen() {
         />
       ) : (
         <FlashList
-          data={NEW_MATCHES}
+          data={matches}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.matchId}
           contentContainerClassName="px-[22px]"
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => router.push(`/chat/${item.id}`)}
-              className="mr-3.5 items-center gap-1.5"
-              style={{ width: 62 }}
-            >
-              <Avatar
-                seed={item.name}
-                size={62}
-                ringColor={item.isOnline ? colors.success : colors.gold.DEFAULT}
-              />
-              <Text className="font-heading text-[10px] uppercase text-ink" numberOfLines={1}>
-                {item.name}
-              </Text>
-            </Pressable>
+          renderItem={({ item, index }) => (
+            <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 60).springify().damping(16)}>
+              <Pressable
+                onPress={() => router.push(`/chat/${item.matchId}`)}
+                className="mr-3.5 items-center gap-1.5 active:opacity-80"
+                style={{ width: 62 }}
+              >
+                <Avatar
+                  source={item.partnerAvatarUrl ?? undefined}
+                  seed={item.partnerFirstName}
+                  size={62}
+                  ringColor={isRecentlyOnline(item.partnerLastActiveAt) ? colors.success : colors.gold.DEFAULT}
+                />
+                <Text className="font-heading text-[10px] uppercase text-ink" numberOfLines={1}>
+                  {item.partnerFirstName}
+                </Text>
+              </Pressable>
+            </Animated.View>
           )}
         />
       )}

@@ -31,6 +31,11 @@ export function useInitialRoute(): Href | null {
     return profileQuery.isError && !isOffline ? '/system/server-error' : null;
   }
 
+  // Banned or self-deleted accounts never reach the app — the status screen
+  // is the only destination until an admin lifts the ban / the user
+  // reactivates. This is the "voyant" a returning banned member always hits.
+  if (profileQuery.data.accountStatus !== 'active') return '/system/account-status';
+
   if (!profileQuery.data.onboardingCompleted) return '/(onboarding)/carousel';
   if (!profileQuery.data.profileCompleted) return '/profile-completion';
 

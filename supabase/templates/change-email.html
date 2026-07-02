@@ -1,0 +1,45 @@
+<!-- Supabase Auth template: "Change email address".
+     Coller dans Dashboard → Authentication → Emails → Change email address.
+     Variables : {{ .ConfirmationURL }}, {{ .NewEmail }}. -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF3EB;padding:32px 12px;font-family:Arial,Helvetica,sans-serif;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
+        <tr>
+          <td align="center" style="padding-bottom:24px;">
+            <img src="https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo.png" width="56" height="56" alt="AfroLove World" style="border-radius:16px;display:block;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color:#ffffff;border-radius:24px;padding:36px 32px;box-shadow:0 8px 30px rgba(44,20,8,0.08);">
+            <h1 style="margin:0 0 6px;font-size:24px;line-height:1.2;color:#2C1408;text-transform:uppercase;letter-spacing:1px;">Changement d'email</h1>
+            <p style="margin:0 0 22px;font-size:14px;line-height:22px;color:#8A6B5A;">
+              Vous avez demandé à utiliser l'adresse <strong style="color:#2C1408;">{{ .NewEmail }}</strong> pour votre compte AfroLove World. Confirmez ce changement&nbsp;:
+            </p>
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td align="center" style="padding-bottom:24px;">
+                  <a href="{{ .ConfirmationURL }}"
+                     style="display:inline-block;background:linear-gradient(100deg,#C86040,#C9862A);background-color:#C86040;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;padding:16px 38px;border-radius:16px;">
+                    Confirmer le changement
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:0;font-size:11.5px;line-height:17px;color:#B3A093;text-align:center;">
+              Si vous n'êtes pas à l'origine de cette demande, ne cliquez pas et sécurisez votre compte en changeant votre mot de passe.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding-top:22px;">
+            <p style="margin:0;font-size:11px;line-height:16px;color:#B3A093;">
+              AfroLove World — Des rencontres sincères, des valeurs partagées.<br />
+              www.afriloveworld.com
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

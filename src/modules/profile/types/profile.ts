@@ -52,6 +52,8 @@ export interface Profile {
   wantsChildren: WantsChildren | null;
   onboardingCompleted: boolean;
   profileCompleted: boolean;
+  accountStatus: 'active' | 'banned' | 'deleted';
+  statusReason: string | null;
   isVerified: boolean;
   lastActiveAt: string | null;
   locationUpdatedAt: string | null;

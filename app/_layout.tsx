@@ -65,6 +65,7 @@ export default function RootLayout() {
               <Stack.Screen name="kyc" />
               <Stack.Screen name="settings" />
               <Stack.Screen name="reports" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="legal/[key]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="blocked-users" />
               <Stack.Screen name="system" />
             </Stack>
