@@ -20,7 +20,7 @@ App de rencontre = catégorie sensible : les stores vérifient ces points à la 
 - [ ] Compte Google Play Console validé (en cours) — 25$ une fois
 - [ ] Compte Apple Developer si iOS — 99$/an
 - [ ] Projet Sentry (sentry.io, gratuit) → mettre le DSN dans les secrets EAS :
-      `npx eas env:create --name EXPO_PUBLic_SENTRY_DSN --value <dsn>` (ou dashboard expo.dev)
+      `npx eas env:create --name EXPO_PUBLIC_SENTRY_DSN --value <dsn>` (ou dashboard expo.dev)
 - [ ] Clés Moneroo/Stripe → intégration webhook (voir SPRINTS.md Sprint 4)
 
 ### Dashboard Supabase (5 minutes)
