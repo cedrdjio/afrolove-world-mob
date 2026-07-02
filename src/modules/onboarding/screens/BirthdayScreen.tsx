@@ -26,17 +26,23 @@ function DateField({
   value,
   onChangeText,
   maxLength,
+  max,
 }: {
   label: string;
   value: string;
   onChangeText: (v: string) => void;
   maxLength: number;
+  max?: number;
 }) {
   return (
     <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/90 bg-white/70 px-3 py-4">
       <TextInput
         value={value}
-        onChangeText={(t) => onChangeText(t.replace(/[^0-9]/g, ''))}
+        onChangeText={(t) => {
+          const digits = t.replace(/[^0-9]/g, '').slice(0, maxLength);
+          const clamped = max && digits !== '' && Number(digits) > max ? String(max) : digits;
+          onChangeText(clamped);
+        }}
         keyboardType="number-pad"
         maxLength={maxLength}
         placeholder={label}
@@ -79,8 +85,8 @@ export function BirthdayScreen() {
 
       <View className="flex-1">
         <View className="flex-row gap-3">
-          <DateField label="Jour" value={birthDate.day} onChangeText={(v) => setBirthDate({ day: v })} maxLength={2} />
-          <DateField label="Mois" value={birthDate.month} onChangeText={(v) => setBirthDate({ month: v })} maxLength={2} />
+          <DateField label="Jour" value={birthDate.day} onChangeText={(v) => setBirthDate({ day: v })} maxLength={2} max={31} />
+          <DateField label="Mois" value={birthDate.month} onChangeText={(v) => setBirthDate({ month: v })} maxLength={2} max={12} />
           <View style={{ flex: 1.4 }}>
             <DateField label="Année" value={birthDate.year} onChangeText={(v) => setBirthDate({ year: v })} maxLength={4} />
           </View>

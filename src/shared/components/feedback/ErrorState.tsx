@@ -8,7 +8,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { WifiOff, ServerCrash, Lock, MailWarning, ShieldAlert, Clock, AlertTriangle } from 'lucide-react-native';
+import { WifiOff, ServerCrash, Lock, MailWarning, ShieldAlert, KeyRound, Clock, AlertTriangle } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { colors } from '@/shared/constants/theme';
@@ -22,6 +22,7 @@ const ICONS: Record<AppErrorKind, LucideIcon> = {
   email_exists: MailWarning,
   weak_password: ShieldAlert,
   invalid_email: MailWarning,
+  invalid_otp: KeyRound,
   session_expired: Clock,
   timeout: Clock,
   unknown: AlertTriangle,

@@ -1,0 +1,69 @@
+name: EAS Build (Android)
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Profil eas.json à utiliser'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+  push:
+    branches:
+      - claude/graphify-plugin-0n39xh
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set up EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build on EAS
+        id: eas_build
+        run: |
+          PROFILE="${{ inputs.profile || 'preview' }}"
+          eas build --platform android --profile "$PROFILE" --non-interactive --wait --json > eas-build-result.json
+          cat eas-build-result.json
+          echo "artifact_url=$(node -pe 'JSON.parse(require("fs").readFileSync("eas-build-result.json")).[0].artifacts.buildUrl')" >> "$GITHUB_OUTPUT"
+
+      - name: Download APK
+        run: curl -L -o AfroLoveWorld-${{ github.run_number }}.apk "${{ steps.eas_build.outputs.artifact_url }}"
+
+      - name: Upload APK as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AfroLoveWorld-${{ github.run_number }}
+          path: AfroLoveWorld-${{ github.run_number }}.apk
+          retention-days: 30
+
+      - name: Publish APK to a GitHub Release (permanent download link)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: eas-build-${{ github.run_number }}
+          name: AfroLove World — EAS build #${{ github.run_number }}
+          body: |
+            APK Android généré via EAS Build depuis le commit ${{ github.sha }}.
+          files: AfroLoveWorld-${{ github.run_number }}.apk

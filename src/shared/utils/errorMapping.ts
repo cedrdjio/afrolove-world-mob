@@ -7,6 +7,7 @@ export type AppErrorKind =
   | 'email_exists'
   | 'weak_password'
   | 'invalid_email'
+  | 'invalid_otp'
   | 'session_expired'
   | 'timeout'
   | 'unknown';
@@ -48,6 +49,11 @@ const APP_ERRORS: Record<AppErrorKind, Omit<AppError, 'kind'>> = {
     title: 'Email invalide',
     message: "Cette adresse email n'est pas valide.",
     retryable: false,
+  },
+  invalid_otp: {
+    title: 'Code incorrect',
+    message: "Le code saisi n'est pas le bon ou a expiré. Vérifiez-le ou demandez un nouvel envoi.",
+    retryable: true,
   },
   session_expired: {
     title: 'Session expirée',
@@ -132,6 +138,11 @@ export function mapToAppError(error: unknown): AppError {
     }
     if (code === 'validation_failed' || code === 'email_address_invalid' || message.includes('invalid email')) {
       return buildError('invalid_email');
+    }
+    // GoTrue returns this same code whether the OTP was typed wrong or has
+    // simply expired — it doesn't distinguish the two server-side.
+    if (code === 'otp_expired' || message.includes('token has expired or is invalid')) {
+      return buildError('invalid_otp');
     }
     if (code === 'session_expired' || code === 'refresh_token_not_found' || code === 'session_not_found') {
       return buildError('session_expired');
