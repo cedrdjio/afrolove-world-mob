@@ -1,4 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
+import { AuthApiError } from '@supabase/supabase-js';
 import { supabase } from '@/shared/services/supabase/client';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -8,13 +9,26 @@ export interface EmailCredentials {
   password: string;
 }
 
-async function signUpWithEmail({ email, password, firstName }: EmailCredentials & { firstName: string }) {
+async function signUpWithEmail({
+  email,
+  password,
+  firstName,
+  redirectTo,
+}: EmailCredentials & { firstName: string; redirectTo: string }) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { first_name: firstName } },
+    options: { data: { first_name: firstName }, emailRedirectTo: redirectTo },
   });
   if (error) throw error;
+  // With email confirmation enabled, GoTrue anti-enumeration returns a fake
+  // user (no identities) instead of an error when the email is already
+  // registered. Left as-is, the app would send the user to the OTP screen to
+  // wait for a code that will never arrive — surface it as the same
+  // "already registered" error the API uses elsewhere.
+  if (data.user && !data.session && (data.user.identities?.length ?? 0) === 0) {
+    throw new AuthApiError('User already registered', 400, 'user_already_exists');
+  }
   return data;
 }
 

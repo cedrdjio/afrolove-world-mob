@@ -23,7 +23,23 @@ export function useAuthDeepLink() {
     if (!url || handledUrls.current.has(url)) return;
 
     const { params, errorCode } = getQueryParams(url);
-    if (errorCode || !params.access_token || !params.refresh_token) return;
+
+    // Expired or already-used links come back as
+    // `#error=access_denied&error_code=otp_expired&...` with no tokens.
+    // Silently ignoring them left the user stranded on whatever screen was
+    // open — land them on Login with an explanation instead. Skip the
+    // redirect when a session is already live (e.g. tapping a stale link
+    // while signed in) so it can't yank an active user out of the app.
+    const linkError = errorCode ?? params.error_code ?? params.error;
+    if (linkError) {
+      handledUrls.current.add(url);
+      if (useAuthStore.getState().status !== 'authenticated') {
+        router.replace({ pathname: '/(auth)/login', params: { linkError } });
+      }
+      return;
+    }
+
+    if (!params.access_token || !params.refresh_token) return;
 
     handledUrls.current.add(url);
 

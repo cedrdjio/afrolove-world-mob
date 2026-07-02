@@ -28,14 +28,29 @@ function s3Endpoint(): string {
   return `https://${host}/storage/v1/s3`;
 }
 
+// The browser sends a preflight OPTIONS before the POST (custom x-upload-*
+// headers make the request non-simple), so every response — including errors —
+// must carry CORS headers or web builds can never reach this function.
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type, x-upload-mode, x-upload-position, x-upload-photo-id',
+  'Access-Control-Max-Age': '86400',
+};
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
   });
 }
 
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'method_not_allowed' }, 405);
   }

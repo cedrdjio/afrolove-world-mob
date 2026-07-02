@@ -41,7 +41,7 @@ const APP_ERRORS: Record<AppErrorKind, Omit<AppError, 'kind'>> = {
   },
   weak_password: {
     title: 'Mot de passe trop faible',
-    message: 'Choisissez un mot de passe plus robuste (au moins 6 caractères).',
+    message: 'Choisissez un mot de passe plus robuste (au moins 8 caractères, lettres et chiffres).',
     retryable: false,
   },
   invalid_email: {

@@ -36,7 +36,16 @@ export function RegisterScreen() {
   const accepted = watch('acceptedTerms');
   const onSubmit = (values: RegisterFormValues) => {
     register.mutate(values, {
-      onSuccess: () => router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } }),
+      onSuccess: (data) => {
+        // If email confirmation is disabled on the project, signUp returns a
+        // live session — the OTP screen would wait forever for a code that
+        // was never sent, so resolve the real landing route instead.
+        if (data.session) {
+          router.replace('/(auth)/resolving');
+        } else {
+          router.push({ pathname: '/(auth)/verify-email', params: { email: values.email } });
+        }
+      },
     });
   };
 

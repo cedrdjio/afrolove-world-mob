@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
@@ -17,8 +17,18 @@ import { useLogin } from '@/modules/auth/hooks/useLogin';
 import { useGoogleAuth } from '@/modules/auth/hooks/useGoogleAuth';
 import { useAppError } from '@/shared/hooks/useAppError';
 
+// Set by useAuthDeepLink when a signup/recovery email link turns out to be
+// expired or already used — the user lands here instead of nowhere.
+const EXPIRED_LINK_ERROR = {
+  kind: 'session_expired' as const,
+  title: 'Lien expiré',
+  message: 'Ce lien a expiré ou a déjà été utilisé. Connectez-vous ou refaites une demande.',
+  retryable: false,
+};
+
 export function LoginScreen() {
   const router = useRouter();
+  const { linkError } = useLocalSearchParams<{ linkError?: string }>();
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
   const googleAuth = useGoogleAuth();
@@ -59,6 +69,10 @@ export function LoginScreen() {
           {loginError ? (
             <View className="mb-4">
               <ErrorState error={loginError} variant="inline" onRetry={handleSubmit(onSubmit)} />
+            </View>
+          ) : linkError ? (
+            <View className="mb-4">
+              <ErrorState error={EXPIRED_LINK_ERROR} variant="inline" />
             </View>
           ) : null}
 

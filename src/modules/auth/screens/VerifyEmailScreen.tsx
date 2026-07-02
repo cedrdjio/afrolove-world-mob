@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MailCheck } from 'lucide-react-native';
@@ -14,11 +14,20 @@ export function VerifyEmailScreen() {
   const router = useRouter();
   const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState('');
-  const [resendConfirmed, setResendConfirmed] = useState(false);
+  // Seconds before another resend is allowed — GoTrue rate-limits resends to
+  // one per minute, so firing earlier would only surface an API error.
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [resendCount, setResendCount] = useState(0);
   const verifyOtp = useVerifySignupOtp();
   const resendEmail = useResendSignupEmail();
   const verifyError = useAppError(verifyOtp.error);
+  const resendError = useAppError(resendEmail.error);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   const MIN_CODE_LENGTH = 4;
   const handleVerify = () => {
@@ -27,7 +36,7 @@ export function VerifyEmailScreen() {
   };
 
   const handleResend = () => {
-    if (!email) return;
+    if (!email || resendCooldown > 0) return;
     resendEmail.mutate(email, {
       onSuccess: () => {
         // Resending invalidates the previous code, so clear whatever the
@@ -35,7 +44,7 @@ export function VerifyEmailScreen() {
         // "Token has expired or is invalid" instead of the new one.
         setCode('');
         setResendCount((n) => n + 1);
-        setResendConfirmed(true);
+        setResendCooldown(60);
       },
     });
   };
@@ -66,13 +75,17 @@ export function VerifyEmailScreen() {
           <View className="mb-5">
             <ErrorState error={verifyError} variant="inline" onRetry={handleVerify} />
           </View>
+        ) : resendError ? (
+          <View className="mb-5">
+            <ErrorState error={resendError} variant="inline" onRetry={handleResend} />
+          </View>
         ) : null}
 
         <OtpInput key={resendCount} onComplete={setCode} />
 
         <Text className="my-6 text-center font-body text-[12.5px] text-ink-muted">
-          {resendConfirmed
-            ? 'Code renvoyé !'
+          {resendCooldown > 0
+            ? `Code renvoyé ! Nouvel envoi possible dans ${resendCooldown}s`
             : resendEmail.isPending
               ? 'Envoi en cours…'
               : (
