@@ -14,31 +14,35 @@ Suivi vivant : cocher au fur et à mesure. Un sprint = un lot livrable et testab
 - [x] CGU/Politique en BD + modale de consentement
 - [x] Templates email brandés, eas.json, proguard/shrink
 
-## 🔵 Sprint 1 — Modération réelle + boutons morts (EN COURS)
+## ✅ Sprint 1 — Modération réelle + boutons morts (terminé)
 
-Objectif : plus aucun bouton visible qui ne fait rien ; exigences stores "dating".
+- [x] Tables `reports` + `blocks` (RLS), filtrage des bloqués dans recherche/conversations/messages
+- [x] Écran Signaler branché (envoi réel → confirmation)
+- [x] Écran Profils bloqués branché (liste réelle + déblocage)
+- [x] Bloquer depuis la conversation ; Supprimer la conversation = unmatch réel
+- [x] Settings : changement de mot de passe et d'email fonctionnels
+- [x] Défilement des photos de profil réparé (tap gauche/droite), like réel depuis le profil
 
-- [ ] Tables `reports` + `blocks` (RLS), filtrage des bloqués dans recherche/conversations/messages
-- [ ] Écran Signaler branché (envoi réel → confirmation)
-- [ ] Écran Profils bloqués branché (liste réelle + déblocage)
-- [ ] Bloquer depuis la conversation (menu long-press) ; Supprimer la conversation = unmatch réel
-- [ ] Settings : changement de mot de passe et d'email fonctionnels
-- [ ] Boutons sans fonction masqués ou reliés (audit écran par écran)
+## ✅ Sprint 2 — Notifications in-app réelles (terminé)
 
-## 🟠 Sprint 2 — Premier build installable + retours à distance
+- [x] Table `notifications` alimentée par triggers (match ×2, message regroupé, like/super-like, KYC)
+- [x] Écran Notifications branché (filtres, tap → conversation, tout lire)
+- [x] Pastille cloche réelle sur Découvrir
+- [x] Recherche de matches sur données réelles
 
-Objectif : APK sur votre téléphone + lien d'installation partageable.
+## ✅ Sprint 3 — Push notifications (terminé)
 
-- [ ] `npx expo login` (VOTRE action — compte Expo requis, gratuit)
-- [ ] `npx eas init` puis `npx eas build -p android --profile preview`
+- [x] Table `push_tokens` + enregistrement du token (onboarding + ouverture app)
+- [x] Envoi automatique via pg_net → API Expo Push sur chaque notification (match, message, like, KYC)
+- [x] Tap sur push → bonne conversation / statut KYC (y compris démarrage à froid)
+- [x] Nettoyage des tokens à la déconnexion
+- ⚠️ Testable uniquement en build EAS (pas Expo Go) — build preview à relancer
+
+## 🟠 Sprint 3bis — Build installable + retours (VOTRE action)
+
+- [ ] Relancer un build : `npx eas build -p android --profile preview` (ou via la GitHub Action)
 - [ ] Lien d'installation expo.dev partagé au testeur distant
 - [ ] Corrections des retours du premier test réel
-- [ ] Notifications in-app réelles (table + triggers match/message) ou écran masqué
-
-## 🟡 Sprint 3 — Push + rétention
-
-- [ ] Enregistrement des tokens Expo Push en BD
-- [ ] Edge Function d'envoi (nouveau match, nouveau message) via triggers/webhooks
 - [ ] Préférences de notifications réelles (écran settings branché)
 
 ## 🟢 Sprint 4 — Monétisation
