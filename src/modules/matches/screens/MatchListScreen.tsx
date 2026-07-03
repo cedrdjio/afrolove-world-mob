@@ -66,7 +66,6 @@ export function MatchListScreen() {
           {matches.length === 0 ? (
             <View className="px-[22px] pb-4">
               <EmptyState
-                icon={<Heart size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
                 title="Pas encore de match"
                 description="Continuez à explorer pour trouver vos premiers matches."
                 actionLabel="Découvrir des profils"

@@ -51,7 +51,6 @@ export function ConversationListScreen() {
         </View>
       ) : conversations.length === 0 ? (
         <EmptyState
-          icon={<MessageCircle size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
           title="Aucune conversation"
           description="Vos conversations avec vos matches apparaîtront ici."
         />

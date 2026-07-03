@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import LottieView from 'lottie-react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,6 +8,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import { ScreenBackground } from '@/shared/components/layout/ScreenBackground';
 import { colors } from '@/shared/constants/theme';
 
 export function LoadingSpinner({ size = 32, color = colors.brand.DEFAULT }: { size?: number; color?: string }) {
@@ -39,8 +41,14 @@ export function LoadingSpinner({ size = 32, color = colors.brand.DEFAULT }: { si
 
 export function FullScreenLoader() {
   return (
-    <View className="flex-1 items-center justify-center bg-cream">
-      <LoadingSpinner />
+    <View className="flex-1 items-center justify-center">
+      <ScreenBackground theme="cream" />
+      <LottieView
+        source={require('@/assets/lottie/hearts-loader.json')}
+        autoPlay
+        loop
+        style={{ width: 130, height: 130 }}
+      />
     </View>
   );
 }
