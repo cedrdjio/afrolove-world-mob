@@ -82,8 +82,7 @@
             "enableMinifyInReleaseBuilds": true
           }
         }
-      ],
-      "@sentry/react-native"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
