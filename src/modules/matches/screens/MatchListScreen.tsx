@@ -3,9 +3,11 @@ import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Search as SearchIcon, Heart, Star, Eye, BadgeCheck } from 'lucide-react-native';
+import { Search as SearchIcon, Heart, Star, Eye, BadgeCheck, Lock } from 'lucide-react-native';
+import { BlurView } from 'expo-blur';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
+import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { EmptyState } from '@/shared/components/feedback';
 import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
@@ -141,6 +143,39 @@ export function MatchListScreen() {
                   </Animated.View>
                 ))}
               </View>
+            ) : likersCount > 0 ? (
+              /* Grille verrouillée façon maquette : des tuiles floutées, le
+                 compteur réel, et le CTA Premium pour tout dévoiler. */
+              <Pressable onPress={() => router.push('/premium')} className="mb-6 active:opacity-95">
+                <View className="flex-row flex-wrap gap-2">
+                  {Array.from({ length: Math.min(likersCount, 6) }).map((_, index) => (
+                    <Animated.View
+                      key={index}
+                      entering={FadeInDown.delay(index * 60).springify().damping(16)}
+                      className="overflow-hidden rounded-2xl border border-white/80"
+                      style={{ width: '31.5%', aspectRatio: 0.82 }}
+                    >
+                      <PhotoPlaceholder seed={index + 2} style={{ flex: 1 }} />
+                      <BlurView intensity={55} tint="light" style={{ position: 'absolute', inset: 0 }} />
+                      <View className="absolute inset-0 items-center justify-center bg-white/[0.12]">
+                        <View className="h-9 w-9 items-center justify-center rounded-full bg-white/70">
+                          <Lock size={15} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+                        </View>
+                      </View>
+                    </Animated.View>
+                  ))}
+                </View>
+                <LinearGradient
+                  colors={gradients.brand}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{ borderRadius: 999, paddingVertical: 13, marginTop: 12 }}
+                >
+                  <Text className="text-center font-heading text-[12.5px] uppercase tracking-wide text-white">
+                    {likersCount} personne{likersCount > 1 ? 's' : ''} craque{likersCount > 1 ? 'nt' : ''} pour toi — Passer à Premium
+                  </Text>
+                </LinearGradient>
+              </Pressable>
             ) : (
               <Pressable onPress={() => router.push('/premium')} className="mb-6 active:opacity-90">
                 <LinearGradient
@@ -155,9 +190,7 @@ export function MatchListScreen() {
                     </View>
                     <View className="flex-1">
                       <Text className="mb-0.5 font-heading text-[14px] uppercase text-white">
-                        {likersCount > 0
-                          ? `${likersCount} personne${likersCount > 1 ? 's' : ''} vous ${likersCount > 1 ? 'ont' : 'a'} aimé`
-                          : 'Voyez qui vous a aimé'}
+                        Voyez qui vous a aimé
                       </Text>
                       <Text className="font-body text-[11.5px] text-white/70">
                         Passez Premium pour découvrir leurs profils.
