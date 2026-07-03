@@ -28,7 +28,7 @@ const ICONS: Record<AppErrorKind, LucideIcon> = {
   unknown: AlertTriangle,
 };
 
-const DANGER_GRADIENT = ['#B41E14', '#6B0E0A'] as const;
+const DANGER_GRADIENT = ['#C24545', '#7E2B2B'] as const;
 
 interface ErrorStateProps {
   error: AppError;
@@ -108,7 +108,7 @@ export function ErrorState({ error, onRetry, variant = 'fullscreen', tone = 'onL
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: 26,
-            shadowColor: '#6B0E0A',
+            shadowColor: '#7E2B2B',
             shadowOpacity: 0.28,
             shadowRadius: 24,
             shadowOffset: { width: 0, height: 12 },

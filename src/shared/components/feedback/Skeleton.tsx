@@ -23,7 +23,7 @@ export function Skeleton({ width = '100%', height = 16, radius = 8, style }: Ske
   return (
     <Animated.View
       style={[
-        { width, height, borderRadius: radius, backgroundColor: 'rgba(26,8,4,0.08)' },
+        { width, height, borderRadius: radius, backgroundColor: 'rgba(46,36,64,0.08)' },
         animatedStyle,
         style,
       ]}

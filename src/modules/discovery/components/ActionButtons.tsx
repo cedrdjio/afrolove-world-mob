@@ -71,7 +71,7 @@ export function ActionButtons({ onNope, onSuperLike, onLike, onBoost }: ActionBu
               borderRadius: 35,
               alignItems: 'center',
               justifyContent: 'center',
-              shadowColor: '#C86040',
+              shadowColor: '#6A4FC0',
               shadowOpacity: 0.44,
               shadowRadius: 26,
               shadowOffset: { width: 0, height: 12 },

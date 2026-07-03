@@ -12,7 +12,7 @@ export function ServerErrorScreen() {
       description="Un problème technique est survenu de notre côté. Notre équipe a été notifiée."
       actionLabel="Réessayer"
       onAction={() => router.back()}
-      iconColors={['#B41E14', '#6B0E0A']}
+      iconColors={['#C24545', '#7E2B2B']}
     />
   );
 }

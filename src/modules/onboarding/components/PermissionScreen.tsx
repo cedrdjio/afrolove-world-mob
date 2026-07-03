@@ -28,7 +28,7 @@ export function PermissionScreen({ Icon, title, description, primaryLabel, onPri
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: 28,
-            shadowColor: '#C86040',
+            shadowColor: '#6A4FC0',
             shadowOpacity: 0.3,
             shadowRadius: 26,
             shadowOffset: { width: 0, height: 12 },

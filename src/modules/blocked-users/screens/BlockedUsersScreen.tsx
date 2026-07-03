@@ -31,7 +31,7 @@ export function BlockedUsersScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={210} color="rgba(200,96,64,0.08)" bottom={-40} left={-40} duration={9500} />
+        <GlowOrb size={210} color="rgba(106,79,192,0.08)" bottom={-40} left={-40} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>

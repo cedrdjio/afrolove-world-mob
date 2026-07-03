@@ -57,7 +57,7 @@ export function UploadSelfieScreen() {
           ) : (
             <Animated.View
               style={[
-                { position: 'absolute', width: 180, height: 2, backgroundColor: 'rgba(200,96,64,0.8)' },
+                { position: 'absolute', width: 180, height: 2, backgroundColor: 'rgba(106,79,192,0.8)' },
                 scanStyle,
               ]}
             />

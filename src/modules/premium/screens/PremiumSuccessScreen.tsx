@@ -22,7 +22,7 @@ export function PremiumSuccessScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={280} color="rgba(201,134,42,0.2)" top={110} left={-40} duration={9000} />
+        <GlowOrb size={280} color="rgba(155,126,222,0.2)" top={110} left={-40} duration={9000} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -35,7 +35,7 @@ export function PremiumSuccessScreen() {
               borderRadius: 48,
               alignItems: 'center',
               justifyContent: 'center',
-              shadowColor: '#C9862A',
+              shadowColor: '#9B7EDE',
               shadowOpacity: 0.45,
               shadowRadius: 30,
               shadowOffset: { width: 0, height: 14 },

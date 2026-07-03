@@ -60,7 +60,7 @@ export function MatchCelebrationScreen() {
           <Animated.View style={[ringStyle, { zIndex: 2 }]}>
             <View
               className="h-[92px] w-[92px] overflow-hidden rounded-full"
-              style={{ borderWidth: 3, borderColor: 'rgba(200,96,64,0.4)' }}
+              style={{ borderWidth: 3, borderColor: 'rgba(106,79,192,0.4)' }}
             >
               <PhotoPlaceholder seed={7} style={{ flex: 1 }} />
             </View>
@@ -76,7 +76,7 @@ export function MatchCelebrationScreen() {
               <Heart size={17} color="#fff" fill="#fff" />
             </LinearGradient>
           </View>
-          <View className="h-[92px] w-[92px] overflow-hidden rounded-full" style={{ borderWidth: 3, borderColor: 'rgba(200,96,64,0.35)' }}>
+          <View className="h-[92px] w-[92px] overflow-hidden rounded-full" style={{ borderWidth: 3, borderColor: 'rgba(106,79,192,0.35)' }}>
             <PhotoPlaceholder seed={3} style={{ flex: 1 }} />
           </View>
         </View>

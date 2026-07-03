@@ -54,11 +54,11 @@ export function GradientButton({
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           className={cn(
-            'flex-row items-center justify-center gap-2 rounded-[18px]',
+            'flex-row items-center justify-center gap-2 rounded-full',
             size === 'lg' ? 'py-[17px]' : 'py-[13px]',
           )}
           style={{
-            shadowColor: '#C86040',
+            shadowColor: '#6A4FC0',
             shadowOpacity: 0.32,
             shadowRadius: 20,
             shadowOffset: { width: 0, height: 10 },

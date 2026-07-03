@@ -23,7 +23,7 @@ const TIER_STYLES: Record<
   week_7d: { Icon: Calendar, color: '#C83030', iconBg: 'rgba(200,60,50,0.1)', highlight: 'rgba(200,60,50,0.26)', gradient: ['#C83030', '#8A1010'] },
   month_1m: { Icon: Calendar, color: '#C07010', iconBg: 'rgba(200,110,20,0.1)', highlight: 'rgba(200,110,20,0.24)' },
   quarter_3m: { Icon: Calendar, color: '#1A7A30', iconBg: 'rgba(30,140,60,0.09)', highlight: 'rgba(30,140,60,0.2)' },
-  year_1y: { Icon: Crown, color: '#C9862A', iconBg: 'rgba(201,134,42,0.14)', highlight: 'rgba(201,134,42,0.36)', gradient: gradients.gold, badge: 'Meilleure offre' },
+  year_1y: { Icon: Crown, color: '#9B7EDE', iconBg: 'rgba(155,126,222,0.14)', highlight: 'rgba(155,126,222,0.36)', gradient: gradients.gold, badge: 'Meilleure offre' },
 };
 
 function formatPrice(cents: number, currency: string): string {
@@ -53,7 +53,7 @@ export function PremiumPricingScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={210} color="rgba(200,96,64,0.09)" top={-40} right={-40} duration={9500} />
+        <GlowOrb size={210} color="rgba(106,79,192,0.09)" top={-40} right={-40} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 20 }}>
@@ -99,7 +99,7 @@ export function PremiumPricingScreen() {
                 style={{ backgroundColor: 'rgba(255,255,255,0.72)' }}
               >
                 <View className="flex-1 flex-row items-center gap-2.5">
-                  <View className="h-9 w-9 items-center justify-center rounded-[11px]" style={{ backgroundColor: 'rgba(44,20,8,0.06)' }}>
+                  <View className="h-9 w-9 items-center justify-center rounded-[11px]" style={{ backgroundColor: 'rgba(62,53,82,0.06)' }}>
                     <UserPlus size={17} color={colors.ink.DEFAULT} />
                   </View>
                   <View className="flex-1">

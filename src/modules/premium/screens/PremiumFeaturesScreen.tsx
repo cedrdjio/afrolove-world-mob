@@ -21,7 +21,7 @@ export function PremiumFeaturesScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(201,134,42,0.1)" top={-50} right={-50} duration={9500} />
+        <GlowOrb size={220} color="rgba(155,126,222,0.1)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>

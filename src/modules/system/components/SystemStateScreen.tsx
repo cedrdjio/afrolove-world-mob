@@ -18,7 +18,7 @@ export function SystemStateScreen({ Icon, title, description, actionLabel, onAct
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={230} color="rgba(200,96,64,0.09)" top={-50} right={-50} duration={9500} />
+        <GlowOrb size={230} color="rgba(106,79,192,0.09)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -31,7 +31,7 @@ export function SystemStateScreen({ Icon, title, description, actionLabel, onAct
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: 26,
-            shadowColor: '#C86040',
+            shadowColor: '#6A4FC0',
             shadowOpacity: 0.28,
             shadowRadius: 24,
             shadowOffset: { width: 0, height: 12 },

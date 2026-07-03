@@ -18,7 +18,7 @@ export function OtpInput({ onComplete }: OtpInputProps) {
       autoComplete="one-time-code"
       textContentType="oneTimeCode"
       placeholder="••••••"
-      placeholderTextColor="rgba(26,8,4,0.25)"
+      placeholderTextColor="rgba(46,36,64,0.25)"
       className="h-14 rounded-2xl border-[1.5px] border-white/90 bg-white/70 text-center font-display text-[22px] text-ink"
       style={{
         letterSpacing: 6,

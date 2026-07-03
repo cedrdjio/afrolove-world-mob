@@ -12,7 +12,7 @@ const PALETTES: readonly [string, string][] = [
   ['#C87030', '#5A2010'],
   ['#E0A94A', '#8A5010'],
   ['#D4774A', '#9A3C1C'],
-  ['#C9862A', '#6B2810'],
+  ['#9B7EDE', '#6B2810'],
 ];
 
 interface PhotoPlaceholderProps {

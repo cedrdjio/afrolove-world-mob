@@ -30,12 +30,12 @@ export function MatchesSearchScreen() {
 
       <View className="mb-4 flex-row items-center gap-3 px-6" style={{ paddingTop: 24 }}>
         <View className="flex-1 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
-          <SearchIcon size={16} color="rgba(44,20,8,0.28)" />
+          <SearchIcon size={16} color="rgba(62,53,82,0.28)" />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder="Rechercher un match…"
-            placeholderTextColor="rgba(26,8,4,0.28)"
+            placeholderTextColor="rgba(46,36,64,0.28)"
             autoFocus
             className="flex-1 font-body text-[14px] text-ink"
           />

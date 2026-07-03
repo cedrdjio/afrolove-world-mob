@@ -3,7 +3,7 @@ import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
-import { SlidersHorizontal, Search as SearchIcon, Bell } from 'lucide-react-native';
+import { SlidersHorizontal, Bell } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { Chip } from '@/shared/components/ui/Chip';
@@ -118,13 +118,6 @@ export function SwipeScreen() {
             }}
           />
         ))}
-        <Pressable onPress={() => router.push('/discover-search')} className="ml-auto">
-          <GlassSurface variant="light" radius={15} style={{ width: 38, height: 38 }}>
-            <View className="h-[38px] w-[38px] items-center justify-center">
-              <SearchIcon size={16} color={colors.ink.DEFAULT} />
-            </View>
-          </GlassSurface>
-        </Pressable>
       </View>
 
       <View className="mx-[18px] mt-6 flex-1" style={{ marginBottom: 210 }}>

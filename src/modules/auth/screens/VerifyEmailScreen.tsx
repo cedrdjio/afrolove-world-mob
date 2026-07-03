@@ -52,7 +52,7 @@ export function VerifyEmailScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={260} color="rgba(201,134,42,0.11)" top={-60} left={-60} duration={9000} />
+        <GlowOrb size={260} color="rgba(155,126,222,0.11)" top={-60} left={-60} duration={9000} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 68 }}>

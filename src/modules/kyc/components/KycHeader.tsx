@@ -1,11 +1,10 @@
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Image } from 'expo-image';
 import { ArrowLeft } from 'lucide-react-native';
 import { IconButton } from '@/shared/components/ui/IconButton';
-import { images } from '@/shared/constants/images';
 import { colors, gradients } from '@/shared/constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BrandLogo } from '@/shared/components/ui/BrandLogo';
 
 export function KycHeader({ step, total = 3 }: { step: number; total?: number }) {
   const router = useRouter();
@@ -31,7 +30,7 @@ export function KycHeader({ step, total = 3 }: { step: number; total?: number })
           />
         </View>
       </View>
-      <Image source={images.logoLight} style={{ width: 44, height: 44, borderRadius: 13 }} contentFit="cover" />
+      <BrandLogo size={44} />
     </View>
   );
 }

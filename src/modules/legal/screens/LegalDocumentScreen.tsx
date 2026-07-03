@@ -73,7 +73,7 @@ export function LegalDocumentScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(201,134,42,0.09)" top={-60} right={-60} duration={10000} />
+        <GlowOrb size={220} color="rgba(155,126,222,0.09)" top={-60} right={-60} duration={10000} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 26, paddingBottom: 30 }}>

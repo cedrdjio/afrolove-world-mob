@@ -40,7 +40,7 @@ export function NameScreen() {
             value={firstName}
             onChangeText={setFirstName}
             placeholder="Prénom"
-            placeholderTextColor="rgba(26,8,4,0.2)"
+            placeholderTextColor="rgba(46,36,64,0.2)"
             className="flex-1 font-display text-[24px] text-ink"
           />
         </View>
@@ -49,7 +49,7 @@ export function NameScreen() {
             value={lastName}
             onChangeText={setLastName}
             placeholder="Nom"
-            placeholderTextColor="rgba(26,8,4,0.2)"
+            placeholderTextColor="rgba(46,36,64,0.2)"
             className="flex-1 font-display text-[24px] text-ink"
           />
         </View>

@@ -24,7 +24,7 @@ export function SettingsHubScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(200,96,64,0.08)" top={-50} right={-50} duration={9500} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.08)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
       <ScrollView contentContainerClassName="px-6 pb-10" style={{ paddingTop: 64 }} showsVerticalScrollIndicator={false}>

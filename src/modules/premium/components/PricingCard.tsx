@@ -21,7 +21,7 @@ export function PricingCard({ plan }: { plan: PremiumPlan }) {
       {plan.badge ? (
         <View
           className="absolute self-center rounded-full px-2.5 py-1"
-          style={{ top: -10, backgroundColor: '#C9862A' }}
+          style={{ top: -10, backgroundColor: '#9B7EDE' }}
         >
           <Text className="font-heading text-[8px] uppercase text-white">{plan.badge}</Text>
         </View>

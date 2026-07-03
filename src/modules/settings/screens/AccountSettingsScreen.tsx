@@ -33,20 +33,20 @@ export function AccountSettingsScreen() {
     >
       <GlassInput
         label="Prénom"
-        icon={<User size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<User size={15} color="rgba(62,53,82,0.26)" />}
         value={firstName}
         onChangeText={setFirstName}
       />
       <GlassInput
         label="Nom"
-        icon={<User size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<User size={15} color="rgba(62,53,82,0.26)" />}
         placeholder="Optionnel — jamais montré aux autres membres"
         value={lastName}
         onChangeText={setLastName}
       />
       <View className="mt-1 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
         <View className="flex-row items-center gap-2.5">
-          <Mail size={15} color="rgba(44,20,8,0.26)" />
+          <Mail size={15} color="rgba(62,53,82,0.26)" />
           <View className="flex-1">
             <Text className="mb-0.5 font-heading text-[10px] uppercase tracking-widest text-ink/35">Email</Text>
             <Text className="font-body text-[13.5px] text-ink">{user?.email ?? '—'}</Text>

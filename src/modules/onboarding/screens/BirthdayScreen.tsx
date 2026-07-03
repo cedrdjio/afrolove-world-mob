@@ -46,7 +46,7 @@ function DateField({
         keyboardType="number-pad"
         maxLength={maxLength}
         placeholder={label}
-        placeholderTextColor="rgba(26,8,4,0.2)"
+        placeholderTextColor="rgba(46,36,64,0.2)"
         className="w-full text-center font-display text-[24px] text-ink"
       />
       <Text className="font-heading text-[9px] uppercase tracking-widest text-ink-faint">{label}</Text>

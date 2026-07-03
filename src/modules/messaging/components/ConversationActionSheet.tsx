@@ -47,7 +47,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: colors.cream.DEFAULT, borderRadius: 28 }}
-        handleIndicatorStyle={{ backgroundColor: 'rgba(26,8,4,0.16)', width: 40 }}
+        handleIndicatorStyle={{ backgroundColor: 'rgba(46,36,64,0.16)', width: 40 }}
       >
         <BottomSheetView className="px-6 pb-8 pt-2">
           <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/35">

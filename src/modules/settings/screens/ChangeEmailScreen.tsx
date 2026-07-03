@@ -76,7 +76,7 @@ export function ChangeEmailScreen() {
       ) : null}
       <GlassInput
         label="Nouvel email"
-        icon={<Mail size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<Mail size={15} color="rgba(62,53,82,0.26)" />}
         placeholder="nouvel.email@exemple.com"
         autoCapitalize="none"
         keyboardType="email-address"
@@ -85,7 +85,7 @@ export function ChangeEmailScreen() {
       />
       <GlassInput
         label="Mot de passe actuel"
-        icon={<Lock size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<Lock size={15} color="rgba(62,53,82,0.26)" />}
         placeholder="Confirmez votre mot de passe"
         secureTextEntry
         value={password}

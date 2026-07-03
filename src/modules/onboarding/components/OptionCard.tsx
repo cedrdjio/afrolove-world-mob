@@ -26,7 +26,7 @@ export function OptionCard({ Icon, title, description, selected, onPress }: Opti
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           className="flex-row items-center gap-3.5 rounded-[22px] px-5 py-5"
-          style={{ shadowColor: '#C86040', shadowOpacity: 0.3, shadowRadius: 24, shadowOffset: { width: 0, height: 10 } }}
+          style={{ shadowColor: '#6A4FC0', shadowOpacity: 0.3, shadowRadius: 24, shadowOffset: { width: 0, height: 10 } }}
         >
           <View className="h-[50px] w-[50px] items-center justify-center rounded-2xl bg-white/20">
             <Icon size={24} color="#fff" strokeWidth={1.8} />
@@ -47,7 +47,7 @@ export function OptionCard({ Icon, title, description, selected, onPress }: Opti
     <Pressable
       onPress={handlePress}
       className="flex-row items-center gap-3.5 rounded-[22px] border-[1.5px] border-white/[0.88] bg-white/65 px-5 py-5"
-      style={{ shadowColor: '#2C1408', shadowOpacity: 0.07, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
+      style={{ shadowColor: '#3D3552', shadowOpacity: 0.07, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
     >
       <View className="h-[50px] w-[50px] items-center justify-center rounded-2xl bg-brand/[0.08]">
         <Icon size={24} color={colors.brand.DEFAULT} strokeWidth={1.8} />

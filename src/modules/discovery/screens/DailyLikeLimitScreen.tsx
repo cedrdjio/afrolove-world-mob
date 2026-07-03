@@ -23,7 +23,7 @@ export function DailyLikeLimitScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={260} color="rgba(200,96,64,0.2)" bottom={140} right={-40} duration={9500} />
+        <GlowOrb size={260} color="rgba(106,79,192,0.2)" bottom={140} right={-40} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -42,7 +42,7 @@ export function DailyLikeLimitScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: 26,
-            shadowColor: '#C86040',
+            shadowColor: '#6A4FC0',
             shadowOpacity: 0.4,
             shadowRadius: 26,
             shadowOffset: { width: 0, height: 12 },

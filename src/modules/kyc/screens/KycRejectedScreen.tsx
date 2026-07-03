@@ -27,12 +27,12 @@ export function KycRejectedScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={260} color="rgba(180,30,20,0.18)" bottom={140} right={-40} duration={9500} />
+        <GlowOrb size={260} color="rgba(194,69,69,0.18)" bottom={140} right={-40} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
         <View className="mb-7 h-24 w-24 items-center justify-center rounded-full border-[1.5px] border-danger/30 bg-danger/[0.12]">
-          <AlertTriangle size={40} color="#E85A4E" strokeWidth={1.6} />
+          <AlertTriangle size={40} color="#C24545" strokeWidth={1.6} />
         </View>
 
         <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">

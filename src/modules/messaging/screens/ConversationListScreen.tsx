@@ -34,7 +34,7 @@ export function ConversationListScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(200,96,64,0.08)" top={-50} left={-50} duration={10000} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.08)" top={-50} left={-50} duration={10000} />
       </ScreenBackground>
 
       <View className="px-[22px]" style={{ paddingTop: 64 }}>

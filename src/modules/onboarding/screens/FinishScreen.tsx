@@ -49,8 +49,8 @@ export function FinishScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={280} color="rgba(201,134,42,0.2)" top={110} right={-50} duration={9000} />
-        <GlowOrb size={220} color="rgba(200,96,64,0.18)" bottom={160} left={-30} duration={11000} delay={1000} />
+        <GlowOrb size={280} color="rgba(155,126,222,0.2)" top={110} right={-50} duration={9000} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.18)" bottom={160} left={-30} duration={11000} delay={1000} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -63,7 +63,7 @@ export function FinishScreen() {
               borderRadius: 48,
               alignItems: 'center',
               justifyContent: 'center',
-              shadowColor: '#C86040',
+              shadowColor: '#6A4FC0',
               shadowOpacity: 0.45,
               shadowRadius: 30,
               shadowOffset: { width: 0, height: 14 },

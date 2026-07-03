@@ -31,7 +31,7 @@ export function ReportUserScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={210} color="rgba(180,30,20,0.07)" top={-50} right={-50} duration={9500} />
+        <GlowOrb size={210} color="rgba(194,69,69,0.07)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
@@ -70,7 +70,7 @@ export function ReportUserScreen() {
                   </Text>
                   <Text className="font-body text-[11px] text-ink-muted">{reason.description}</Text>
                 </View>
-                {selected ? <Check size={17} color="#B41E14" strokeWidth={2.5} /> : null}
+                {selected ? <Check size={17} color="#C24545" strokeWidth={2.5} /> : null}
               </Pressable>
             );
           })}
@@ -80,7 +80,7 @@ export function ReportUserScreen() {
           value={details}
           onChangeText={setDetails}
           placeholder="Détails supplémentaires (optionnel)"
-          placeholderTextColor="rgba(26,8,4,0.25)"
+          placeholderTextColor="rgba(46,36,64,0.25)"
           multiline
           className="mb-4 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5 font-body text-[13px] text-ink"
           style={{ minHeight: 80, textAlignVertical: 'top' }}

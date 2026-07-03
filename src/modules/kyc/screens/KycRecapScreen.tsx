@@ -49,7 +49,7 @@ export function KycRecapScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={210} color="rgba(201,134,42,0.08)" bottom={-40} left={-40} duration={10000} />
+        <GlowOrb size={210} color="rgba(155,126,222,0.08)" bottom={-40} left={-40} duration={10000} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 26 }}>

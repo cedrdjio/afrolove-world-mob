@@ -37,7 +37,7 @@ export const GlassInput = forwardRef<TextInput, GlassInputProps>(
           {icon}
           <TextInput
             ref={ref}
-            placeholderTextColor="rgba(26,8,4,0.3)"
+            placeholderTextColor="rgba(46,36,64,0.3)"
             onFocus={(e) => {
               setFocused(true);
               props.onFocus?.(e);

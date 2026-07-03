@@ -56,7 +56,6 @@ export default function RootLayout() {
               <Stack.Screen name="profile-completion" options={{ animation: 'fade' }} />
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="discover-filters" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="discover-search" options={{ presentation: 'modal' }} />
               <Stack.Screen name="discover-like-limit" options={{ presentation: 'transparentModal', animation: 'fade' }} />
               <Stack.Screen name="profile" />
               <Stack.Screen name="edit-profile" options={{ presentation: 'modal' }} />

@@ -35,7 +35,7 @@ export function MatchListScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={230} color="rgba(200,96,64,0.09)" top={-50} right={-50} duration={9500} />
+        <GlowOrb size={230} color="rgba(106,79,192,0.09)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
       <View className="px-[22px]" style={{ paddingTop: 64 }}>
@@ -52,7 +52,7 @@ export function MatchListScreen() {
           onPress={() => router.push('/matches-search')}
           className="mb-5 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5"
         >
-          <SearchIcon size={15} color="rgba(44,20,8,0.28)" />
+          <SearchIcon size={15} color="rgba(62,53,82,0.28)" />
           <Text className="font-body text-[13px] text-ink/30">Rechercher un match…</Text>
         </Pressable>
       </View>

@@ -35,7 +35,7 @@ export function Chip({ label, selected = false, onPress, size = 'md', icon }: Ch
             end={{ x: 1, y: 1 }}
             className={`rounded-full ${size === 'sm' ? 'px-3.5 py-2' : 'px-4 py-2.5'}`}
             style={{
-              shadowColor: '#C86040',
+              shadowColor: '#6A4FC0',
               shadowOpacity: 0.28,
               shadowRadius: 10,
               shadowOffset: { width: 0, height: 4 },

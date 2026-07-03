@@ -17,7 +17,7 @@ export function OnboardingLayout({ children, orbPosition = 'topRight' }: Onboard
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={250} color="rgba(200,96,64,0.11)" duration={9000} {...ORB_POSITIONS[orbPosition]} />
+        <GlowOrb size={250} color="rgba(106,79,192,0.11)" duration={9000} {...ORB_POSITIONS[orbPosition]} />
       </ScreenBackground>
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
         {children}

@@ -52,7 +52,7 @@ export function EditBioScreen() {
               multiline
               textAlignVertical="top"
               placeholder="Parlez de vous…"
-              placeholderTextColor="rgba(26,8,4,0.25)"
+              placeholderTextColor="rgba(46,36,64,0.25)"
               className="flex-1 font-body text-[14px] leading-[21px] text-ink"
             />
           </View>

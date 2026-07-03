@@ -7,7 +7,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -27,7 +26,7 @@
     "android": {
       "package": "com.afroloveworld.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0D0502",
+        "backgroundColor": "#221937",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -52,7 +51,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0D0502",
+          "backgroundColor": "#221937",
           "image": "./assets/splash-icon.png",
           "imageWidth": 140
         }
@@ -61,7 +60,7 @@
         "expo-notifications",
         {
           "icon": "./assets/android-icon-foreground.png",
-          "color": "#C86040"
+          "color": "#9B7EDE"
         }
       ],
       [

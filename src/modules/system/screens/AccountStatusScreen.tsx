@@ -54,7 +54,7 @@ export function AccountStatusScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={260} color={isBanned ? 'rgba(180,30,20,0.18)' : 'rgba(201,134,42,0.14)'} top={120} left={-40} duration={9000} />
+        <GlowOrb size={260} color={isBanned ? 'rgba(194,69,69,0.18)' : 'rgba(155,126,222,0.14)'} top={120} left={-40} duration={9000} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -65,7 +65,7 @@ export function AccountStatusScreen() {
           }`}
         >
           {isBanned ? (
-            <Ban size={40} color="#E85A4E" strokeWidth={1.6} />
+            <Ban size={40} color="#C24545" strokeWidth={1.6} />
           ) : (
             <UserX size={40} color={colors.gold.DEFAULT} strokeWidth={1.6} />
           )}

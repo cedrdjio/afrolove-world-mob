@@ -12,7 +12,7 @@ export function PremiumLockedScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={280} color="rgba(201,134,42,0.2)" top={100} left={-50} duration={9000} />
+        <GlowOrb size={280} color="rgba(155,126,222,0.2)" top={100} left={-50} duration={9000} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -31,7 +31,7 @@ export function PremiumLockedScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: 26,
-            shadowColor: '#C9862A',
+            shadowColor: '#9B7EDE',
             shadowOpacity: 0.4,
             shadowRadius: 26,
             shadowOffset: { width: 0, height: 12 },

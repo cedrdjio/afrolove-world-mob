@@ -55,7 +55,7 @@ export function InterestsScreen() {
         </View>
         <View className="flex-row items-center gap-1">
           <Text className="font-body-medium text-[11px] text-ink/30">min. {MIN_INTERESTS}</Text>
-          {isValid ? <Check size={11} color="rgba(26,8,4,0.3)" strokeWidth={3} /> : null}
+          {isValid ? <Check size={11} color="rgba(46,36,64,0.3)" strokeWidth={3} /> : null}
         </View>
       </View>
 

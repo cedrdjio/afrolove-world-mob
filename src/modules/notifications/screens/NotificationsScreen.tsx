@@ -27,7 +27,7 @@ const FILTERS: { key: 'all' | NotificationType; label: string }[] = [
 const TYPE_STYLE: Record<NotificationType, { Icon: LucideIcon; accent: string }> = {
   match: { Icon: Heart, accent: colors.brand.DEFAULT },
   message: { Icon: MessageCircle, accent: colors.gold.DEFAULT },
-  like: { Icon: Star, accent: '#C9862A' },
+  like: { Icon: Star, accent: '#9B7EDE' },
   kyc: { Icon: ShieldCheck, accent: colors.success },
 };
 
@@ -54,7 +54,7 @@ export function NotificationsScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(201,134,42,0.08)" bottom={-40} left={-40} duration={10000} />
+        <GlowOrb size={220} color="rgba(155,126,222,0.08)" bottom={-40} left={-40} duration={10000} />
       </ScreenBackground>
 
       <View className="px-6" style={{ paddingTop: 64 }}>

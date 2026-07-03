@@ -17,7 +17,7 @@ export function LogoutScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(200,96,64,0.09)" top={-50} left={-50} duration={9500} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.09)" top={-50} left={-50} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">

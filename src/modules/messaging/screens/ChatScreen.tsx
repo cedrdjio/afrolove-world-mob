@@ -70,7 +70,7 @@ export function ChatScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <ScreenBackground theme="cream">
-        <GlowOrb size={200} color="rgba(200,96,64,0.08)" top={-40} right={-40} duration={9500} />
+        <GlowOrb size={200} color="rgba(106,79,192,0.08)" top={-40} right={-40} duration={9500} />
       </ScreenBackground>
 
       <GlassSurface variant="lightStrong" radius={0} style={{ paddingTop: 52 }}>
@@ -92,7 +92,7 @@ export function ChatScreen() {
           </View>
           {conversation ? (
             <Pressable onPress={() => router.push(`/profile/${conversation.partnerId}`)}>
-              <MoreHorizontal size={18} color="rgba(26,8,4,0.35)" />
+              <MoreHorizontal size={18} color="rgba(46,36,64,0.35)" />
             </Pressable>
           ) : null}
         </View>
@@ -155,14 +155,14 @@ export function ChatScreen() {
       <GlassSurface variant="lightStrong" radius={0}>
         <View className="flex-row items-center gap-2.5 px-[18px] py-3.5" style={{ paddingBottom: 26 }}>
           <Pressable onPress={() => router.push(`/chat/${matchId}/emoji-picker`)} hitSlop={6}>
-            <Smile size={20} color="rgba(26,8,4,0.35)" />
+            <Smile size={20} color="rgba(46,36,64,0.35)" />
           </Pressable>
           <View className="flex-1 rounded-full border-[1.5px] border-white/90 bg-white/[0.68] px-[18px] py-3">
             <TextInput
               value={draft}
               onChangeText={setDraft}
               placeholder="Écrire un message…"
-              placeholderTextColor="rgba(26,8,4,0.28)"
+              placeholderTextColor="rgba(46,36,64,0.28)"
               className="font-body text-[13px] text-ink"
               multiline
               maxLength={2000}

@@ -37,7 +37,7 @@ export function BioScreen() {
           value={bio}
           onChangeText={(text) => setBio(text.slice(0, MAX_BIO_LENGTH))}
           placeholder="Passionné(e) de voyages, toujours partant(e) pour un bon plat et de belles conversations…"
-          placeholderTextColor="rgba(26,8,4,0.25)"
+          placeholderTextColor="rgba(46,36,64,0.25)"
           multiline
           textAlignVertical="top"
           className="flex-1 font-body text-[15px] leading-[22px] text-ink"

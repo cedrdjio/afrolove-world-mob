@@ -50,8 +50,8 @@ export function CarouselScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={280} color="rgba(200,96,64,0.11)" top={-70} right={-60} duration={9500} />
-        <GlowOrb size={220} color="rgba(201,134,42,0.09)" bottom={-30} left={-40} duration={11000} delay={1200} />
+        <GlowOrb size={280} color="rgba(106,79,192,0.11)" top={-70} right={-60} duration={9500} />
+        <GlowOrb size={220} color="rgba(155,126,222,0.09)" bottom={-30} left={-40} duration={11000} delay={1200} />
       </ScreenBackground>
 
       <ScrollView
@@ -74,7 +74,7 @@ export function CarouselScreen() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 32,
-                shadowColor: '#C86040',
+                shadowColor: '#6A4FC0',
                 shadowOpacity: 0.32,
                 shadowRadius: 28,
                 shadowOffset: { width: 0, height: 14 },

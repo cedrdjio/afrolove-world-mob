@@ -6,18 +6,17 @@ import { useLegalConsentStore } from '@/modules/legal/stores/legalConsentStore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Mail, Lock, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react-native';
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { ErrorState } from '@/shared/components/feedback/ErrorState';
-import { images } from '@/shared/constants/images';
 import { colors, gradients } from '@/shared/constants/theme';
 import { registerSchema, type RegisterFormValues } from '@/modules/auth/types/schemas';
 import { useRegister } from '@/modules/auth/hooks/useRegister';
 import { useAppError } from '@/shared/hooks/useAppError';
+import { BrandLogo } from '@/shared/components/ui/BrandLogo';
 
 export function RegisterScreen() {
   const router = useRouter();
@@ -65,8 +64,8 @@ export function RegisterScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={260} color="rgba(201,134,42,0.1)" top={-60} left={-60} duration={10000} />
-        <GlowOrb size={220} color="rgba(200,96,64,0.11)" bottom={-40} right={-30} duration={9000} delay={1000} />
+        <GlowOrb size={260} color="rgba(155,126,222,0.1)" top={-60} left={-60} duration={10000} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.11)" bottom={-40} right={-30} duration={9000} delay={1000} />
       </ScreenBackground>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -75,7 +74,7 @@ export function RegisterScreen() {
             <IconButton onPress={() => router.back()}>
               <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
             </IconButton>
-            <Image source={images.logoLight} style={{ width: 44, height: 44, borderRadius: 13 }} contentFit="cover" />
+            <BrandLogo size={44} />
             <View style={{ width: 44 }} />
           </View>
 
@@ -101,7 +100,7 @@ export function RegisterScreen() {
             render={({ field: { onChange, onBlur, value } }) => (
               <GlassInput
                 label="Prénom"
-                icon={<User size={15} color="rgba(44,20,8,0.26)" />}
+                icon={<User size={15} color="rgba(62,53,82,0.26)" />}
                 placeholder="Votre prénom"
                 value={value}
                 onChangeText={onChange}
@@ -116,7 +115,7 @@ export function RegisterScreen() {
             render={({ field: { onChange, onBlur, value } }) => (
               <GlassInput
                 label="Email"
-                icon={<Mail size={15} color="rgba(44,20,8,0.26)" />}
+                icon={<Mail size={15} color="rgba(62,53,82,0.26)" />}
                 placeholder="Adresse email"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -133,7 +132,7 @@ export function RegisterScreen() {
             render={({ field: { onChange, onBlur, value } }) => (
               <GlassInput
                 label="Mot de passe"
-                icon={<Lock size={15} color="rgba(44,20,8,0.26)" />}
+                icon={<Lock size={15} color="rgba(62,53,82,0.26)" />}
                 placeholder="••••••••"
                 secureTextEntry={!showPassword}
                 value={value}
@@ -142,9 +141,9 @@ export function RegisterScreen() {
                 error={errors.password?.message}
                 rightIcon={
                   showPassword ? (
-                    <EyeOff size={15} color="rgba(44,20,8,0.2)" />
+                    <EyeOff size={15} color="rgba(62,53,82,0.2)" />
                   ) : (
-                    <Eye size={15} color="rgba(44,20,8,0.2)" />
+                    <Eye size={15} color="rgba(62,53,82,0.2)" />
                   )
                 }
                 onRightIconPress={() => setShowPassword((v) => !v)}

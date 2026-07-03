@@ -50,14 +50,14 @@ export function ChangePasswordScreen() {
       ) : null}
       <GlassInput
         label="Mot de passe actuel"
-        icon={<Lock size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<Lock size={15} color="rgba(62,53,82,0.26)" />}
         secureTextEntry
         value={current}
         onChangeText={setCurrent}
       />
       <GlassInput
         label="Nouveau mot de passe"
-        icon={<Lock size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<Lock size={15} color="rgba(62,53,82,0.26)" />}
         secureTextEntry
         value={next}
         onChangeText={setNext}
@@ -69,7 +69,7 @@ export function ChangePasswordScreen() {
       />
       <GlassInput
         label="Confirmer le mot de passe"
-        icon={<Lock size={15} color="rgba(44,20,8,0.26)" />}
+        icon={<Lock size={15} color="rgba(62,53,82,0.26)" />}
         secureTextEntry
         value={confirm}
         onChangeText={setConfirm}

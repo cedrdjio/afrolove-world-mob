@@ -52,7 +52,7 @@ export function UploadIdScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={220} color="rgba(200,96,64,0.08)" top={-50} right={-50} duration={9500} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.08)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 26 }}>
@@ -129,7 +129,7 @@ export function UploadIdScreen() {
               <Image source={{ uri: backUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
             ) : (
               <>
-                <IdCard size={26} color="rgba(200,96,64,0.45)" strokeWidth={1.5} />
+                <IdCard size={26} color="rgba(106,79,192,0.45)" strokeWidth={1.5} />
                 <Text className="font-heading text-[10px] uppercase text-brand/50">Verso</Text>
               </>
             )}

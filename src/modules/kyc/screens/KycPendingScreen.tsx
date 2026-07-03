@@ -46,8 +46,8 @@ export function KycPendingScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={300} color="rgba(201,134,42,0.14)" top={110} left={45} duration={8000} />
-        <GlowOrb size={180} color="rgba(200,96,64,0.1)" bottom={100} right={20} duration={9500} />
+        <GlowOrb size={300} color="rgba(155,126,222,0.14)" top={110} left={45} duration={8000} />
+        <GlowOrb size={180} color="rgba(106,79,192,0.1)" bottom={100} right={20} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-7" style={{ paddingBottom: 20 }}>
@@ -55,7 +55,7 @@ export function KycPendingScreen() {
           style={[floatStyle]}
           className="mb-8 h-[110px] w-[110px] items-center justify-center rounded-[32px] border border-white/[0.14] bg-white/[0.08]"
         >
-          <ShieldCheck size={52} color="rgba(201,134,42,0.9)" strokeWidth={1.4} />
+          <ShieldCheck size={52} color="rgba(155,126,222,0.9)" strokeWidth={1.4} />
         </Animated.View>
 
         <Text className="mb-2 text-center font-display-black text-[34px] uppercase tracking-wide text-white">

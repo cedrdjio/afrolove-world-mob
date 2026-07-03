@@ -46,7 +46,7 @@ export function EditJobScreen() {
       ) : (
         <GlassInput
           label="Métier"
-          icon={<Briefcase size={15} color="rgba(44,20,8,0.26)" />}
+          icon={<Briefcase size={15} color="rgba(62,53,82,0.26)" />}
           placeholder="Votre profession"
           value={job}
           onChangeText={setJob}

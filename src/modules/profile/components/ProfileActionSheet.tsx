@@ -36,7 +36,7 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: colors.cream.DEFAULT, borderRadius: 28 }}
-        handleIndicatorStyle={{ backgroundColor: 'rgba(26,8,4,0.16)', width: 40 }}
+        handleIndicatorStyle={{ backgroundColor: 'rgba(46,36,64,0.16)', width: 40 }}
       >
         <BottomSheetView className="px-6 pb-8 pt-2">
           <Pressable

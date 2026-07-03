@@ -43,7 +43,7 @@ export function DeleteAccountScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={200} color="rgba(180,30,20,0.09)" bottom={-40} right={-40} duration={9500} />
+        <GlowOrb size={200} color="rgba(194,69,69,0.09)" bottom={-40} right={-40} duration={9500} />
       </ScreenBackground>
 
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
@@ -57,7 +57,7 @@ export function DeleteAccountScreen() {
 
         <View className="mb-5 items-center">
           <View className="mb-3.5 h-16 w-16 items-center justify-center rounded-full border-[1.5px] border-danger/30 bg-danger/[0.1]">
-            <AlertTriangle size={28} color="#E85A4E" strokeWidth={1.7} />
+            <AlertTriangle size={28} color="#C24545" strokeWidth={1.7} />
           </View>
           <Text className="text-center font-display text-[24px] uppercase leading-none text-ink">
             Cette action est{'\n'}irréversible
@@ -80,7 +80,7 @@ export function DeleteAccountScreen() {
           value={confirmText}
           onChangeText={setConfirmText}
           placeholder={CONFIRM_WORD}
-          placeholderTextColor="rgba(26,8,4,0.2)"
+          placeholderTextColor="rgba(46,36,64,0.2)"
           autoCapitalize="characters"
           className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-white/70 px-5 py-4 font-heading text-[15px] uppercase tracking-wide text-ink"
         />

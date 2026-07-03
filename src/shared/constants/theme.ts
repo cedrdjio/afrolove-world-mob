@@ -1,71 +1,80 @@
 /**
  * AfriLove World — design tokens
- * Extracted from the source design (AfriLove App Screens.dc.html).
- * Warm terracotta / gold palette, glassmorphism surfaces, dual light+dark themes.
+ * Charte graphique v1.0 (juillet 2026) : gamme lavande ancrée par l'aubergine,
+ * verre Fluent/glassmorphism, dégradé signature réservé aux actions.
+ *
+ * Token names are semantic and stable — screens reference `brand`, `ink`,
+ * `cream`, `deep`, `gold` — so a rebrand swaps values here, never call sites.
+ * (`gold` is the premium/accent slot, now the lavender accent range;
+ * `cream` is the light surface slot, now blanc-lavande/brume.)
  */
 
 export const colors = {
   brand: {
-    light: '#D4774A',
-    DEFAULT: '#C86040',
-    dark: '#9A3C1C',
+    light: '#8B69D6',
+    DEFAULT: '#6A4FC0',
+    dark: '#5B3E9E',
   },
+  // Accent (badges vérifiés, premium) — lavande/lilas
   gold: {
-    light: '#E0A94A',
-    DEFAULT: '#C9862A',
-    dark: '#8A5010',
+    light: '#C3B1E1',
+    DEFAULT: '#9B7EDE',
+    dark: '#7C5CBF',
   },
+  // Texte sur fonds clairs — aubergine
   ink: {
-    DEFAULT: '#1A0804',
-    soft: '#2C1408',
-    muted: '#7A5540',
-    faint: '#9A7060',
+    DEFAULT: '#2E2440',
+    soft: '#3D3552',
+    muted: '#5E5473',
+    faint: '#8A7FA0',
   },
+  // Surfaces claires — blanc lavande / brume
   cream: {
-    DEFAULT: '#FDF5EE',
-    bezel1: '#E8DDD4',
-    bezel2: '#D4C4B0',
+    DEFAULT: '#FAF8FD',
+    bezel1: '#EDE4F9',
+    bezel2: '#D9C9F1',
   },
+  // Surfaces sombres — nuit aubergine
   deep: {
-    DEFAULT: '#0D0502',
-    soft: '#2A1A10',
-    ember: '#6B2810',
-    black: '#070201',
+    DEFAULT: '#221937',
+    soft: '#3A2B4F',
+    ember: '#4A2C7F',
+    black: '#180F2A',
   },
-  success: '#4CAF50',
-  danger: '#B41E14',
+  success: '#3E9B5F',
+  danger: '#C24545',
   white: '#FFFFFF',
 } as const;
 
 export const gradients = {
-  brand: [colors.brand.light, colors.brand.dark] as const, // 135deg
-  brandVertical: [colors.brand.light, colors.brand.dark] as const,
-  bezelLight: [colors.cream.bezel1, colors.cream.bezel2] as const, // 145deg
-  bezelDark: [colors.deep.soft, colors.deep.DEFAULT] as const, // 145deg
-  splashBg: ['#6B2810', '#2A1008', '#070201'] as const, // radial approximation, use as linear fallback
-  gold: [colors.gold.DEFAULT, colors.gold.dark] as const,
+  brand: ['#8B69D6', '#5B3E9E'] as const, // dégradé signature · 135°
+  brandVertical: ['#8B69D6', '#5B3E9E'] as const,
+  bezelLight: ['#F5F0FC', '#D9C9F1'] as const, // dégradé brume · 145°
+  bezelDark: [colors.deep.soft, colors.deep.DEFAULT] as const,
+  splashBg: ['#4A2C7F', '#2E2440', '#180F2A'] as const, // dégradé nuit
+  gold: ['#A98FD8', '#7C5CBF'] as const, // accent lavande événementiel
 };
 
 export const glass = {
   light: {
-    background: 'rgba(255,255,255,0.72)',
-    backgroundStrong: 'rgba(255,255,255,0.82)',
-    backgroundSoft: 'rgba(255,255,255,0.62)',
-    border: 'rgba(255,255,255,0.9)',
+    background: 'rgba(255,255,255,0.5)',
+    backgroundStrong: 'rgba(255,255,255,0.66)',
+    backgroundSoft: 'rgba(255,255,255,0.4)',
+    border: 'rgba(255,255,255,0.75)',
   },
   dark: {
-    background: 'rgba(255,255,255,0.14)',
-    backgroundStrong: 'rgba(255,255,255,0.18)',
-    border: 'rgba(255,255,255,0.24)',
+    background: 'rgba(255,255,255,0.1)',
+    backgroundStrong: 'rgba(255,255,255,0.16)',
+    border: 'rgba(255,255,255,0.22)',
   },
 };
 
 export const radii = {
-  sm: 12,
-  md: 16,
-  lg: 18,
-  xl: 22,
-  xxl: 24,
+  sm: 14,
+  md: 18,
+  lg: 20,
+  xl: 24,
+  xxl: 28,
   pill: 999,
 };
 
@@ -76,52 +85,49 @@ export const spacing = {
 
 export const shadows = {
   brand: {
-    shadowColor: colors.brand.dark,
-    shadowOpacity: 0.32,
+    shadowColor: '#5B3E9E',
+    shadowOpacity: 0.35,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 12 },
     elevation: 10,
   },
   soft: {
-    shadowColor: colors.ink.soft,
-    shadowOpacity: 0.09,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#5B3E9E',
+    shadowOpacity: 0.1,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 5 },
     elevation: 4,
   },
   card: {
-    shadowColor: '#2C1408',
-    shadowOpacity: 0.18,
-    shadowRadius: 24,
+    shadowColor: '#2E2440',
+    shadowOpacity: 0.16,
+    shadowRadius: 26,
     shadowOffset: { width: 0, height: 10 },
     elevation: 8,
   },
 };
 
 export const fontFamilies = {
-  displayBlack: 'BarlowCondensed-ExtraBold',
-  display: 'BarlowCondensed-Bold',
-  displaySemibold: 'BarlowCondensed-SemiBold',
-  displayMedium: 'BarlowCondensed-Medium',
-  heading: 'Barlow-Bold',
-  headingSemibold: 'Barlow-SemiBold',
-  headingMedium: 'Barlow-Medium',
-  body: 'Montserrat-Regular',
-  bodyMedium: 'Montserrat-Medium',
-  bodySemibold: 'Montserrat-SemiBold',
+  displayBlack: 'PlusJakartaSans-ExtraBold',
+  display: 'PlusJakartaSans-Bold',
+  displaySemibold: 'PlusJakartaSans-SemiBold',
+  displayMedium: 'PlusJakartaSans-Medium',
+  heading: 'PlusJakartaSans-Bold',
+  headingSemibold: 'PlusJakartaSans-SemiBold',
+  headingMedium: 'PlusJakartaSans-Medium',
+  body: 'Nunito-Regular',
+  bodyMedium: 'Nunito-Medium',
+  bodySemibold: 'Nunito-SemiBold',
 } as const;
 
 export const fontMap = {
-  'BarlowCondensed-ExtraBold': require('@expo-google-fonts/barlow-condensed').BarlowCondensed_800ExtraBold,
-  'BarlowCondensed-Bold': require('@expo-google-fonts/barlow-condensed').BarlowCondensed_700Bold,
-  'BarlowCondensed-SemiBold': require('@expo-google-fonts/barlow-condensed').BarlowCondensed_600SemiBold,
-  'BarlowCondensed-Medium': require('@expo-google-fonts/barlow-condensed').BarlowCondensed_500Medium,
-  'Barlow-Bold': require('@expo-google-fonts/barlow').Barlow_700Bold,
-  'Barlow-SemiBold': require('@expo-google-fonts/barlow').Barlow_600SemiBold,
-  'Barlow-Medium': require('@expo-google-fonts/barlow').Barlow_500Medium,
-  'Montserrat-Regular': require('@expo-google-fonts/montserrat').Montserrat_400Regular,
-  'Montserrat-Medium': require('@expo-google-fonts/montserrat').Montserrat_500Medium,
-  'Montserrat-SemiBold': require('@expo-google-fonts/montserrat').Montserrat_600SemiBold,
+  'PlusJakartaSans-ExtraBold': require('@expo-google-fonts/plus-jakarta-sans').PlusJakartaSans_800ExtraBold,
+  'PlusJakartaSans-Bold': require('@expo-google-fonts/plus-jakarta-sans').PlusJakartaSans_700Bold,
+  'PlusJakartaSans-SemiBold': require('@expo-google-fonts/plus-jakarta-sans').PlusJakartaSans_600SemiBold,
+  'PlusJakartaSans-Medium': require('@expo-google-fonts/plus-jakarta-sans').PlusJakartaSans_500Medium,
+  'Nunito-Regular': require('@expo-google-fonts/nunito').Nunito_400Regular,
+  'Nunito-Medium': require('@expo-google-fonts/nunito').Nunito_500Medium,
+  'Nunito-SemiBold': require('@expo-google-fonts/nunito').Nunito_600SemiBold,
 };
 
 export type ThemeColors = typeof colors;

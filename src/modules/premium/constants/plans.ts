@@ -24,5 +24,5 @@ export const PLAN_TONE_STYLES: Record<PremiumPlan['tone'], { bg: string; border:
   red: { bg: 'rgba(200,60,50,0.25)', border: 'rgba(200,60,50,0.4)', text: '#FF9E8C', cta: 'rgba(200,60,50,0.5)' },
   orange: { bg: 'rgba(200,110,20,0.25)', border: 'rgba(200,110,20,0.4)', text: '#FFBE64', cta: 'rgba(200,110,20,0.5)' },
   green: { bg: 'rgba(30,140,60,0.22)', border: 'rgba(30,140,60,0.38)', text: '#78F096', cta: 'rgba(30,140,60,0.45)' },
-  gold: { bg: 'rgba(201,134,42,0.28)', border: 'rgba(201,134,42,0.55)', text: '#C9862A', cta: 'rgba(201,134,42,0.5)' },
+  gold: { bg: 'rgba(155,126,222,0.28)', border: 'rgba(155,126,222,0.55)', text: '#9B7EDE', cta: 'rgba(155,126,222,0.5)' },
 };

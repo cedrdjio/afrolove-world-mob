@@ -36,7 +36,7 @@ export function ResetPasswordScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={260} color="rgba(200,96,64,0.11)" top={-60} right={-60} duration={9500} />
+        <GlowOrb size={260} color="rgba(106,79,192,0.11)" top={-60} right={-60} duration={9500} />
       </ScreenBackground>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -67,7 +67,7 @@ export function ResetPasswordScreen() {
             render={({ field: { onChange, onBlur, value } }) => (
               <GlassInput
                 label="Nouveau mot de passe"
-                icon={<Lock size={16} color="rgba(44,20,8,0.28)" />}
+                icon={<Lock size={16} color="rgba(62,53,82,0.28)" />}
                 placeholder="••••••••••"
                 secureTextEntry={!showPassword}
                 value={value}
@@ -76,9 +76,9 @@ export function ResetPasswordScreen() {
                 error={errors.password?.message}
                 rightIcon={
                   showPassword ? (
-                    <EyeOff size={15} color="rgba(44,20,8,0.22)" />
+                    <EyeOff size={15} color="rgba(62,53,82,0.22)" />
                   ) : (
-                    <Eye size={15} color="rgba(44,20,8,0.22)" />
+                    <Eye size={15} color="rgba(62,53,82,0.22)" />
                   )
                 }
                 onRightIconPress={() => setShowPassword((v) => !v)}
@@ -91,7 +91,7 @@ export function ResetPasswordScreen() {
             render={({ field: { onChange, onBlur, value } }) => (
               <GlassInput
                 label="Confirmer le mot de passe"
-                icon={<Lock size={16} color="rgba(44,20,8,0.28)" />}
+                icon={<Lock size={16} color="rgba(62,53,82,0.28)" />}
                 placeholder="••••••••••"
                 secureTextEntry={!showPassword}
                 value={value}

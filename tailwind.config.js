@@ -1,55 +1,57 @@
 /** @type {import('tailwindcss').Config} */
+// AfriLove World — charte lavande v1.0. Token names are semantic and stable:
+// screens use brand/gold/ink/cream/deep; a rebrand only swaps values here.
 module.exports = {
   content: ['./app/**/*.{js,jsx,ts,tsx}', './src/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {
-        // Brand — warm terracotta/brown (primary CTA gradient endpoints)
+        // Brand — violet profond (actions, liens, CTA)
         brand: {
-          light: '#D4774A',
-          DEFAULT: '#C86040',
-          dark: '#9A3C1C',
+          light: '#8B69D6',
+          DEFAULT: '#6A4FC0',
+          dark: '#5B3E9E',
         },
-        // Accent gold (verified badges, premium)
+        // Accent (badges vérifiés, premium) — lavande/lilas
         gold: {
-          light: '#E0A94A',
-          DEFAULT: '#C9862A',
-          dark: '#8A5010',
+          light: '#C3B1E1',
+          DEFAULT: '#9B7EDE',
+          dark: '#7C5CBF',
         },
-        // Ink — text on light backgrounds
+        // Ink — aubergine, texte sur fonds clairs
         ink: {
-          DEFAULT: '#1A0804',
-          soft: '#2C1408',
-          muted: '#7A5540',
-          faint: '#9A7060',
+          DEFAULT: '#2E2440',
+          soft: '#3D3552',
+          muted: '#5E5473',
+          faint: '#8A7FA0',
         },
-        // Cream — light theme surface
+        // Cream — blanc lavande / brume, surfaces claires
         cream: {
-          DEFAULT: '#FDF5EE',
-          bezel1: '#E8DDD4',
-          bezel2: '#D4C4B0',
+          DEFAULT: '#FAF8FD',
+          bezel1: '#EDE4F9',
+          bezel2: '#D9C9F1',
         },
-        // Deep — dark theme surface (splash, profile hero, match, premium)
+        // Deep — nuit aubergine (splash, héros, match, premium)
         deep: {
-          DEFAULT: '#0D0502',
-          soft: '#2A1A10',
-          ember: '#6B2810',
-          black: '#070201',
+          DEFAULT: '#221937',
+          soft: '#3A2B4F',
+          ember: '#4A2C7F',
+          black: '#180F2A',
         },
-        success: '#4CAF50',
-        danger: '#B41E14',
+        success: '#3E9B5F',
+        danger: '#C24545',
       },
       fontFamily: {
-        display: ['BarlowCondensed-Bold'],
-        'display-black': ['BarlowCondensed-ExtraBold'],
-        'display-semibold': ['BarlowCondensed-SemiBold'],
-        heading: ['Barlow-Bold'],
-        'heading-semibold': ['Barlow-SemiBold'],
-        'heading-medium': ['Barlow-Medium'],
-        body: ['Montserrat-Regular'],
-        'body-medium': ['Montserrat-Medium'],
-        'body-semibold': ['Montserrat-SemiBold'],
+        display: ['PlusJakartaSans-Bold'],
+        'display-black': ['PlusJakartaSans-ExtraBold'],
+        'display-semibold': ['PlusJakartaSans-SemiBold'],
+        heading: ['PlusJakartaSans-Bold'],
+        'heading-semibold': ['PlusJakartaSans-SemiBold'],
+        'heading-medium': ['PlusJakartaSans-Medium'],
+        body: ['Nunito-Regular'],
+        'body-medium': ['Nunito-Medium'],
+        'body-semibold': ['Nunito-SemiBold'],
       },
     },
   },

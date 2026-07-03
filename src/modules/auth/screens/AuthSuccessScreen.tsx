@@ -21,8 +21,8 @@ export function AuthSuccessScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={280} color="rgba(76,175,80,0.16)" top={120} left={-40} duration={9000} />
-        <GlowOrb size={220} color="rgba(200,96,64,0.18)" bottom={160} right={-30} duration={11000} delay={1200} />
+        <GlowOrb size={280} color="rgba(62,155,95,0.16)" top={120} left={-40} duration={9000} />
+        <GlowOrb size={220} color="rgba(106,79,192,0.18)" bottom={160} right={-30} duration={11000} delay={1200} />
       </ScreenBackground>
 
       <View className="flex-1 items-center justify-center px-8">
@@ -35,7 +35,7 @@ export function AuthSuccessScreen() {
               borderRadius: 48,
               alignItems: 'center',
               justifyContent: 'center',
-              shadowColor: '#C86040',
+              shadowColor: '#6A4FC0',
               shadowOpacity: 0.45,
               shadowRadius: 30,
               shadowOffset: { width: 0, height: 14 },

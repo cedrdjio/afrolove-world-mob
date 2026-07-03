@@ -85,7 +85,7 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
             )}
           </Animated.View>
           <LinearGradient
-            colors={['rgba(0,0,0,0.18)', 'transparent', 'transparent', 'rgba(8,3,1,0.95)']}
+            colors={['rgba(0,0,0,0.18)', 'transparent', 'transparent', 'rgba(24,15,42,0.95)']}
             locations={[0, 0.25, 0.55, 1]}
             style={{ position: 'absolute', inset: 0 }}
           />

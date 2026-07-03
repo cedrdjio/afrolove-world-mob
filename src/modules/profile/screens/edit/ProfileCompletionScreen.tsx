@@ -44,7 +44,7 @@ export function ProfileCompletionScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream">
-        <GlowOrb size={230} color="rgba(201,134,42,0.09)" bottom={-40} right={-40} duration={10000} />
+        <GlowOrb size={230} color="rgba(155,126,222,0.09)" bottom={-40} right={-40} duration={10000} />
       </ScreenBackground>
 
       <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 68 }} showsVerticalScrollIndicator={false}>
@@ -59,7 +59,7 @@ export function ProfileCompletionScreen() {
                   <Stop offset="100%" stopColor={colors.brand.dark} />
                 </SvgLinearGradient>
               </Defs>
-              <Circle cx={58} cy={58} r={RADIUS} stroke="rgba(44,20,8,0.07)" strokeWidth={9} fill="none" />
+              <Circle cx={58} cy={58} r={RADIUS} stroke="rgba(62,53,82,0.07)" strokeWidth={9} fill="none" />
               <Circle
                 cx={58}
                 cy={58}
@@ -102,7 +102,7 @@ export function ProfileCompletionScreen() {
               <Text className="flex-1 font-heading-semibold text-[13px] uppercase text-ink">{item.title}</Text>
               <View className="flex-row items-center gap-1">
                 <Text className="font-body-medium text-[10px] text-brand/60">Fait</Text>
-                <Check size={10} color="rgba(200,96,64,0.6)" strokeWidth={3} />
+                <Check size={10} color="rgba(106,79,192,0.6)" strokeWidth={3} />
               </View>
             </View>
           ))}

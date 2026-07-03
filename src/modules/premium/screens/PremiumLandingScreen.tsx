@@ -20,7 +20,7 @@ export function PremiumLandingScreen() {
   return (
     <View className="flex-1">
       <ScreenBackground theme="deep">
-        <GlowOrb size={300} color="rgba(201,134,42,0.18)" top={90} left={45} duration={9000} />
+        <GlowOrb size={300} color="rgba(155,126,222,0.18)" top={90} left={45} duration={9000} />
       </ScreenBackground>
 
       <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 62 }} showsVerticalScrollIndicator={false}>
@@ -47,7 +47,7 @@ export function PremiumLandingScreen() {
           {FEATURES.map((feature) => (
             <View key={feature.label} className="flex-row items-center gap-3.5">
               <View className="h-[30px] w-[30px] items-center justify-center rounded-lg bg-gold/[0.22]">
-                <feature.Icon size={15} color="#C9862A" />
+                <feature.Icon size={15} color="#9B7EDE" />
               </View>
               <Text className="font-heading-semibold text-[13px] uppercase text-white/90">{feature.label}</Text>
             </View>

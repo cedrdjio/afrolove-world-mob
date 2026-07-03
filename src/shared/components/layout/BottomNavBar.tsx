@@ -49,7 +49,7 @@ function TabItem({
       <Animated.View style={iconStyle}>
         <Icon
           size={22}
-          color={active ? colors.brand.DEFAULT : 'rgba(26,8,4,0.28)'}
+          color={active ? colors.brand.DEFAULT : 'rgba(46,36,64,0.28)'}
           strokeWidth={active ? 2.4 : 1.8}
           fill={active && fillWhenActive ? colors.brand.DEFAULT : 'none'}
         />

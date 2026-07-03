@@ -143,7 +143,7 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
     <Animated.View
       style={[
         { position: 'absolute', inset: 0, borderRadius: 28, overflow: 'hidden' },
-        { shadowColor: '#2C1408', shadowOpacity: 0.28, shadowRadius: 30, shadowOffset: { width: 0, height: 14 } },
+        { shadowColor: '#3D3552', shadowOpacity: 0.28, shadowRadius: 30, shadowOffset: { width: 0, height: 14 } },
         cardStyle,
       ]}
     >
@@ -158,7 +158,7 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
         <PhotoPlaceholder seed={profile.id.charCodeAt(0)} style={{ position: 'absolute', inset: 0 }} showIcon iconSize={40} />
       )}
       <LinearGradient
-        colors={['transparent', 'rgba(8,3,1,0.92)']}
+        colors={['transparent', 'rgba(24,15,42,0.92)']}
         locations={[0.38, 1]}
         style={{ position: 'absolute', inset: 0 }}
       />

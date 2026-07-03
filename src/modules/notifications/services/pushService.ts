@@ -23,7 +23,7 @@ async function registerDevice(userId: string): Promise<boolean> {
         name: 'Notifications',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#C86040',
+        lightColor: '#6A4FC0',
       });
     }
 
