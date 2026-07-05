@@ -7,4 +7,11 @@ export const images = {
   logoRound: require('@/assets/images/logo-round.png'),
   /** White silhouette — monochrome contexts on deep backgrounds. */
   logoSilhouette: require('@/assets/images/logo-silhouette.png'),
+  /** Full-bleed hero photo for the welcome screen (charte: photo + carte
+   *  verre en bas, pas de dégradé orange). */
+  welcomeHero: require('@/assets/images/welcome-hero.jpg'),
+  /** Presentation carousel backgrounds — one photo per slide. */
+  slideAmour: require('@/assets/images/slide-amour.jpg'),
+  slideDiaspora: require('@/assets/images/slide-diaspora.jpg'),
+  slideConfiance: require('@/assets/images/slide-confiance.jpg'),
 };

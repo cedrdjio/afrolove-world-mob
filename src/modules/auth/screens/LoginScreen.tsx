@@ -63,9 +63,11 @@ export function LoginScreen() {
             <View style={{ width: 44 }} />
           </View>
 
-          <Animated.View entering={FadeInDown.duration(420).springify().damping(17)}>
-            <Text className="mb-1.5 font-display text-[38px] uppercase leading-none text-ink">Bon retour</Text>
-            <Text className="mb-7 font-body text-[13px] text-ink-muted">Ravis de vous revoir parmi nous.</Text>
+          <Animated.View entering={FadeInDown.duration(420)}>
+            <Text className="mb-1.5 font-display text-[34px] leading-[1.08] text-ink">Bon retour</Text>
+            <Text className="mb-7 font-body text-[13px] text-ink-muted">
+              Reprends là où l'histoire s'est arrêtée.
+            </Text>
           </Animated.View>
 
           {loginError ? (
@@ -78,7 +80,7 @@ export function LoginScreen() {
             </View>
           ) : null}
 
-          <Animated.View entering={FadeInDown.delay(90).duration(420).springify().damping(17)}>
+          <Animated.View entering={FadeInDown.delay(90).duration(420)}>
           <Controller
             control={control}
             name="email"
@@ -131,7 +133,7 @@ export function LoginScreen() {
           </View>
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(180).duration(420).springify().damping(17)}>
+          <Animated.View entering={FadeInDown.delay(180).duration(420)}>
           <GradientButton
             label="Se connecter"
             loading={login.isPending}
@@ -148,7 +150,7 @@ export function LoginScreen() {
           <Pressable
             disabled={!googleAuth.isReady || googleAuth.isPending}
             onPress={() => googleAuth.promptAsync()}
-            className="mb-6 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-white/90 bg-white/75 py-3.5"
+            className="mb-6 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.5] py-3.5"
             style={{ opacity: googleAuth.isReady ? 1 : 0.5 }}
           >
             {googleAuth.isPending ? (

@@ -59,13 +59,13 @@ export function VerifyEmailScreen() {
         <ScreenHeader />
 
         <View
-          className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/70"
+          className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]"
           style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
         >
           <MailCheck size={26} color={colors.brand.DEFAULT} strokeWidth={1.8} />
         </View>
 
-        <Text className="mb-2.5 font-display text-[34px] uppercase leading-none text-ink">Vérifiez{'\n'}votre email</Text>
+        <Text className="mb-2.5 font-display text-[34px] leading-none text-ink">Vérifiez{'\n'}votre email</Text>
         <Text className="mb-8 font-body text-[13.5px] leading-[21px] text-ink-muted">
           Saisissez le code envoyé à {email ?? 'votre adresse email'}, ou ouvrez directement le lien reçu par
           email.

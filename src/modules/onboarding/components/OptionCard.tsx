@@ -32,7 +32,7 @@ export function OptionCard({ Icon, title, description, selected, onPress }: Opti
             <Icon size={24} color="#fff" strokeWidth={1.8} />
           </View>
           <View className="flex-1">
-            <Text className="mb-1 font-heading text-[16px] uppercase text-white">{title}</Text>
+            <Text className="mb-1 font-heading text-[16px] text-white">{title}</Text>
             <Text className="font-body text-[12px] text-white/70">{description}</Text>
           </View>
           <View className="h-[26px] w-[26px] items-center justify-center rounded-full bg-white">
@@ -53,7 +53,7 @@ export function OptionCard({ Icon, title, description, selected, onPress }: Opti
         <Icon size={24} color={colors.brand.DEFAULT} strokeWidth={1.8} />
       </View>
       <View className="flex-1">
-        <Text className="mb-1 font-heading text-[16px] uppercase text-ink">{title}</Text>
+        <Text className="mb-1 font-heading text-[16px] text-ink">{title}</Text>
         <Text className="font-body text-[12px] text-ink-muted">{description}</Text>
       </View>
       <View className="h-[26px] w-[26px] rounded-full border-2 border-ink/[0.14]" />

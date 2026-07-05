@@ -24,7 +24,7 @@ function renderContent(content: string) {
     }
     if (trimmed.startsWith('## ')) {
       return (
-        <Text key={index} className="mb-1.5 mt-4 font-heading text-[13.5px] uppercase tracking-wide text-ink">
+        <Text key={index} className="mb-1.5 mt-4 font-heading text-[13.5px] tracking-wide text-ink">
           {trimmed.slice(3)}
         </Text>
       );
@@ -78,7 +78,7 @@ export function LegalDocumentScreen() {
 
       <View className="flex-1 px-6" style={{ paddingTop: 26, paddingBottom: 30 }}>
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="flex-1 pr-3 font-display text-[21px] uppercase leading-tight text-ink">
+          <Text className="flex-1 pr-3 font-display text-[21px] leading-tight text-ink">
             {documentQuery.data?.title ?? 'Document'}
           </Text>
           <Pressable onPress={() => router.back()}>
@@ -99,9 +99,9 @@ export function LegalDocumentScreen() {
             <ErrorState error={documentError} variant="inline" onRetry={() => documentQuery.refetch()} />
           </View>
         ) : (
-          <Animated.View entering={FadeInDown.duration(350).springify().damping(17)} className="flex-1">
+          <Animated.View entering={FadeInDown.duration(350)} className="flex-1">
             <ScrollView
-              className="mb-4 flex-1 rounded-2xl border-[1.5px] border-white/90 bg-white/70"
+              className="mb-4 flex-1 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]"
               contentContainerClassName="px-5 py-4"
               showsVerticalScrollIndicator
             >

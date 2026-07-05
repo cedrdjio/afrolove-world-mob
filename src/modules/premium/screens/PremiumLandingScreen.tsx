@@ -34,12 +34,12 @@ export function PremiumLandingScreen() {
           <View style={{ marginBottom: 12 }}>
             <Crown size={40} color={colors.gold.DEFAULT} strokeWidth={1.6} />
           </View>
-          <Text className="text-center font-display-black text-[38px] uppercase leading-none text-white">
+          <Text className="text-center font-display-black text-[38px] leading-none text-white">
             AfriLove{'\n'}
             <Text className="text-gold">Premium</Text>
           </Text>
           <View className="mt-3 rounded-full border border-gold/40 bg-gold/[0.22] px-4 py-2">
-            <Text className="font-heading text-[11px] uppercase text-gold">7 jours gratuits</Text>
+            <Text className="font-heading text-[11px] text-gold">7 jours gratuits</Text>
           </View>
         </View>
 
@@ -49,7 +49,7 @@ export function PremiumLandingScreen() {
               <View className="h-[30px] w-[30px] items-center justify-center rounded-lg bg-gold/[0.22]">
                 <feature.Icon size={15} color="#9B7EDE" />
               </View>
-              <Text className="font-heading-semibold text-[13px] uppercase text-white/90">{feature.label}</Text>
+              <Text className="font-heading-semibold text-[13px] text-white/90">{feature.label}</Text>
             </View>
           ))}
         </View>

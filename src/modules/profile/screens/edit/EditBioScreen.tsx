@@ -45,7 +45,7 @@ export function EditBioScreen() {
         <Skeleton width="100%" height={180} radius={16} />
       ) : (
         <>
-          <View className="rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-4" style={{ minHeight: 180 }}>
+          <View className="rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-4" style={{ minHeight: 180 }}>
             <TextInput
               value={bio}
               onChangeText={(text) => setBio(text.slice(0, MAX_LENGTH))}

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { View, Pressable } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Compass, Heart, MessageCircle, User } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
@@ -28,16 +28,16 @@ function TabItem({
 }) {
   const pop = useSharedValue(active ? 1 : 0);
 
-  // Becoming active bounces the icon; leaving fades it back — the tab bar
-  // responds to every switch instead of just repainting colors.
+  // Becoming active lifts the icon subtly; leaving fades it back — a clean
+  // timing transition, no bounce.
   useEffect(() => {
     pop.value = active
-      ? withSpring(1, { damping: 11, stiffness: 220 })
+      ? withTiming(1, { duration: 200 })
       : withTiming(0, { duration: 180 });
   }, [active, pop]);
 
   const iconStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: 1 + pop.value * 0.18 }, { translateY: -pop.value * 1.5 }],
+    transform: [{ scale: 1 + pop.value * 0.08 }, { translateY: -pop.value * 1 }],
   }));
   const dotStyle = useAnimatedStyle(() => ({
     opacity: pop.value,

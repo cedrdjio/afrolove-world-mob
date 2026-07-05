@@ -42,22 +42,22 @@ export function EditPreferencesScreen() {
 
   return (
     <EditScreenLayout title="Préférences" onSave={() => router.back()}>
-      <Text className="mb-2.5 font-heading text-[11px] uppercase tracking-widest text-ink/40">Je recherche</Text>
+      <Text className="mb-2.5 font-heading text-[11px] text-ink/40">Je recherche</Text>
       <View className="mb-6 flex-row flex-wrap gap-2">
         {LOOKING_FOR_OPTIONS.map((option) => (
           <Chip key={option} label={option} selected={lookingFor === option} onPress={() => setLookingFor(option)} />
         ))}
       </View>
 
-      <Text className="mb-2.5 font-heading text-[11px] uppercase tracking-widest text-ink/40">Distance maximale</Text>
+      <Text className="mb-2.5 font-heading text-[11px] text-ink/40">Distance maximale</Text>
       <View className="mb-6 flex-row flex-wrap gap-2">
         {DISTANCE_OPTIONS.map((option) => (
           <Chip key={option} label={`${option} km`} selected={distance === option} onPress={() => setDistance(option)} />
         ))}
       </View>
 
-      <Text className="mb-2.5 font-heading text-[11px] uppercase tracking-widest text-ink/40">Tranche d'âge</Text>
-      <View className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4">
+      <Text className="mb-2.5 font-heading text-[11px] text-ink/40">Tranche d'âge</Text>
+      <View className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
         <Stepper value={ageMin} onChange={(v) => setAgeMin(Math.min(v, ageMax))} min={18} max={ageMax} />
         <Text className="font-body-medium text-[12px] text-ink-muted">à</Text>
         <Stepper value={ageMax} onChange={(v) => setAgeMax(Math.max(v, ageMin))} min={ageMin} max={99} />

@@ -76,13 +76,13 @@ export function ChatScreen() {
       <GlassSurface variant="lightStrong" radius={0} style={{ paddingTop: 52 }}>
         <View className="flex-row items-center gap-3 px-[18px] py-3">
           <Pressable onPress={() => router.back()}>
-            <View className="h-10 w-10 items-center justify-center rounded-[13px] border border-white/90 bg-white/80">
+            <View className="h-10 w-10 items-center justify-center rounded-[13px] border border-white/70 bg-white/80">
               <ArrowLeft size={17} color={colors.ink.DEFAULT} strokeWidth={2} />
             </View>
           </Pressable>
           <Avatar source={conversation?.partnerAvatarUrl ?? undefined} seed={partnerName} size={48} />
           <View className="flex-1">
-            <Text className="mb-0.5 font-heading text-[16px] uppercase text-ink">{partnerName}</Text>
+            <Text className="mb-0.5 font-heading text-[16px] text-ink">{partnerName}</Text>
             {online ? (
               <View className="flex-row items-center gap-1.5">
                 <View className="h-1.5 w-1.5 rounded-full bg-success" />
@@ -119,7 +119,7 @@ export function ChatScreen() {
             const fromMe = item.senderId === user?.id;
             return (
               <Animated.View
-                entering={FadeInUp.springify().damping(18)}
+                entering={FadeInUp}
                 className={`mb-2.5 ${fromMe ? 'items-end' : 'items-start'}`}
               >
                 {fromMe ? (
@@ -136,7 +136,7 @@ export function ChatScreen() {
                   <View className="flex-row items-end gap-2" style={{ maxWidth: '80%' }}>
                     <Avatar source={conversation?.partnerAvatarUrl ?? undefined} seed={partnerName} size={26} />
                     <View
-                      className="rounded-[18px] border-[1.5px] border-white/90 bg-white/75 p-3.5"
+                      className="rounded-[18px] border-[1.5px] border-white/70 bg-white/[0.5] p-3.5"
                       style={{ borderBottomLeftRadius: 5 }}
                     >
                       <Text className="font-body text-[13.5px] leading-[19px] text-ink">{item.content}</Text>
@@ -157,7 +157,7 @@ export function ChatScreen() {
           <Pressable onPress={() => router.push(`/chat/${matchId}/emoji-picker`)} hitSlop={6}>
             <Smile size={20} color="rgba(46,36,64,0.35)" />
           </Pressable>
-          <View className="flex-1 rounded-full border-[1.5px] border-white/90 bg-white/[0.68] px-[18px] py-3">
+          <View className="flex-1 rounded-full border-[1.5px] border-white/70 bg-white/[0.68] px-[18px] py-3">
             <TextInput
               value={draft}
               onChangeText={setDraft}

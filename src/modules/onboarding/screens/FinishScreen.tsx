@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { PartyPopper } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDelay } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
@@ -22,7 +22,7 @@ export function FinishScreen() {
   const scale = useSharedValue(0);
 
   useEffect(() => {
-    scale.value = withDelay(150, withSpring(1, { damping: 9, stiffness: 120 }));
+    scale.value = withDelay(150, withTiming(1, { duration: 380 }));
   }, [scale]);
 
   const iconStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
@@ -33,7 +33,6 @@ export function FinishScreen() {
       {
         userId: user.id,
         firstName: onboarding.firstName,
-        lastName: onboarding.lastName,
         gender: onboarding.gender,
         birthDate: onboarding.birthDate,
         lookingFor: onboarding.lookingFor,
@@ -73,7 +72,7 @@ export function FinishScreen() {
           </LinearGradient>
         </Animated.View>
 
-        <Text className="mb-3 text-center font-display-black text-[32px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[32px] text-white">
           Profil complet{onboarding.firstName ? `, ${onboarding.firstName}` : ''} !
         </Text>
         <Text className="mb-8 text-center font-body text-[13.5px] leading-[21px] text-white/50">

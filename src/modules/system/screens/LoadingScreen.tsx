@@ -10,7 +10,7 @@ export function LoadingScreen() {
       <View className="flex-1 items-center justify-center px-8">
         <BrandLogo size={64} style={{ marginBottom: 28 }} />
         <LoadingSpinner />
-        <Text className="mt-5 font-heading-semibold text-[12px] uppercase tracking-widest text-ink-muted">
+        <Text className="mt-5 font-heading-semibold text-[12px] text-ink-muted">
           Chargement…
         </Text>
       </View>

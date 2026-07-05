@@ -44,10 +44,10 @@ export function ChangeEmailScreen() {
         scrollable={false}
       >
         <View className="flex-1 items-center justify-center px-2">
-          <View className="mb-4 h-16 w-16 items-center justify-center rounded-[20px] bg-white/70">
+          <View className="mb-4 h-16 w-16 items-center justify-center rounded-[20px] bg-white/[0.55]">
             <MailCheck size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />
           </View>
-          <Text className="mb-2 text-center font-display text-[22px] uppercase leading-tight text-ink">
+          <Text className="mb-2 text-center font-display text-[22px] leading-tight text-ink">
             Confirmez votre{'\n'}nouvelle adresse
           </Text>
           <Text className="text-center font-body text-[13px] leading-[20px] text-ink-muted">

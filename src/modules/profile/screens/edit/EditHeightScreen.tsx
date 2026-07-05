@@ -57,7 +57,7 @@ export function EditHeightScreen() {
             </Pressable>
             <View className="items-center">
               <Text className="font-display text-[56px] leading-[56px] text-ink">{height}</Text>
-              <Text className="font-heading text-[11px] uppercase tracking-widest text-ink-faint">centimètres</Text>
+              <Text className="font-heading text-[11px] text-ink-faint">centimètres</Text>
             </View>
             <Pressable onPress={() => setHeight((h) => Math.min(220, h + 1))}>
               <GlassSurface variant="light" radius={22} style={{ width: 52, height: 52 }}>

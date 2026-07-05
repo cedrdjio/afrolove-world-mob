@@ -82,7 +82,7 @@ export function UploadSelfieScreen() {
           </View>
         </Pressable>
         <View className="rounded-full border border-white/20 bg-white/[0.12] px-4 py-1.5">
-          <Text className="font-heading text-[10px] uppercase text-white/70">Étape 2/3</Text>
+          <Text className="font-heading text-[10px] text-white/70">Étape 2/3</Text>
         </View>
         <View style={{ width: 40 }} />
       </View>

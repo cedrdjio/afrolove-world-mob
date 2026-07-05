@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Mail, KeyRound, Smartphone, ShieldCheck, ArrowLeft } from 'lucide-react-native';
+import { Mail, KeyRound, ArrowLeft } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { SettingsRow } from '@/shared/components/ui/SettingsRow';
@@ -20,30 +20,22 @@ export function SecuritySettingsScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Sécurité</Text>
+          <Text className="font-display text-[20px] text-ink">Sécurité</Text>
           <View style={{ width: 44 }} />
         </View>
 
-        <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">
+        <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
           <SettingsRow
             icon={<Mail size={16} color={colors.brand.DEFAULT} />}
             label="Changer l'email"
             onPress={() => router.push('/settings/change-email')}
           />
+          {/* Appareils connectés / 2FA retirés : aucun backend ne les sert
+              encore — pas de boutons morts dans l'app. */}
           <SettingsRow
             icon={<KeyRound size={16} color={colors.brand.DEFAULT} />}
             label="Changer le mot de passe"
             onPress={() => router.push('/settings/change-password')}
-          />
-          <SettingsRow
-            icon={<Smartphone size={16} color={colors.brand.DEFAULT} />}
-            label="Appareils connectés"
-            onPress={() => {}}
-          />
-          <SettingsRow
-            icon={<ShieldCheck size={16} color={colors.brand.DEFAULT} />}
-            label="Authentification à deux facteurs"
-            onPress={() => {}}
             isLast
           />
         </View>

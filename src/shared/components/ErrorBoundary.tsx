@@ -41,14 +41,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-danger/10">
             <AlertTriangle size={36} color={colors.danger} strokeWidth={1.6} />
           </View>
-          <Text className="mb-2.5 text-center font-display text-[26px] uppercase leading-none text-ink">
+          <Text className="mb-2.5 text-center font-display text-[26px] leading-none text-ink">
             Une erreur est survenue
           </Text>
           <Text className="mb-8 text-center font-body text-[13px] leading-[20px] text-ink-muted">
             Quelque chose a mal tourné. Vous pouvez réessayer sans perdre votre session.
           </Text>
           <Pressable onPress={this.handleRetry} className="w-full rounded-[18px] bg-brand py-[17px]">
-            <Text className="text-center font-heading text-[14px] uppercase tracking-wide text-white">
+            <Text className="text-center font-heading text-[14px] tracking-wide text-white">
               Réessayer
             </Text>
           </Pressable>

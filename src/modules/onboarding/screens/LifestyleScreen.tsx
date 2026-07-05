@@ -18,7 +18,7 @@ export function LifestyleScreen() {
     <OnboardingLayout orbPosition="bottomRight">
       <OnboardingHeader step={8} total={8} />
 
-      <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Votre mode de vie</Text>
+      <Text className="mb-1 font-display text-[34px] leading-none text-ink">Votre mode de vie</Text>
       <Text className="mb-[18px] font-body text-[12.5px] text-ink-muted">Aidez-nous à mieux vous faire matcher.</Text>
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -26,7 +26,7 @@ export function LifestyleScreen() {
           <View key={category.key} className="mb-5">
             <View className="mb-2.5 flex-row items-center gap-1.5">
               <category.Icon size={12} color={colors.ink.muted} />
-              <Text className="font-heading text-[10px] uppercase tracking-widest text-ink/40">
+              <Text className="font-heading text-[10px] text-ink/40">
                 {category.label}
               </Text>
             </View>

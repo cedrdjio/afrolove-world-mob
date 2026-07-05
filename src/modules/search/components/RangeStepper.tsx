@@ -36,7 +36,7 @@ interface RangeStepperProps {
 
 export function RangeStepper({ min, max, low, high, onChange, unit }: RangeStepperProps) {
   return (
-    <View className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-5">
+    <View className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-5">
       <Stepper value={low} onChange={(v) => onChange(Math.min(v, high), high)} min={min} max={max} />
       <Text className="font-body-medium text-[12px] text-ink-muted">{unit ?? 'à'}</Text>
       <Stepper value={high} onChange={(v) => onChange(low, Math.max(v, low))} min={min} max={max} />

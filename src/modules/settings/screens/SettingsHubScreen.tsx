@@ -28,16 +28,16 @@ export function SettingsHubScreen() {
       </ScreenBackground>
 
       <ScrollView contentContainerClassName="px-6 pb-10" style={{ paddingTop: 64 }} showsVerticalScrollIndicator={false}>
-        <Text className="mb-5 font-display text-[28px] uppercase text-ink">Paramètres</Text>
+        <Text className="mb-5 font-display text-[28px] text-ink">Paramètres</Text>
 
         <View className="mb-[22px] flex-row items-center gap-3.5 rounded-3xl border-[1.5px] border-white/[0.92] bg-white/[0.78] px-5 py-[18px]">
           <Avatar source={profile?.avatarUrl ?? undefined} seed={profile?.firstName ?? ''} size={62} />
           <View className="flex-1">
-            <Text className="mb-0.5 font-heading text-[17px] uppercase text-ink">{displayName}</Text>
+            <Text className="mb-0.5 font-heading text-[17px] text-ink">{displayName}</Text>
             {subtitle ? <Text className="font-body text-[12px] text-ink-muted">{subtitle}</Text> : null}
           </View>
           <Pressable onPress={() => router.push('/edit-profile')} className="rounded-xl bg-brand/10 px-3.5 py-2">
-            <Text className="font-heading text-[11px] uppercase text-brand">Modifier</Text>
+            <Text className="font-heading text-[11px] text-brand">Modifier</Text>
           </Pressable>
         </View>
 
@@ -80,7 +80,7 @@ export function SettingsHubScreen() {
             onPress={() => router.push('/settings/delete-account')}
             className="w-full rounded-2xl border-[1.5px] border-danger/[0.18] bg-danger/[0.07] py-4"
           >
-            <Text className="text-center font-heading text-[13px] uppercase tracking-wide text-danger/[0.65]">
+            <Text className="text-center font-heading text-[13px] tracking-wide text-danger/[0.65]">
               Supprimer le compte
             </Text>
           </Pressable>
@@ -93,8 +93,8 @@ export function SettingsHubScreen() {
 function SettingsGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View className="mb-4">
-      <Text className="mb-2 font-heading text-[9.5px] uppercase tracking-widest text-ink/35">{title}</Text>
-      <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">{children}</View>
+      <Text className="mb-2 font-heading text-[11px] text-ink/35">{title}</Text>
+      <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">{children}</View>
     </View>
   );
 }

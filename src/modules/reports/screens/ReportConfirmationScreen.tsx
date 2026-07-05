@@ -21,7 +21,7 @@ export function ReportConfirmationScreen() {
           style={{ width: 150, height: 150, marginBottom: 8 }}
         />
 
-        <Text className="mb-2.5 text-center font-display text-[26px] uppercase leading-none text-ink">
+        <Text className="mb-2.5 text-center font-display text-[26px] leading-none text-ink">
           Signalement envoyé
         </Text>
         <Text className="mb-9 text-center font-body text-[13px] leading-[20px] text-ink-muted">

@@ -24,7 +24,7 @@ export function SettingsRow({ icon, label, onPress, isLast = false, right }: Set
     >
       <View className="flex-row items-center gap-3">
         <View className="h-[34px] w-[34px] items-center justify-center rounded-md bg-brand/10">{icon}</View>
-        <Text className="font-heading-semibold text-[14px] uppercase text-ink">{label}</Text>
+        <Text className="font-heading-semibold text-[14px] text-ink">{label}</Text>
       </View>
       {right ?? <ChevronRight size={17} color="rgba(46,36,64,0.22)" />}
     </Pressable>

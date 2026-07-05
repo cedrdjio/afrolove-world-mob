@@ -16,9 +16,10 @@ export const loginSchema = z.object({
 });
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
+// L'inscription reste minimale : email + mot de passe. Le pseudo et le reste
+// du profil sont demandés dans l'onboarding — jamais deux fois.
 export const registerSchema = z
   .object({
-    firstName: z.string().min(2, 'Au moins 2 caractères'),
     email: z.string().email('Adresse email invalide'),
     password: newPasswordSchema,
     acceptedTerms: z.literal(true, 'Vous devez accepter les conditions'),

@@ -16,7 +16,7 @@ export function KycHeader({ step, total = 3 }: { step: number; total?: number })
       </IconButton>
       <View className="mx-3.5 flex-1">
         <View className="mb-1.5 flex-row justify-between">
-          <Text className="font-heading text-[10px] uppercase text-ink">KYC</Text>
+          <Text className="font-heading text-[10px] text-ink">KYC</Text>
           <Text className="font-heading-semibold text-[10px] text-brand">
             Étape {step}/{total}
           </Text>

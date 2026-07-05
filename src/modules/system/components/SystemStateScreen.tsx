@@ -40,7 +40,7 @@ export function SystemStateScreen({ Icon, title, description, actionLabel, onAct
           <Icon size={40} color="#fff" strokeWidth={1.6} />
         </LinearGradient>
 
-        <Text className="mb-2.5 text-center font-display text-[26px] uppercase leading-none text-ink">{title}</Text>
+        <Text className="mb-2.5 text-center font-display text-[26px] leading-none text-ink">{title}</Text>
         <Text className="mb-8 text-center font-body text-[13px] leading-[20px] text-ink-muted">{description}</Text>
 
         {actionLabel ? <GradientButton label={actionLabel} onPress={onAction} style={{ width: '100%' }} /> : null}

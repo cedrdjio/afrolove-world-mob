@@ -32,7 +32,7 @@ export function NotificationSettingsScreen() {
 
   return (
     <EditScreenLayout title="Notifications" onSave={save} saving={updateProfile.isPending}>
-      <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">
+      <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
         {OPTIONS.map((option, i) => (
           <View
             key={option.key}
@@ -41,7 +41,7 @@ export function NotificationSettingsScreen() {
             }`}
           >
             <View className="mr-3 flex-1">
-              <Text className="mb-0.5 font-heading-semibold text-[13.5px] uppercase text-ink">{option.label}</Text>
+              <Text className="mb-0.5 font-heading-semibold text-[13.5px] text-ink">{option.label}</Text>
               <Text className="font-body text-[11px] text-ink-muted">{option.description}</Text>
             </View>
             <ToggleSwitch

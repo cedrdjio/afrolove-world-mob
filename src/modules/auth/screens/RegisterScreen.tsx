@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { useLegalConsentStore } from '@/modules/legal/stores/legalConsentStore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Mail, Lock, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react-native';
+import { Mail, Lock, Eye, EyeOff, Check, ArrowLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
@@ -31,7 +31,7 @@ export function RegisterScreen() {
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { firstName: '', email: '', password: '', acceptedTerms: false as unknown as true },
+    defaultValues: { email: '', password: '', acceptedTerms: false as unknown as true },
   });
 
   const accepted = watch('acceptedTerms');
@@ -47,7 +47,7 @@ export function RegisterScreen() {
   }, [acceptedFromModal, setValue, setAcceptedFromModal]);
 
   const onSubmit = (values: RegisterFormValues) => {
-    register.mutate(values, {
+    register.mutate({ email: values.email, password: values.password }, {
       onSuccess: (data) => {
         // If email confirmation is disabled on the project, signUp returns a
         // live session — the OTP screen would wait forever for a code that
@@ -78,12 +78,12 @@ export function RegisterScreen() {
             <View style={{ width: 44 }} />
           </View>
 
-          <Animated.View entering={FadeInDown.duration(420).springify().damping(17)}>
-            <Text className="mb-1 font-display text-[36px] uppercase leading-none text-ink">
-              Rejoindre AfriLove
+          <Animated.View entering={FadeInDown.duration(350)}>
+            <Text className="mb-1 font-display text-[32px] leading-[1.08] text-ink">
+              Créer ton compte
             </Text>
             <Text className="mb-[22px] font-body text-[13px] text-ink-muted">
-              Créez votre compte en quelques instants.
+              Quelques infos et l'aventure commence.
             </Text>
           </Animated.View>
 
@@ -93,22 +93,7 @@ export function RegisterScreen() {
             </View>
           ) : null}
 
-          <Animated.View entering={FadeInDown.delay(90).duration(420).springify().damping(17)}>
-          <Controller
-            control={control}
-            name="firstName"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <GlassInput
-                label="Prénom"
-                icon={<User size={15} color="rgba(62,53,82,0.26)" />}
-                placeholder="Votre prénom"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.firstName?.message}
-              />
-            )}
-          />
+          <Animated.View entering={FadeInDown.delay(80).duration(350)}>
           <Controller
             control={control}
             name="email"
@@ -188,7 +173,7 @@ export function RegisterScreen() {
           ) : null}
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(180).duration(420).springify().damping(17)}>
+          <Animated.View entering={FadeInDown.delay(160).duration(350)}>
           <GradientButton
             label="Créer mon compte"
             loading={register.isPending}

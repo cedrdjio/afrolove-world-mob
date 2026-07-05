@@ -35,7 +35,7 @@ function DateField({
   max?: number;
 }) {
   return (
-    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/90 bg-white/70 px-3 py-4">
+    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/70 bg-white/[0.45] px-3 py-4">
       <TextInput
         value={value}
         onChangeText={(t) => {
@@ -49,7 +49,7 @@ function DateField({
         placeholderTextColor="rgba(46,36,64,0.2)"
         className="w-full text-center font-display text-[24px] text-ink"
       />
-      <Text className="font-heading text-[9px] uppercase tracking-widest text-ink-faint">{label}</Text>
+      <Text className="font-heading text-[9px] text-ink-faint">{label}</Text>
     </View>
   );
 }
@@ -70,12 +70,12 @@ export function BirthdayScreen() {
       <OnboardingHeader step={3} total={8} />
 
       <View
-        className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/70"
+        className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]"
         style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
       >
         <Cake size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />
       </View>
-      <Text className="mb-2.5 font-display text-[38px] uppercase leading-none text-ink">
+      <Text className="mb-2.5 font-display text-[38px] leading-none text-ink">
         Votre date{'\n'}
         <Text className="text-brand">de naissance</Text>
       </Text>

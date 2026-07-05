@@ -93,7 +93,7 @@ export function SwipeScreen() {
             </View>
           </GlassSurface>
         </Pressable>
-        <Text className="font-display text-[22px] uppercase tracking-wide text-ink">Découvrir</Text>
+        <Text className="font-display text-[22px] tracking-wide text-ink">Découvrir</Text>
         <Pressable onPress={() => router.push('/notifications')}>
           <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
             <View className="h-11 w-11 items-center justify-center">
@@ -134,7 +134,7 @@ export function SwipeScreen() {
             <ErrorState error={feedError} variant="inline" onRetry={() => feed.refetch()} />
           </View>
         ) : isEmpty ? (
-          <Animated.View entering={FadeInDown.springify().damping(16)} className="flex-1">
+          <Animated.View entering={FadeInDown} className="flex-1">
             <NoProfilesState onOpenFilters={() => router.push('/discover-filters')} />
           </Animated.View>
         ) : (

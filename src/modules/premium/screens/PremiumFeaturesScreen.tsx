@@ -29,7 +29,7 @@ export function PremiumFeaturesScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Avantages Premium</Text>
+          <Text className="font-display text-[20px] text-ink">Avantages Premium</Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -38,13 +38,13 @@ export function PremiumFeaturesScreen() {
             {FEATURES.map((feature) => (
               <View
                 key={feature.title}
-                className="flex-row items-start gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-4"
+                className="flex-row items-start gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-4"
               >
                 <View className="h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.12]">
                   <feature.Icon size={18} color={colors.gold.DEFAULT} />
                 </View>
                 <View className="flex-1">
-                  <Text className="mb-1 font-heading text-[14px] uppercase text-ink">{feature.title}</Text>
+                  <Text className="mb-1 font-heading text-[14px] text-ink">{feature.title}</Text>
                   <Text className="font-body text-[12px] leading-[18px] text-ink-muted">{feature.description}</Text>
                 </View>
               </View>

@@ -41,7 +41,7 @@ export function UploadPhotosScreen() {
     <OnboardingLayout orbPosition="topLeft">
       <OnboardingHeader step={7} total={8} />
 
-      <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Vos photos</Text>
+      <Text className="mb-1 font-display text-[34px] leading-none text-ink">Vos photos</Text>
       <Text className="mb-[18px] font-body text-[12.5px] leading-[19px] text-ink-muted">
         Soyez authentique. 3 photos = 4× plus de visibilité.
       </Text>
@@ -70,7 +70,7 @@ export function UploadPhotosScreen() {
                 </Pressable>
                 {index === 0 ? (
                   <View className="absolute bottom-1.5 left-1.5 rounded-full bg-brand px-2 py-1">
-                    <Text className="font-heading text-[8px] uppercase text-white">Principal</Text>
+                    <Text className="font-heading text-[8px] text-white">Principal</Text>
                   </View>
                 ) : null}
               </View>
@@ -88,7 +88,7 @@ export function UploadPhotosScreen() {
                 <Plus size={18} color={colors.brand.DEFAULT} />
               </View>
               {index === photos.length ? (
-                <Text className="font-heading text-[9px] uppercase text-brand/60">Ajouter</Text>
+                <Text className="font-heading text-[9px] text-brand/60">Ajouter</Text>
               ) : null}
             </Pressable>
           );

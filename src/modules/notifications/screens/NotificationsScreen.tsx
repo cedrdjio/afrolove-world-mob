@@ -62,14 +62,14 @@ export function NotificationsScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[22px] uppercase text-ink">Notifications</Text>
+          <Text className="font-display text-[22px] text-ink">Notifications</Text>
           {hasUnread ? (
             <Pressable
               onPress={() => markAllRead.mutate()}
               disabled={markAllRead.isPending}
               className="rounded-full bg-brand/10 px-3.5 py-2"
             >
-              <Text className="font-heading text-[10.5px] uppercase text-brand">
+              <Text className="font-heading text-[10.5px] text-brand">
                 {markAllRead.isPending ? '…' : 'Tout lire'}
               </Text>
             </Pressable>
@@ -114,7 +114,7 @@ export function NotificationsScreen() {
           renderItem={({ item, index }) => {
             const { Icon, accent } = TYPE_STYLE[item.type];
             return (
-              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 40).springify().damping(17)}>
+              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 40)}>
                 <Pressable
                   onPress={() => openNotification(item)}
                   className={`mb-2 flex-row items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 active:opacity-85 ${

@@ -16,7 +16,7 @@ import { colors, gradients } from '@/shared/constants/theme';
 
 function SectionTitle({ children }: { children: string }) {
   return (
-    <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/40">{children}</Text>
+    <Text className="mb-3 font-heading text-[13px] text-ink/60">{children}</Text>
   );
 }
 
@@ -42,17 +42,17 @@ export function MatchListScreen() {
 
       <View className="px-[22px]" style={{ paddingTop: 64 }}>
         <View className="mb-[18px] flex-row items-center justify-between">
-          <Text className="font-display text-[30px] uppercase text-ink">Mes Matches</Text>
+          <Text className="font-display text-[30px] text-ink">Mes Matches</Text>
           {newMatchesCount > 0 ? (
             <View className="rounded-full bg-brand/10 px-3 py-1.5">
-              <Text className="font-heading text-[11.5px] uppercase text-brand">{newMatchesCount} nouveaux</Text>
+              <Text className="font-heading text-[11.5px] text-brand">{newMatchesCount} nouveaux</Text>
             </View>
           ) : null}
         </View>
 
         <Pressable
           onPress={() => router.push('/matches-search')}
-          className="mb-5 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5"
+          className="mb-5 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
         >
           <SearchIcon size={15} color="rgba(62,53,82,0.28)" />
           <Text className="font-body text-[13px] text-ink/30">Rechercher un match…</Text>
@@ -76,6 +76,9 @@ export function MatchListScreen() {
             </View>
           ) : (
             <View className="mb-6">
+              <View className="px-[22px]">
+                <SectionTitle>Nouveaux matchs</SectionTitle>
+              </View>
               <FlashList
                 data={matches}
                 horizontal
@@ -83,7 +86,7 @@ export function MatchListScreen() {
                 keyExtractor={(item) => item.matchId}
                 contentContainerClassName="px-[22px]"
                 renderItem={({ item, index }) => (
-                  <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 60).springify().damping(16)}>
+                  <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 60)}>
                     <Pressable
                       onPress={() => router.push(`/chat/${item.matchId}`)}
                       className="mr-3.5 items-center gap-1.5 active:opacity-80"
@@ -95,7 +98,7 @@ export function MatchListScreen() {
                         size={62}
                         ringColor={isRecentlyOnline(item.partnerLastActiveAt) ? colors.success : colors.gold.DEFAULT}
                       />
-                      <Text className="font-heading text-[10px] uppercase text-ink" numberOfLines={1}>
+                      <Text className="font-heading text-[10px] text-ink" numberOfLines={1}>
                         {item.partnerFirstName}
                       </Text>
                     </Pressable>
@@ -113,7 +116,7 @@ export function MatchListScreen() {
                 {likers.slice(0, 8).map((liker, index) => (
                   <Animated.View
                     key={liker.id}
-                    entering={FadeInDown.delay(Math.min(index, 6) * 50).springify().damping(16)}
+                    entering={FadeInDown.delay(Math.min(index, 6) * 50)}
                   >
                     <Pressable
                       onPress={() => router.push(`/profile/${liker.id}`)}
@@ -134,7 +137,7 @@ export function MatchListScreen() {
                         ) : null}
                       </View>
                       <View className="flex-row items-center gap-1">
-                        <Text className="font-heading text-[10px] uppercase text-ink" numberOfLines={1}>
+                        <Text className="font-heading text-[10px] text-ink" numberOfLines={1}>
                           {liker.firstName}
                         </Text>
                         {liker.isVerified ? <BadgeCheck size={9} color={colors.gold.DEFAULT} strokeWidth={2.8} /> : null}
@@ -151,14 +154,14 @@ export function MatchListScreen() {
                   {Array.from({ length: Math.min(likersCount, 6) }).map((_, index) => (
                     <Animated.View
                       key={index}
-                      entering={FadeInDown.delay(index * 60).springify().damping(16)}
+                      entering={FadeInDown.delay(index * 60)}
                       className="overflow-hidden rounded-2xl border border-white/80"
                       style={{ width: '31.5%', aspectRatio: 0.82 }}
                     >
                       <PhotoPlaceholder seed={index + 2} style={{ flex: 1 }} />
                       <BlurView intensity={55} tint="light" style={{ position: 'absolute', inset: 0 }} />
                       <View className="absolute inset-0 items-center justify-center bg-white/[0.12]">
-                        <View className="h-9 w-9 items-center justify-center rounded-full bg-white/70">
+                        <View className="h-9 w-9 items-center justify-center rounded-full bg-white/[0.55]">
                           <Lock size={15} color={colors.brand.DEFAULT} strokeWidth={2.2} />
                         </View>
                       </View>
@@ -171,7 +174,7 @@ export function MatchListScreen() {
                   end={{ x: 1, y: 1 }}
                   style={{ borderRadius: 999, paddingVertical: 13, marginTop: 12 }}
                 >
-                  <Text className="text-center font-heading text-[12.5px] uppercase tracking-wide text-white">
+                  <Text className="text-center font-heading text-[12.5px] tracking-wide text-white">
                     {likersCount} personne{likersCount > 1 ? 's' : ''} craque{likersCount > 1 ? 'nt' : ''} pour toi — Passer à Premium
                   </Text>
                 </LinearGradient>
@@ -189,7 +192,7 @@ export function MatchListScreen() {
                       <Eye size={22} color="#fff" strokeWidth={1.9} />
                     </View>
                     <View className="flex-1">
-                      <Text className="mb-0.5 font-heading text-[14px] uppercase text-white">
+                      <Text className="mb-0.5 font-heading text-[14px] text-white">
                         Voyez qui vous a aimé
                       </Text>
                       <Text className="font-body text-[11.5px] text-white/70">
@@ -213,16 +216,16 @@ export function MatchListScreen() {
               favorites.slice(0, 20).map((favorite, index) => (
                 <Animated.View
                   key={favorite.id}
-                  entering={FadeInDown.delay(Math.min(index, 8) * 45).springify().damping(17)}
+                  entering={FadeInDown.delay(Math.min(index, 8) * 45)}
                 >
                   <Pressable
                     onPress={() => router.push(`/profile/${favorite.id}`)}
-                    className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3 active:opacity-85"
+                    className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3 active:opacity-85"
                   >
                     <Avatar source={favorite.avatarUrl ?? undefined} seed={favorite.firstName} size={46} />
                     <View className="flex-1">
                       <View className="flex-row items-center gap-1.5">
-                        <Text className="font-heading text-[13.5px] uppercase text-ink">{favorite.firstName}</Text>
+                        <Text className="font-heading text-[13.5px] text-ink">{favorite.firstName}</Text>
                         {favorite.isVerified ? (
                           <BadgeCheck size={11} color={colors.gold.DEFAULT} strokeWidth={2.7} />
                         ) : null}
@@ -234,7 +237,7 @@ export function MatchListScreen() {
                     {favorite.action === 'super_like' ? (
                       <View className="flex-row items-center gap-1 rounded-full bg-gold/[0.12] px-2.5 py-1.5">
                         <Star size={10} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
-                        <Text className="font-heading text-[9px] uppercase text-gold">Super like</Text>
+                        <Text className="font-heading text-[9px] text-gold">Super like</Text>
                       </View>
                     ) : (
                       <Heart size={15} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />

@@ -40,7 +40,7 @@ export function PremiumLockedScreen() {
           <Lock size={38} color="#fff" strokeWidth={1.8} />
         </LinearGradient>
 
-        <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[28px] text-white">
           Fonctionnalité{'\n'}Premium
         </Text>
         <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">

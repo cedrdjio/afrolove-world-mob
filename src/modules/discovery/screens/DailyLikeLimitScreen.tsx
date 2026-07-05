@@ -51,13 +51,13 @@ export function DailyLikeLimitScreen() {
           <Clock size={38} color="#fff" strokeWidth={1.8} />
         </LinearGradient>
 
-        <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[28px] text-white">
           Limite quotidienne{'\n'}atteinte
         </Text>
         <Text className="mb-2 text-center font-body text-[13.5px] leading-[21px] text-white/50">
           Vous avez utilisé tous vos likes gratuits pour aujourd'hui.
         </Text>
-        <Text className="mb-10 font-heading-semibold text-[12px] uppercase tracking-widest text-gold">
+        <Text className="mb-10 font-heading-semibold text-[12px] text-gold">
           Réinitialisation dans {timeUntilMidnight()}
         </Text>
 

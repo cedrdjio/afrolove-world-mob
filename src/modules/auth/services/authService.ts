@@ -12,13 +12,13 @@ export interface EmailCredentials {
 async function signUpWithEmail({
   email,
   password,
-  firstName,
   redirectTo,
-}: EmailCredentials & { firstName: string; redirectTo: string }) {
+}: EmailCredentials & { redirectTo: string }) {
+  // Pas de nom à l'inscription : le pseudo est collecté dans l'onboarding.
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { first_name: firstName }, emailRedirectTo: redirectTo },
+    options: { emailRedirectTo: redirectTo },
   });
   if (error) throw error;
   // With email confirmation enabled, GoTrue anti-enumeration returns a fake

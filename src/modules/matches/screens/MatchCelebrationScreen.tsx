@@ -8,7 +8,6 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withSequence,
-  withSpring,
   withTiming,
   withDelay,
   Easing,
@@ -55,7 +54,7 @@ export function MatchCelebrationScreen() {
   const heartPop = useSharedValue(0);
   useEffect(() => {
     ringScale.value = withRepeat(withSequence(withTiming(1.06, { duration: 1100 }), withTiming(1, { duration: 1100 })), -1, true);
-    heartPop.value = withDelay(350, withSpring(1, { damping: 9, stiffness: 160 }));
+    heartPop.value = withDelay(350, withTiming(1, { duration: 380 }));
   }, [ringScale, heartPop]);
   const ringStyle = useAnimatedStyle(() => ({ transform: [{ scale: ringScale.value }] }));
   const heartStyle = useAnimatedStyle(() => ({ transform: [{ scale: heartPop.value }] }));
@@ -83,7 +82,7 @@ export function MatchCelebrationScreen() {
 
       <View className="flex-1 items-center justify-center" style={{ marginTop: -30 }}>
         <Animated.View entering={FadeIn.duration(400)} className="mb-9 items-center">
-          <Text className="mb-2 text-center font-heading text-[12px] uppercase tracking-[5px] text-gold">
+          <Text className="mb-2 text-center font-heading text-[12px] tracking-[5px] text-gold">
             Coup de cœur mutuel
           </Text>
           <Text className="text-center font-display-black text-[46px] leading-none tracking-wide text-white">
@@ -91,7 +90,7 @@ export function MatchCelebrationScreen() {
           </Text>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(150).springify().damping(12)} className="flex-row items-center">
+        <Animated.View entering={FadeInDown.delay(150)} className="flex-row items-center">
           <Animated.View style={[ringStyle, { zIndex: 2 }]}>
             <View
               className="overflow-hidden rounded-full"
@@ -136,7 +135,7 @@ export function MatchCelebrationScreen() {
         </Animated.View>
       </View>
 
-      <Animated.View entering={FadeInDown.delay(650).springify().damping(15)} className="px-7 pb-12">
+      <Animated.View entering={FadeInDown.delay(650)} className="px-7 pb-12">
         <GradientButton
           label={matchName ? `Dis bonjour à ${matchName}` : 'Envoyer un message'}
           icon={<MessageCircle size={16} color="#fff" />}

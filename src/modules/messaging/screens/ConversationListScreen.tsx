@@ -38,7 +38,7 @@ export function ConversationListScreen() {
       </ScreenBackground>
 
       <View className="px-[22px]" style={{ paddingTop: 64 }}>
-        <Text className="mb-5 font-display text-[30px] uppercase text-ink">Messages</Text>
+        <Text className="mb-5 font-display text-[30px] text-ink">Messages</Text>
       </View>
 
       {conversationsQuery.isLoading ? (
@@ -62,11 +62,11 @@ export function ConversationListScreen() {
           renderItem={({ item, index }) => {
             const online = isRecentlyOnline(item.partnerLastActiveAt);
             return (
-              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 50).springify().damping(17)}>
+              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 50)}>
                 <Pressable
                   onPress={() => router.push(`/chat/${item.matchId}`)}
                   onLongPress={() => openActions(item)}
-                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5 active:opacity-85"
+                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5 active:opacity-85"
                 >
                   <Avatar
                     source={item.partnerAvatarUrl ?? undefined}
@@ -76,7 +76,7 @@ export function ConversationListScreen() {
                   />
                   <View className="min-w-0 flex-1">
                     <View className="mb-1 flex-row justify-between">
-                      <Text className="font-heading text-[14px] uppercase text-ink">{item.partnerFirstName}</Text>
+                      <Text className="font-heading text-[14px] text-ink">{item.partnerFirstName}</Text>
                       <Text className="font-body-medium text-[11px] text-ink/35">
                         {formatConversationTime(item.lastMessageAt ?? item.matchedAt)}
                       </Text>

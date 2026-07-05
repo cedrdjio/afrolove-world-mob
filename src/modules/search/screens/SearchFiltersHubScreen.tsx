@@ -49,12 +49,12 @@ export function SearchFiltersHubScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Recherche avancée</Text>
+          <Text className="font-display text-[20px] text-ink">Recherche avancée</Text>
           <View style={{ width: 44 }} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-          <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">
+          <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
             {rows.map((row, i) => (
               <Pressable
                 key={row.label}
@@ -67,7 +67,7 @@ export function SearchFiltersHubScreen() {
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-brand/[0.08]">
                     <row.icon size={16} color={colors.brand.DEFAULT} />
                   </View>
-                  <Text className="font-heading-semibold text-[13.5px] uppercase text-ink">{row.label}</Text>
+                  <Text className="font-heading-semibold text-[13.5px] text-ink">{row.label}</Text>
                 </View>
                 <Text className="font-body-medium text-[12px] text-ink-muted">{row.value}</Text>
               </Pressable>

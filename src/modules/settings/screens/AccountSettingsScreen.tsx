@@ -44,18 +44,18 @@ export function AccountSettingsScreen() {
         value={lastName}
         onChangeText={setLastName}
       />
-      <View className="mt-1 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
+      <View className="mt-1 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
         <View className="flex-row items-center gap-2.5">
           <Mail size={15} color="rgba(62,53,82,0.26)" />
           <View className="flex-1">
-            <Text className="mb-0.5 font-heading text-[10px] uppercase tracking-widest text-ink/35">Email</Text>
+            <Text className="mb-0.5 font-heading text-[10px] text-ink/35">Email</Text>
             <Text className="font-body text-[13.5px] text-ink">{user?.email ?? '—'}</Text>
           </View>
           <Pressable
             onPress={() => router.push('/settings/change-email')}
             className="rounded-xl bg-brand/10 px-3 py-2 active:opacity-70"
           >
-            <Text className="font-heading text-[10.5px] uppercase text-brand">Changer</Text>
+            <Text className="font-heading text-[10.5px] text-brand">Changer</Text>
           </Pressable>
         </View>
       </View>

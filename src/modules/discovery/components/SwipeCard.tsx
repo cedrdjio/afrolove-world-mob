@@ -41,7 +41,7 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
   const crossedThreshold = useSharedValue(false);
 
   useEffect(() => {
-    stackProgress.value = withSpring(stackIndex, { damping: 18, stiffness: 160 });
+    stackProgress.value = withSpring(stackIndex, { damping: 18, stiffness: 160, overshootClamping: true });
   }, [stackIndex, stackProgress]);
 
   const finishSwipe = useCallback(
@@ -87,8 +87,8 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
         translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: 250 });
         runOnJS(finishSwipe)('left');
       } else {
-        translateX.value = withSpring(0, { damping: 15 });
-        translateY.value = withSpring(0, { damping: 15 });
+        translateX.value = withSpring(0, { damping: 18, stiffness: 180, overshootClamping: true });
+        translateY.value = withSpring(0, { damping: 18, stiffness: 180, overshootClamping: true });
       }
     });
 
@@ -169,31 +169,31 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
             style={[{ position: 'absolute', top: 20, left: 20 }, likeStampStyle]}
             className="rounded-lg border-4 border-brand px-3 py-1"
           >
-            <Text className="font-display-black text-[24px] uppercase text-brand">Like</Text>
+            <Text className="font-display-black text-[24px] text-brand">Like</Text>
           </Animated.View>
           <Animated.View
             style={[{ position: 'absolute', top: 20, right: 20 }, nopeStampStyle]}
             className="rounded-lg border-4 border-ink-muted px-3 py-1"
           >
-            <Text className="font-display-black text-[24px] uppercase text-ink-muted">Nope</Text>
+            <Text className="font-display-black text-[24px] text-ink-muted">Nope</Text>
           </Animated.View>
           <Animated.View
             style={[{ position: 'absolute', top: 20, alignSelf: 'center' }, superStampStyle]}
             className="rounded-lg border-4 border-gold px-3 py-1"
           >
-            <Text className="font-display-black text-[24px] uppercase text-gold">Super</Text>
+            <Text className="font-display-black text-[24px] text-gold">Super</Text>
           </Animated.View>
         </>
       ) : null}
 
       <View className="absolute left-3.5 top-3.5 flex-row items-center gap-1.5 rounded-full border border-white/95 bg-white/[0.88] px-3 py-1.5">
         <Heart size={11} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
-        <Text className="font-heading text-[11px] uppercase text-ink">{profile.compatibility}% Match</Text>
+        <Text className="font-heading text-[11px] text-ink">{profile.compatibility}% Match</Text>
       </View>
       {profile.isVerified ? (
         <View className="absolute right-3.5 top-3.5 flex-row items-center gap-1 rounded-full border border-white/95 bg-white/[0.88] px-2.5 py-1.5">
           <BadgeCheck size={10} color={colors.gold.DEFAULT} strokeWidth={2.8} />
-          <Text className="font-heading-semibold text-[10px] uppercase text-ink">Vérifié</Text>
+          <Text className="font-heading-semibold text-[10px] text-ink">Vérifié</Text>
         </View>
       ) : null}
 
@@ -208,7 +208,7 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
         <View className="flex-row flex-wrap gap-1.5">
           {profile.interestNames.slice(0, 3).map((tag) => (
             <View key={tag} className="rounded-full border border-white/[0.22] bg-white/[0.15] px-3 py-1.5">
-              <Text className="font-heading-semibold text-[11px] uppercase text-white">{tag}</Text>
+              <Text className="font-heading-semibold text-[11px] text-white">{tag}</Text>
             </View>
           ))}
         </View>

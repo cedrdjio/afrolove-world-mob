@@ -75,7 +75,7 @@ export function ProfileCompletionScreen() {
             <Text className="font-display text-[30px] text-ink">{completionPercent}%</Text>
             <Text className="font-body-medium text-[10px] text-ink-muted">complété</Text>
           </View>
-          <Text className="mb-1.5 text-center font-display text-[26px] uppercase leading-[1.15] text-ink">
+          <Text className="mb-1.5 text-center font-display text-[26px] leading-[1.15] text-ink">
             {status.isComplete ? 'Profil complet !' : 'Complétez pour'}
             {'\n'}
             <Text className="text-brand">{status.isComplete ? 'Bravo !' : 'plus de matches !'}</Text>
@@ -91,7 +91,7 @@ export function ProfileCompletionScreen() {
           {doneItems.map((item) => (
             <View
               key={item.key}
-              className="flex-row items-center gap-3 rounded-[17px] border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5"
+              className="flex-row items-center gap-3 rounded-[17px] border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
             >
               <LinearGradient
                 colors={gradients.brand}
@@ -99,7 +99,7 @@ export function ProfileCompletionScreen() {
               >
                 <Check size={13} color="#fff" strokeWidth={3} />
               </LinearGradient>
-              <Text className="flex-1 font-heading-semibold text-[13px] uppercase text-ink">{item.title}</Text>
+              <Text className="flex-1 font-heading-semibold text-[13px] text-ink">{item.title}</Text>
               <View className="flex-row items-center gap-1">
                 <Text className="font-body-medium text-[10px] text-brand/60">Fait</Text>
                 <Check size={10} color="rgba(106,79,192,0.6)" strokeWidth={3} />
@@ -117,7 +117,7 @@ export function ProfileCompletionScreen() {
                 <Plus size={14} color={colors.brand.DEFAULT} />
               </View>
               <View className="flex-1">
-                <Text className="mb-0.5 font-heading-semibold text-[13px] uppercase text-ink">{item.title}</Text>
+                <Text className="mb-0.5 font-heading-semibold text-[13px] text-ink">{item.title}</Text>
                 <Text className="font-body text-[11px] text-ink-muted">{item.subtitle}</Text>
               </View>
             </Pressable>

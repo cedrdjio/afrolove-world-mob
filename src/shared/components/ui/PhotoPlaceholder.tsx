@@ -3,16 +3,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { User } from 'lucide-react-native';
 
 /**
- * Warm gradient placeholder used wherever a user photo will eventually load
- * from Supabase Storage. No business/data logic is wired up yet, so this
- * keeps every card/avatar visually complete without fabricating fake photos.
+ * Lavender gradient placeholder used wherever a user photo will eventually
+ * load from Supabase Storage — the whole range stays inside the charte
+ * (lavande → aubergine), no warm/orange tones.
  */
 const PALETTES: readonly [string, string][] = [
-  ['#D4904A', '#7A3018'],
-  ['#C87030', '#5A2010'],
-  ['#E0A94A', '#8A5010'],
-  ['#D4774A', '#9A3C1C'],
-  ['#9B7EDE', '#6B2810'],
+  ['#C3B1E1', '#7C5CBF'],
+  ['#9B7EDE', '#5B3E9E'],
+  ['#8B69D6', '#4A2C7F'],
+  ['#A98FD8', '#6A4FC0'],
+  ['#7C5CBF', '#3A2B4F'],
 ];
 
 interface PhotoPlaceholderProps {

@@ -5,8 +5,8 @@ import type { Gender, LookingForOption } from '@/modules/onboarding/stores/onboa
 
 export interface CompleteOnboardingInput {
   userId: string;
+  /** Pseudo public — le nom civil n'est pas collecté à l'inscription. */
   firstName: string;
-  lastName: string;
   gender: Gender;
   birthDate: { day: string; month: string; year: string };
   lookingFor: LookingForOption;
@@ -37,7 +37,6 @@ async function completeOnboarding(input: CompleteOnboardingInput): Promise<void>
 
   await profileService.updateProfile(input.userId, {
     first_name: input.firstName,
-    last_name: input.lastName,
     gender: input.gender,
     looking_for: input.lookingFor,
     birth_date: toIsoBirthDate(input.birthDate),

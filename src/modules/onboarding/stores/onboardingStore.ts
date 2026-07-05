@@ -6,8 +6,8 @@ export type Gender = 'femme' | 'homme' | 'non-binaire';
 export type LookingForOption = 'femmes' | 'hommes' | 'les-deux';
 
 interface OnboardingState {
+  /** Pseudo public choisi à l'inscription — pas de nom civil. */
   firstName: string;
-  lastName: string;
   gender: Gender | null;
   birthDate: { day: string; month: string; year: string };
   lookingFor: LookingForOption | null;
@@ -16,7 +16,6 @@ interface OnboardingState {
   lifestyle: LifestyleValues;
   photos: string[];
   setFirstName: (value: string) => void;
-  setLastName: (value: string) => void;
   setGender: (value: Gender) => void;
   setBirthDate: (value: Partial<OnboardingState['birthDate']>) => void;
   setLookingFor: (value: LookingForOption) => void;
@@ -28,7 +27,6 @@ interface OnboardingState {
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   firstName: '',
-  lastName: '',
   gender: null,
   birthDate: { day: '', month: '', year: '' },
   lookingFor: null,
@@ -37,7 +35,6 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   lifestyle: EMPTY_LIFESTYLE,
   photos: [],
   setFirstName: (firstName) => set({ firstName }),
-  setLastName: (lastName) => set({ lastName }),
   setGender: (gender) => set({ gender }),
   setBirthDate: (value) => set((state) => ({ birthDate: { ...state.birthDate, ...value } })),
   setLookingFor: (lookingFor) => set({ lookingFor }),

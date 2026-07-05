@@ -2,9 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { authService, type EmailCredentials } from '@/modules/auth/services/authService';
 import { AUTH_CALLBACK_URL } from '@/modules/auth/constants/authLinks';
 
-interface RegisterInput extends EmailCredentials {
-  firstName: string;
-}
+type RegisterInput = EmailCredentials;
 
 export function useRegister() {
   return useMutation({

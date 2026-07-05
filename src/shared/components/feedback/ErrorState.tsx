@@ -5,7 +5,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import { WifiOff, ServerCrash, Lock, MailWarning, ShieldAlert, KeyRound, Clock, AlertTriangle } from 'lucide-react-native';
@@ -57,7 +56,7 @@ export function ErrorState({ error, onRetry, variant = 'fullscreen', tone = 'onL
         withTiming(0, { duration: 60 }),
       );
     } else {
-      scale.value = withSpring(1, { damping: 9, stiffness: 140 });
+      scale.value = withTiming(1, { duration: 350 });
     }
     // Re-trigger the attention animation every time a new error comes in.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +76,7 @@ export function ErrorState({ error, onRetry, variant = 'fullscreen', tone = 'onL
         )}
       >
         <View className={cn('h-9 w-9 items-center justify-center rounded-full', onDark ? 'bg-white/10' : 'bg-danger/10')}>
-          <Icon size={16} color={onDark ? '#FF6B5E' : colors.danger} strokeWidth={2} />
+          <Icon size={16} color={onDark ? '#E88585' : colors.danger} strokeWidth={2} />
         </View>
         <View className="flex-1">
           <Text className={cn('mb-0.5 font-heading-semibold text-[12.5px]', onDark ? 'text-white' : 'text-ink')}>
@@ -118,7 +117,7 @@ export function ErrorState({ error, onRetry, variant = 'fullscreen', tone = 'onL
         </LinearGradient>
       </Animated.View>
 
-      <Text className="mb-2.5 text-center font-display text-[26px] uppercase leading-none text-ink">
+      <Text className="mb-2.5 text-center font-display text-[26px] leading-none text-ink">
         {error.title}
       </Text>
       <Text className="mb-8 text-center font-body text-[13px] leading-[20px] text-ink-muted">{error.message}</Text>

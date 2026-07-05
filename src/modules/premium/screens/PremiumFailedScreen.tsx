@@ -18,7 +18,7 @@ export function PremiumFailedScreen() {
           <X size={40} color="#C24545" strokeWidth={1.8} />
         </View>
 
-        <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[28px] text-white">
           Paiement échoué
         </Text>
         <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">

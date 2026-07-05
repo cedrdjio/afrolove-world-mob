@@ -48,13 +48,16 @@ export default function RootLayout() {
             <Stack
               screenOptions={{
                 headerShown: false,
+                // Ouverture d'écran fluide par défaut — chaque écran poussé
+                // glisse depuis la droite, les modales gardent leur présentation.
+                animation: 'slide_from_right',
                 contentStyle: { backgroundColor: colors.cream.DEFAULT },
               }}
             >
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(onboarding)" />
+              <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
+              <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
               <Stack.Screen name="profile-completion" options={{ animation: 'fade' }} />
-              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
               <Stack.Screen name="discover-filters" options={{ presentation: 'modal' }} />
               <Stack.Screen name="discover-like-limit" options={{ presentation: 'transparentModal', animation: 'fade' }} />
               <Stack.Screen name="profile" />

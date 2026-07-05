@@ -18,18 +18,18 @@ export const GlassInput = forwardRef<TextInput, GlassInputProps>(
     return (
       <View className="mb-3">
         {label ? (
-          <Text className="mb-2 font-heading-semibold text-[9.5px] uppercase tracking-widest text-ink-faint">
+          <Text className="mb-2 font-heading-semibold text-[11.5px] text-ink-faint">
             {label}
           </Text>
         ) : null}
         <View
           className={cn(
-            'flex-row items-center gap-2.5 rounded-2xl border-[1.5px] bg-white/70 px-[18px] py-3.5',
-            focused || error ? 'border-brand/35' : 'border-white/90',
+            'flex-row items-center gap-2.5 rounded-2xl border-[1.5px] bg-white/55 px-[18px] py-3.5',
+            focused || error ? 'border-brand/40 bg-white/[0.55]' : 'border-white/75',
           )}
           style={{
-            shadowColor: colors.ink.soft,
-            shadowOpacity: 0.07,
+            shadowColor: focused ? colors.brand.DEFAULT : colors.ink.soft,
+            shadowOpacity: focused ? 0.16 : 0.07,
             shadowRadius: 14,
             shadowOffset: { width: 0, height: 4 },
           }}

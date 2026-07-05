@@ -43,7 +43,7 @@ export function FiltersScreen() {
       <ScreenBackground theme="cream" />
       <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 24 }}>
         <View className="mb-6 flex-row items-center justify-between">
-          <Text className="font-display text-[26px] uppercase text-ink">Filtres</Text>
+          <Text className="font-display text-[26px] text-ink">Filtres</Text>
           <Pressable onPress={() => router.back()}>
             <GlassSurface variant="light" radius={15} style={{ width: 40, height: 40 }}>
               <View className="h-10 w-10 items-center justify-center">
@@ -53,7 +53,7 @@ export function FiltersScreen() {
           </Pressable>
         </View>
 
-        <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/40">
+        <Text className="mb-3 font-heading text-[11px] text-ink/40">
           Distance maximale
         </Text>
         <View className="mb-7 flex-row flex-wrap gap-2">
@@ -67,8 +67,8 @@ export function FiltersScreen() {
           ))}
         </View>
 
-        <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/40">Tranche d'âge</Text>
-        <View className="mb-7 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4">
+        <Text className="mb-3 font-heading text-[11px] text-ink/40">Tranche d'âge</Text>
+        <View className="mb-7 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
           <Stepper
             value={ageMin}
             onDecrement={() => setAgeRange(Math.max(18, ageMin - 1), ageMax)}
@@ -82,8 +82,8 @@ export function FiltersScreen() {
           />
         </View>
 
-        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4">
-          <Text className="font-heading-semibold text-[13px] uppercase text-ink">Profils vérifiés uniquement</Text>
+        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
+          <Text className="font-heading-semibold text-[13px] text-ink">Profils vérifiés uniquement</Text>
           <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
         </View>
 

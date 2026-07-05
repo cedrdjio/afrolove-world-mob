@@ -51,7 +51,7 @@ export function DeleteAccountScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Supprimer le compte</Text>
+          <Text className="font-display text-[20px] text-ink">Supprimer le compte</Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -59,7 +59,7 @@ export function DeleteAccountScreen() {
           <View className="mb-3.5 h-16 w-16 items-center justify-center rounded-full border-[1.5px] border-danger/30 bg-danger/[0.1]">
             <AlertTriangle size={28} color="#C24545" strokeWidth={1.7} />
           </View>
-          <Text className="text-center font-display text-[24px] uppercase leading-none text-ink">
+          <Text className="text-center font-display text-[24px] leading-none text-ink">
             Cette action est{'\n'}irréversible
           </Text>
         </View>
@@ -73,7 +73,7 @@ export function DeleteAccountScreen() {
           ))}
         </View>
 
-        <Text className="mb-2 font-heading-semibold text-[11px] uppercase tracking-widest text-ink-faint">
+        <Text className="mb-2 font-heading-semibold text-[11px] text-ink-faint">
           Tapez {CONFIRM_WORD} pour confirmer
         </Text>
         <TextInput
@@ -82,7 +82,7 @@ export function DeleteAccountScreen() {
           placeholder={CONFIRM_WORD}
           placeholderTextColor="rgba(46,36,64,0.2)"
           autoCapitalize="characters"
-          className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-white/70 px-5 py-4 font-heading text-[15px] uppercase tracking-wide text-ink"
+          className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-white/[0.55] px-5 py-4 font-heading text-[15px] tracking-wide text-ink"
         />
 
         {deleteError ? (
@@ -100,7 +100,7 @@ export function DeleteAccountScreen() {
           {deleteAccount.isPending ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="font-heading text-[14px] uppercase tracking-wide text-white">
+            <Text className="font-heading text-[14px] tracking-wide text-white">
               Supprimer définitivement mon compte
             </Text>
           )}

@@ -35,7 +35,7 @@ export function KycRejectedScreen() {
           <AlertTriangle size={40} color="#C24545" strokeWidth={1.6} />
         </View>
 
-        <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[28px] text-white">
           Vérification refusée
         </Text>
         <Text className="mb-6 text-center font-body text-[13.5px] leading-[21px] text-white/50">

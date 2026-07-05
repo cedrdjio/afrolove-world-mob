@@ -56,7 +56,7 @@ export function EditProfileHubScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Modifier le profil</Text>
+          <Text className="font-display text-[20px] text-ink">Modifier le profil</Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -70,7 +70,7 @@ export function EditProfileHubScreen() {
               <Eye size={18} color="#fff" />
             </View>
             <View className="flex-1">
-              <Text className="font-heading text-[13px] uppercase text-white">Aperçu du profil</Text>
+              <Text className="font-heading text-[13px] text-white">Aperçu du profil</Text>
               <Text className="font-body text-[11.5px] text-white/70">Voyez ce que les autres voient</Text>
             </View>
             <ChevronRight size={16} color="#fff" />
@@ -79,10 +79,10 @@ export function EditProfileHubScreen() {
 
         {SECTIONS.map((section) => (
           <View key={section.title} className="mb-5">
-            <Text className="mb-2 font-heading text-[9.5px] uppercase tracking-widest text-ink/35">
+            <Text className="mb-2 font-heading text-[11px] text-ink/35">
               {section.title}
             </Text>
-            <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/90 bg-white/70">
+            <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
               {section.rows.map((row, i) => (
                 <SettingsRow
                   key={row.label}

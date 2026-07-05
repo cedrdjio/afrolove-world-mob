@@ -44,10 +44,10 @@ export function Chip({ label, selected = false, onPress, size = 'md', icon }: Ch
             {icon ? (
               <View className="flex-row items-center gap-1.5">
                 {icon}
-                <Text className="font-heading text-[11.5px] uppercase text-white">{label}</Text>
+                <Text className="font-heading text-[11.5px] text-white">{label}</Text>
               </View>
             ) : (
-              <Text className="font-heading text-[11.5px] uppercase text-white">{label}</Text>
+              <Text className="font-heading text-[11.5px] text-white">{label}</Text>
             )}
           </LinearGradient>
         </Pressable>
@@ -61,17 +61,17 @@ export function Chip({ label, selected = false, onPress, size = 'md', icon }: Ch
         onPress={handlePress}
         onPressIn={pressIn}
         onPressOut={pressOut}
-        className={`rounded-full border-[1.5px] border-white/90 bg-white/70 ${
+        className={`rounded-full border-[1.5px] border-white/70 bg-white/[0.45] ${
           size === 'sm' ? 'px-3.5 py-2' : 'px-4 py-2.5'
         }`}
       >
         {icon ? (
           <View className="flex-row items-center gap-1.5">
             {icon}
-            <Text className="font-heading-medium text-[11.5px] uppercase text-ink">{label}</Text>
+            <Text className="font-heading-medium text-[11.5px] text-ink">{label}</Text>
           </View>
         ) : (
-          <Text className="font-heading-medium text-[11.5px] uppercase text-ink">{label}</Text>
+          <Text className="font-heading-medium text-[11.5px] text-ink">{label}</Text>
         )}
       </Pressable>
     </Animated.View>

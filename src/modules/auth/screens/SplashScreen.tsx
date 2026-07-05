@@ -9,7 +9,6 @@ import Animated, {
   withDelay,
   withRepeat,
   withSequence,
-  withSpring,
   withTiming,
   Easing,
 } from 'react-native-reanimated';
@@ -40,13 +39,13 @@ export function SplashScreen() {
   const [brandingDelayElapsed, setBrandingDelayElapsed] = useState(false);
   const initialRoute = useInitialRoute();
 
-  // Entrance: the glass tile springs in, then floats; the halo breathes.
+  // Entrance: the glass tile fades/scales in, then floats; the halo breathes.
   const enter = useSharedValue(0);
   const float = useSharedValue(0);
   const halo = useSharedValue(0);
 
   useEffect(() => {
-    enter.value = withSpring(1, { damping: 12, stiffness: 110 });
+    enter.value = withTiming(1, { duration: 450, easing: Easing.out(Easing.cubic) });
     float.value = withDelay(
       700,
       withRepeat(
