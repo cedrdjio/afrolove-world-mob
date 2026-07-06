@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useMemo } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Ban, Trash2, Flag } from 'lucide-react-native';
 import { colors } from '@/shared/constants/theme';
@@ -32,11 +33,49 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
     if (!conversation) return null;
 
     const handleBlock = () => {
-      blockUser.mutate(conversation.partnerId, { onSettled: close });
+      Alert.alert(
+        `Bloquer ${conversation.partnerFirstName} ?`,
+        'Cette personne disparaîtra de vos conversations et découvertes, et ne pourra plus vous contacter.',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          {
+            text: 'Bloquer',
+            style: 'destructive',
+            onPress: () =>
+              blockUser.mutate(conversation.partnerId, {
+                onSuccess: () => {
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  Alert.alert('Profil bloqué', `${conversation.partnerFirstName} ne peut plus vous contacter.`);
+                },
+                onSettled: () => {
+                  close();
+                  router.back();
+                },
+              }),
+          },
+        ],
+      );
     };
 
     const handleUnmatch = () => {
-      unmatch.mutate(conversation.matchId, { onSettled: close });
+      Alert.alert(
+        'Supprimer la conversation ?',
+        'Le match et tous les messages seront définitivement supprimés.',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          {
+            text: 'Supprimer',
+            style: 'destructive',
+            onPress: () =>
+              unmatch.mutate(conversation.matchId, {
+                onSettled: () => {
+                  close();
+                  router.back();
+                },
+              }),
+          },
+        ],
+      );
     };
 
     return (

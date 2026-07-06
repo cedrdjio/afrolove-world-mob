@@ -62,7 +62,6 @@ export default function RootLayout() {
               <Stack.Screen name="chat" />
               <Stack.Screen name="matches" options={{ presentation: 'transparentModal', animation: 'fade' }} />
               <Stack.Screen name="matches-search" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="likes" />
               <Stack.Screen name="notifications" />
               <Stack.Screen name="search" options={{ presentation: 'modal' }} />
               <Stack.Screen name="premium" options={{ presentation: 'modal' }} />
