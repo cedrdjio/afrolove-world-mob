@@ -3,8 +3,8 @@ import {
   useLanguagesQuery,
   useReligionsQuery,
   useEducationLevelsQuery,
+  useLifestyleCategories,
 } from '@/modules/profile/hooks/useReferenceData';
-import { LIFESTYLE_CATEGORIES } from '@/shared/constants/lifestyle';
 import { calculateAge, type Profile } from '@/modules/profile/types/profile';
 
 export interface ProfileDisplayData {
@@ -25,6 +25,7 @@ export function useProfileDisplayData(profile: Profile | undefined): ProfileDisp
   const languagesQuery = useLanguagesQuery();
   const religionsQuery = useReligionsQuery();
   const educationQuery = useEducationLevelsQuery();
+  const { categories: lifestyleCategories } = useLifestyleCategories();
 
   if (!profile) return null;
 
@@ -39,7 +40,7 @@ export function useProfileDisplayData(profile: Profile | undefined): ProfileDisp
   const religionLabel = religionsQuery.data?.find((r) => r.id === profile.religionId)?.label ?? null;
   const educationLabel = educationQuery.data?.find((e) => e.id === profile.educationLevelId)?.label ?? null;
 
-  const lifestyleRows = LIFESTYLE_CATEGORIES.map((category) => ({
+  const lifestyleRows = lifestyleCategories.map((category) => ({
     label: category.label,
     value: category.options.find((option) => option.value === profile[category.key])?.label ?? '—',
   }));

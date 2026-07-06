@@ -1,21 +1,40 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { X, Heart, Eye, Star, Zap, Globe2, Crown } from 'lucide-react-native';
+import { X, Heart, Eye, Star, Zap, Globe2, Crown, BadgeCheck } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
+import { ErrorState } from '@/shared/components/feedback/ErrorState';
+import { useAppError } from '@/shared/hooks/useAppError';
 import { PricingCard } from '@/modules/premium/components/PricingCard';
-import { PREMIUM_PLANS } from '@/modules/premium/constants/plans';
+import { BEST_PLAN_KEY } from '@/modules/premium/constants/plans';
+import { usePremiumPlans, usePurchasePlan, useEntitlements } from '@/modules/premium/hooks/usePremium';
+import type { PremiumPlan } from '@/modules/premium/services/premiumService';
 import { colors } from '@/shared/constants/theme';
 
 const FEATURES = [
-  { Icon: Heart, label: 'Likes illimités' },
+  { Icon: Heart, label: 'Likes et swipes illimités' },
   { Icon: Eye, label: 'Voir qui vous a aimé' },
   { Icon: Star, label: 'Super Like × 5 / jour' },
-  { Icon: Zap, label: 'Boost profil mensuel' },
+  { Icon: Zap, label: 'Favoris illimités' },
   { Icon: Globe2, label: 'Filtres avancés' },
 ];
 
 export function PremiumLandingScreen() {
   const router = useRouter();
+  const plansQuery = usePremiumPlans();
+  const entitlements = useEntitlements();
+  const purchase = usePurchasePlan();
+  const purchaseError = useAppError(purchase.error);
+
+  const plans = plansQuery.data ?? [];
+  const isPremium = entitlements.data?.isPremium ?? false;
+
+  const handleChoose = (plan: PremiumPlan) => {
+    if (purchase.isPending) return;
+    purchase.mutate(plan.key, {
+      onSuccess: () => router.push({ pathname: '/premium/success', params: { plan: plan.label } }),
+      onError: () => router.push('/premium/failed'),
+    });
+  };
 
   return (
     <View className="flex-1">
@@ -38,10 +57,27 @@ export function PremiumLandingScreen() {
             AfriLove{'\n'}
             <Text className="text-gold">Premium</Text>
           </Text>
-          <View className="mt-3 rounded-full border border-gold/40 bg-gold/[0.22] px-4 py-2">
-            <Text className="font-heading text-[11px] uppercase text-gold">7 jours gratuits</Text>
-          </View>
         </View>
+
+        {/* Abonnement déjà actif : on l'affiche clairement au lieu de
+            redemander un forfait comme si l'utilisateur n'avait rien. */}
+        {isPremium ? (
+          <View className="mb-[18px] flex-row items-center gap-3 rounded-2xl border border-gold/40 bg-gold/[0.16] px-4 py-3.5">
+            <BadgeCheck size={18} color={colors.gold.DEFAULT} strokeWidth={2.2} />
+            <View className="flex-1">
+              <Text className="mb-0.5 font-heading text-[12px] uppercase text-gold">
+                Premium actif — {entitlements.data?.planLabel ?? ''}
+              </Text>
+              <Text className="font-body text-[11.5px] leading-[16px] text-white/60">
+                Valable jusqu'au{' '}
+                {entitlements.data?.premiumUntil
+                  ? new Date(entitlements.data.premiumUntil).toLocaleDateString('fr-FR')
+                  : '—'}
+                . Un nouvel achat prolonge cette durée.
+              </Text>
+            </View>
+          </View>
+        ) : null}
 
         <View className="mb-[18px] gap-3.5 rounded-3xl border border-white/[0.18] bg-white/[0.1] p-5">
           {FEATURES.map((feature) => (
@@ -54,13 +90,36 @@ export function PremiumLandingScreen() {
           ))}
         </View>
 
-        <View className="mb-3.5 flex-row flex-wrap gap-1.5">
-          {PREMIUM_PLANS.map((plan) => (
-            <View key={plan.key} style={{ width: '31.5%' }}>
-              <PricingCard plan={plan} />
-            </View>
-          ))}
-        </View>
+        {purchaseError ? (
+          <View className="mb-3">
+            <ErrorState error={purchaseError} variant="inline" />
+          </View>
+        ) : null}
+
+        {plansQuery.isLoading ? (
+          <View className="items-center py-8">
+            <ActivityIndicator size="large" color={colors.gold.DEFAULT} />
+          </View>
+        ) : (
+          <View className="mb-3.5 flex-row flex-wrap gap-1.5">
+            {plans.map((plan) => (
+              <View key={plan.key} style={{ width: '31.5%' }}>
+                <PricingCard
+                  plan={plan}
+                  onChoose={handleChoose}
+                  loading={purchase.isPending && purchase.variables === plan.key}
+                  badge={plan.key === BEST_PLAN_KEY ? 'Meilleur' : undefined}
+                />
+              </View>
+            ))}
+          </View>
+        )}
+
+        <Pressable onPress={() => router.push('/premium/pricing')} className="mb-3 active:opacity-80">
+          <Text className="text-center font-heading text-[11px] uppercase text-white/50">
+            Comparer tous les forfaits
+          </Text>
+        </Pressable>
 
         <Text className="text-center font-body text-[10px] text-white/25">
           www.afriloveworld.com · +33 6 98 89 19 75

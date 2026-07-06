@@ -1,21 +1,44 @@
+import { useEffect, useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { FullScreenLoader } from '@/shared/components/feedback';
 import { useOtherProfileQuery } from '@/modules/profile/hooks/useOtherProfileQuery';
+import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useProfileDisplayData } from '@/modules/profile/hooks/useProfileDisplayData';
+import { profileService } from '@/modules/profile/services/profileService';
 import { ProfileDetailView } from '@/modules/profile/components/ProfileDetailView';
 import { useSwipe } from '@/modules/discovery/hooks/useDiscovery';
+import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
 
 export function ProfileViewScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const profileQuery = useOtherProfileQuery(id);
+  const myProfileQuery = useProfileQuery();
+  const conversationsQuery = useConversationsQuery();
   const displayData = useProfileDisplayData(profileQuery.data);
   const swipe = useSwipe();
 
-  if (!profileQuery.data || !displayData) return <FullScreenLoader />;
+  // Chaque ouverture de fiche alimente le compteur « Vues » du profil visité.
+  useEffect(() => {
+    if (id) profileService.recordProfileView(id).catch(() => {});
+  }, [id]);
 
   const profile = profileQuery.data;
+
+  // Compatibilité affichée = même formule que le deck (search_profiles) :
+  // 50 % de base + la part d'intérêts en commun, plafonnée à 99.
+  const discoveryStats = useMemo(() => {
+    if (!profile || !myProfileQuery.data) return null;
+    const mine = new Set(myProfileQuery.data.interestIds);
+    const common = profile.interestIds.filter((interestId) => mine.has(interestId)).length;
+    const compatibility = Math.min(99, Math.max(50, 50 + Math.round((common * 49) / Math.max(mine.size, 1))));
+    return { compatibility, commonInterests: common };
+  }, [profile, myProfileQuery.data]);
+
+  if (!profile || !displayData) return <FullScreenLoader />;
+
+  const matchWithProfile = (conversationsQuery.data ?? []).find((c) => c.partnerId === profile.id);
 
   // "J'aime" records a real swipe; the celebration only fires on an actual
   // mutual match (it used to open unconditionally without saving anything).
@@ -35,6 +58,16 @@ export function ProfileViewScreen() {
             router.back();
           }
         },
+        onError: (error) => {
+          // Les plafonds gratuits (15 swipes/jour, 10 favoris) sont levés par
+          // le trigger BD — on route vers l'écran forfaits correspondant.
+          const message = error instanceof Error ? error.message : '';
+          if (message.includes('SWIPE_LIMIT_REACHED') || message.includes('LIKE_LIMIT_REACHED')) {
+            router.push({ pathname: '/discover-like-limit', params: { reason: 'swipes' } });
+          } else if (message.includes('FAVORITES_LIMIT_REACHED')) {
+            router.push({ pathname: '/discover-like-limit', params: { reason: 'favorites' } });
+          }
+        },
       },
     );
   };
@@ -44,8 +77,10 @@ export function ProfileViewScreen() {
       profile={profile}
       displayData={displayData}
       variant="discovery"
+      discoveryStats={discoveryStats ?? undefined}
       onGalleryPress={() => router.push(`/profile/${profile.id}/gallery`)}
       onLike={handleLike}
+      onMessage={matchWithProfile ? () => router.push(`/chat/${matchWithProfile.matchId}`) : undefined}
     />
   );
 }

@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'expo-image';
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
@@ -11,14 +10,16 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { MapPin, BadgeCheck, Settings, ShieldCheck } from 'lucide-react-native';
-import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
+import { MapPin, BadgeCheck, Settings, ShieldCheck, Pencil, Crown } from 'lucide-react-native';
+import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
+import { Avatar } from '@/shared/components/ui/Avatar';
 import { Chip } from '@/shared/components/ui/Chip';
 import { FullScreenLoader } from '@/shared/components/feedback';
 import { colors, gradients } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useProfileStats } from '@/modules/profile/hooks/useProfileStats';
 import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
+import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { computeProfileCompletion, calculateAge } from '@/modules/profile/types/profile';
 
 function AnimatedProgressBar({ percent }: { percent: number }) {
@@ -44,13 +45,18 @@ function AnimatedProgressBar({ percent }: { percent: number }) {
   );
 }
 
+/** Écran « Mon profil » conforme à la maquette 08 : carte identité avec
+ *  progression, stats Vues/Likes/Matchs, carte Ma bio éditable et carte
+ *  AfriLove Premium qui reflète l'abonnement réel. */
 export function MyProfileScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const statsQuery = useProfileStats();
   const interestsQuery = useInterestsQuery();
+  const entitlements = useEntitlements();
 
   const profile = profileQuery.data;
+  const isPremium = entitlements.data?.isPremium ?? false;
 
   const completionPercent = useMemo(() => {
     if (!profile) return 0;
@@ -71,153 +77,187 @@ export function MyProfileScreen() {
   }
 
   const age = profile.birthDate ? calculateAge(profile.birthDate) : null;
-  const locationLabel = [profile.city, profile.country].filter(Boolean).join(', ');
+  const locationLabel = [profile.city, profile.country].filter(Boolean).join(' · ');
   const stats = [
-    { value: String(statsQuery.data?.likesReceived ?? '—'), label: 'Likes reçus', color: colors.brand.DEFAULT },
-    { value: String(statsQuery.data?.matchesCount ?? '—'), label: 'Matches', color: colors.gold.DEFAULT },
-    { value: statsQuery.data ? `${statsQuery.data.matchRate}%` : '—', label: 'Taux match', color: colors.success },
+    { value: statsQuery.data ? String(statsQuery.data.viewsCount) : '—', label: 'Vues', color: colors.ink.DEFAULT },
+    { value: statsQuery.data ? String(statsQuery.data.likesReceived) : '—', label: 'Likes', color: colors.brand.DEFAULT },
+    { value: statsQuery.data ? String(statsQuery.data.matchesCount) : '—', label: 'Matchs', color: colors.gold.DEFAULT },
   ];
 
   return (
-    <View className="flex-1 bg-cream">
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-28">
-        <View style={{ height: 310 }} className="relative overflow-hidden">
-          {profile.avatarUrl ? (
-            <Image source={{ uri: profile.avatarUrl }} style={{ flex: 1 }} contentFit="cover" transition={250} />
-          ) : (
-            <PhotoPlaceholder seed={0} style={{ flex: 1 }} showIcon iconSize={44} />
-          )}
-          <LinearGradient
-            colors={['rgba(0,0,0,0.18)', 'transparent', colors.cream.DEFAULT]}
-            locations={[0, 0.4, 1]}
-            style={{ position: 'absolute', inset: 0 }}
-          />
-          <View className="absolute inset-x-[18px] flex-row items-center justify-between" style={{ top: 60 }}>
-            <Text
-              className="font-display text-[20px] uppercase text-white"
-              style={{ textShadowColor: 'rgba(0,0,0,0.35)', textShadowRadius: 8, textShadowOffset: { width: 0, height: 2 } }}
-            >
-              Mon Profil
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <Pressable
-                onPress={() => router.push('/edit-profile')}
-                className="rounded-full bg-white/90 px-3.5 py-2 active:opacity-80"
-              >
-                <Text className="font-heading text-[11px] uppercase text-brand">Modifier</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => router.push('/settings')}
-                hitSlop={6}
-                className="h-[34px] w-[34px] items-center justify-center rounded-full bg-white/90 active:opacity-80"
-                accessibilityLabel="Paramètres"
-              >
-                <Settings size={16} color={colors.brand.DEFAULT} strokeWidth={2.1} />
-              </Pressable>
-            </View>
-          </View>
+    <View className="flex-1">
+      <ScreenBackground theme="cream">
+        <GlowOrb size={230} color="rgba(106,79,192,0.09)" top={-50} left={-50} duration={9500} />
+      </ScreenBackground>
 
-          {completionPercent < 100 ? (
-            <Animated.View
-              entering={FadeInDown.delay(120).springify().damping(16)}
-              className="absolute inset-x-[18px]"
-              style={{ top: 206 }}
-            >
-              <Pressable
-                onPress={() => router.push('/edit-profile/completion')}
-                className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/95 bg-white/85 px-4 py-3.5 active:opacity-90"
-                style={{ shadowColor: colors.ink.soft, shadowOpacity: 0.1, shadowRadius: 22, shadowOffset: { width: 0, height: 6 } }}
-              >
-                <View className="flex-1">
-                  <View className="mb-1.5 flex-row justify-between">
-                    <Text className="font-heading text-[11px] uppercase text-ink">Profil complété</Text>
-                    <Text className="font-heading text-[12px] text-brand">{completionPercent}%</Text>
-                  </View>
-                  <AnimatedProgressBar percent={completionPercent} />
-                </View>
-                <View className="rounded-xl bg-brand px-3.5 py-2.5">
-                  <Text className="font-heading text-[11px] uppercase text-white">Compléter</Text>
-                </View>
-              </Pressable>
-            </Animated.View>
-          ) : null}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="px-[22px] pb-32" style={{ paddingTop: 64 }}>
+        <View className="mb-5 flex-row items-center justify-between">
+          <Text className="font-display text-[30px] uppercase text-ink">Mon profil</Text>
+          <Pressable
+            onPress={() => router.push('/settings')}
+            hitSlop={6}
+            className="h-[40px] w-[40px] items-center justify-center rounded-2xl border-[1.5px] border-white/90 bg-white/70 active:opacity-80"
+            accessibilityLabel="Paramètres"
+          >
+            <Settings size={17} color={colors.brand.DEFAULT} strokeWidth={2.1} />
+          </Pressable>
         </View>
 
-        <View className="px-[22px] pt-6">
-          <Animated.View entering={FadeInDown.delay(180).springify().damping(16)}>
-            <View className="mb-1 flex-row items-center justify-between">
-              <View className="flex-row items-baseline gap-2">
-                <Text className="font-display text-[32px] text-ink">{profile.firstName ?? 'Moi'},</Text>
-                {age != null ? (
-                  <Text className="font-display-semibold text-[26px] text-ink-muted">{age}</Text>
+        {/* Carte identité : avatar, nom, ville, progression du profil. */}
+        <Animated.View entering={FadeInDown.delay(80).springify().damping(16)}>
+          <View className="mb-3.5 rounded-3xl border-[1.5px] border-white/90 bg-white/75 p-4">
+            <View className="flex-row items-center gap-3.5">
+              <Pressable onPress={() => router.push('/edit-profile/photos')} className="active:opacity-85">
+                <Avatar source={profile.avatarUrl ?? undefined} seed={profile.firstName ?? 'moi'} size={64} />
+                <View className="absolute -bottom-1 -right-1 h-6 w-6 items-center justify-center rounded-full bg-brand">
+                  <Pencil size={11} color="#fff" strokeWidth={2.4} />
+                </View>
+              </Pressable>
+              <View className="flex-1">
+                <View className="flex-row items-center gap-1.5">
+                  <Text className="font-display text-[22px] text-ink" numberOfLines={1}>
+                    {profile.firstName ?? 'Moi'}
+                    {age != null ? `, ${age}` : ''}
+                  </Text>
+                  {profile.isVerified ? (
+                    <BadgeCheck size={15} color={colors.gold.DEFAULT} strokeWidth={2.6} />
+                  ) : null}
+                </View>
+                {locationLabel ? (
+                  <View className="mt-0.5 flex-row items-center gap-1.5">
+                    <MapPin size={11} color={colors.ink.muted} />
+                    <Text className="font-body-medium text-[11.5px] text-ink-muted">{locationLabel}</Text>
+                  </View>
                 ) : null}
               </View>
-              {profile.isVerified ? (
-                <View className="flex-row items-center gap-1.5 rounded-full bg-gold/[0.12] px-3 py-1.5">
-                  <BadgeCheck size={11} color={colors.gold.DEFAULT} strokeWidth={2.8} />
-                  <Text className="font-heading text-[10px] uppercase text-gold">
-                    {profile.gender === 'femme' ? 'Vérifiée' : 'Vérifié'}
-                  </Text>
-                </View>
-              ) : (
-                <Pressable
-                  onPress={() => router.push('/kyc/upload-id')}
-                  className="flex-row items-center gap-1.5 rounded-full bg-brand/[0.1] px-3 py-1.5 active:opacity-80"
-                >
-                  <ShieldCheck size={11} color={colors.brand.DEFAULT} strokeWidth={2.6} />
-                  <Text className="font-heading text-[10px] uppercase text-brand">Me vérifier</Text>
-                </Pressable>
-              )}
+              <Pressable
+                onPress={() => router.push('/edit-profile')}
+                className="rounded-full bg-brand/10 px-3 py-2 active:opacity-80"
+              >
+                <Text className="font-heading text-[10px] uppercase text-brand">Modifier</Text>
+              </Pressable>
             </View>
-            {locationLabel ? (
-              <View className="mb-3 flex-row items-center gap-1.5">
-                <MapPin size={12} color={colors.ink.muted} />
-                <Text className="font-body-medium text-[12px] text-ink-muted">{locationLabel}</Text>
-              </View>
-            ) : null}
-          </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(240).springify().damping(16)}>
             <Pressable
-              onPress={() => router.push('/edit-profile/bio')}
-              className="mb-3 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5 active:opacity-90"
+              onPress={() => router.push('/edit-profile/completion')}
+              className="mt-4 active:opacity-90"
+              disabled={completionPercent >= 100}
             >
-              <Text className="mb-1.5 font-heading text-[9.5px] uppercase tracking-widest text-ink/35">À propos</Text>
-              {profile.bio ? (
-                <Text className="font-body text-[12.5px] leading-[19px] text-ink">{profile.bio}</Text>
-              ) : (
-                <Text className="font-body italic text-[12.5px] leading-[19px] text-ink-muted">
-                  Ajoutez une bio pour attirer 2× plus de visites.
+              <View className="mb-1.5 flex-row justify-between">
+                <Text className="font-heading text-[10px] uppercase text-ink/50">
+                  Profil complété à {completionPercent}%
                 </Text>
-              )}
+                {completionPercent < 100 ? (
+                  <Text className="font-heading text-[10px] uppercase text-brand">Compléter</Text>
+                ) : null}
+              </View>
+              <AnimatedProgressBar percent={completionPercent} />
+            </Pressable>
+          </View>
+        </Animated.View>
+
+        {/* Vérification d'identité (badge) si pas encore faite. */}
+        {!profile.isVerified ? (
+          <Animated.View entering={FadeInDown.delay(140).springify().damping(16)}>
+            <Pressable
+              onPress={() => router.push('/kyc/upload-id')}
+              className="mb-3.5 flex-row items-center gap-3 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3 active:opacity-85"
+            >
+              <View className="h-9 w-9 items-center justify-center rounded-xl bg-brand/[0.1]">
+                <ShieldCheck size={16} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+              </View>
+              <View className="flex-1">
+                <Text className="font-heading text-[11.5px] uppercase text-ink">Vérifier mon profil</Text>
+                <Text className="font-body text-[10.5px] text-ink-muted">Obtenez le badge certifié ✓</Text>
+              </View>
             </Pressable>
           </Animated.View>
+        ) : null}
 
-          {interestLabels.length > 0 ? (
-            <Animated.View
-              entering={FadeInDown.delay(300).springify().damping(16)}
-              className="mb-3.5 flex-row flex-wrap gap-2"
+        {/* Stats façon maquette : Vues / Likes / Matchs. */}
+        <Animated.View entering={FadeInDown.delay(200).springify().damping(16)} className="mb-3.5 flex-row gap-2.5">
+          {stats.map((stat) => (
+            <View
+              key={stat.label}
+              className="flex-1 items-center rounded-2xl border-[1.5px] border-white/90 bg-white/70 py-3.5"
             >
-              {interestLabels.map((interest) => (
-                <Chip key={interest} label={interest} />
-              ))}
-            </Animated.View>
-          ) : null}
+              <Text className="mb-1 font-display text-[22px]" style={{ color: stat.color }}>
+                {stat.value}
+              </Text>
+              <Text className="font-body-medium text-[10px] text-ink-muted">{stat.label}</Text>
+            </View>
+          ))}
+        </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(360).springify().damping(16)} className="flex-row gap-2.5">
-            {stats.map((stat) => (
-              <View
-                key={stat.label}
-                className="flex-1 items-center rounded-2xl border-[1.5px] border-white/90 bg-white/70 py-3.5"
-              >
-                <Text className="mb-1 font-display text-[22px]" style={{ color: stat.color }}>
-                  {stat.value}
-                </Text>
-                <Text className="font-body-medium text-[10px] text-ink-muted">{stat.label}</Text>
-              </View>
+        {/* Ma bio. */}
+        <Animated.View entering={FadeInDown.delay(260).springify().damping(16)}>
+          <Pressable
+            onPress={() => router.push('/edit-profile/bio')}
+            className="mb-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5 active:opacity-90"
+          >
+            <View className="mb-1.5 flex-row items-center justify-between">
+              <Text className="font-heading text-[9.5px] uppercase tracking-widest text-ink/35">Ma bio</Text>
+              <Pencil size={11} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+            </View>
+            {profile.bio ? (
+              <Text className="font-body text-[12.5px] leading-[19px] text-ink">{profile.bio}</Text>
+            ) : (
+              <Text className="font-body italic text-[12.5px] leading-[19px] text-ink-muted">
+                Ajoutez une bio pour attirer 2× plus de visites.
+              </Text>
+            )}
+          </Pressable>
+        </Animated.View>
+
+        {interestLabels.length > 0 ? (
+          <Animated.View
+            entering={FadeInDown.delay(320).springify().damping(16)}
+            className="mb-3.5 flex-row flex-wrap gap-2"
+          >
+            {interestLabels.map((interest) => (
+              <Chip key={interest} label={interest} size="sm" />
             ))}
           </Animated.View>
-        </View>
+        ) : null}
+
+        {/* Carte AfriLove Premium — reflète l'abonnement réel au lieu de
+            proposer « Essayer » à un compte déjà premium. */}
+        <Animated.View entering={FadeInDown.delay(380).springify().damping(16)}>
+          <Pressable
+            onPress={() => router.push(isPremium ? '/premium/pricing' : '/premium')}
+            className="active:opacity-90"
+          >
+            <LinearGradient
+              colors={gradients.brand}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ borderRadius: 20, padding: 16 }}
+            >
+              <View className="flex-row items-center gap-3">
+                <View className="h-11 w-11 items-center justify-center rounded-full bg-white/[0.16]">
+                  <Crown size={20} color="#fff" strokeWidth={1.9} />
+                </View>
+                <View className="flex-1">
+                  <Text className="mb-0.5 font-heading text-[13px] uppercase text-white">AfriLove Premium</Text>
+                  <Text className="font-body text-[11px] text-white/70">
+                    {isPremium
+                      ? `Actif jusqu'au ${
+                          entitlements.data?.premiumUntil
+                            ? new Date(entitlements.data.premiumUntil).toLocaleDateString('fr-FR')
+                            : '—'
+                        }`
+                      : "Vois qui t'a déjà liké"}
+                  </Text>
+                </View>
+                <View className="rounded-full bg-white px-3.5 py-2">
+                  <Text className="font-heading text-[10.5px] uppercase text-brand">
+                    {isPremium ? 'Prolonger' : 'Essayer'}
+                  </Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </Pressable>
+        </Animated.View>
       </ScrollView>
     </View>
   );

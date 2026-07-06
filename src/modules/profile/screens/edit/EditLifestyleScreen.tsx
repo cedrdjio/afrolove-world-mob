@@ -4,15 +4,16 @@ import { useRouter } from 'expo-router';
 import { HeartHandshake } from 'lucide-react-native';
 import { Chip } from '@/shared/components/ui/Chip';
 import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
-import { LIFESTYLE_CATEGORIES, EMPTY_LIFESTYLE, isLifestyleComplete, type LifestyleValues } from '@/shared/constants/lifestyle';
+import { EMPTY_LIFESTYLE, isLifestyleComplete, type LifestyleValues } from '@/shared/constants/lifestyle';
 import { colors } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
-import { useRelationshipGoalsQuery } from '@/modules/profile/hooks/useReferenceData';
+import { useLifestyleCategories, useRelationshipGoalsQuery } from '@/modules/profile/hooks/useReferenceData';
 import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
 
 export function EditLifestyleScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
+  const { categories: lifestyleCategories } = useLifestyleCategories();
   const relationshipGoalsQuery = useRelationshipGoalsQuery();
   const updateProfile = useUpdateProfile();
   const [choices, setChoices] = useState<LifestyleValues>(EMPTY_LIFESTYLE);
@@ -55,7 +56,7 @@ export function EditLifestyleScreen() {
       saveLabel={updateProfile.isPending ? 'Enregistrement…' : 'Enregistrer'}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        {LIFESTYLE_CATEGORIES.map((category) => (
+        {lifestyleCategories.map((category) => (
           <View key={category.key} className="mb-5">
             <View className="mb-2.5 flex-row items-center gap-1.5">
               <category.Icon size={12} color={colors.ink.muted} />
@@ -69,7 +70,12 @@ export function EditLifestyleScreen() {
                   key={option.value}
                   label={option.label}
                   selected={choices[category.key] === option.value}
-                  onPress={() => setChoices((prev) => ({ ...prev, [category.key]: option.value }))}
+                  onPress={() =>
+                    setChoices((prev) => ({
+                      ...prev,
+                      [category.key]: option.value as LifestyleValues[keyof LifestyleValues],
+                    }))
+                  }
                 />
               ))}
             </View>

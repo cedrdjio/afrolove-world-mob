@@ -1,93 +1,119 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { X, Minus, Plus } from 'lucide-react-native';
+import { ChevronLeft } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
+import { Slider, DualSlider } from '@/shared/components/ui/RangeSlider';
 import { useFiltersStore } from '@/modules/discovery/stores/filtersStore';
+import { useDiscoveryCount } from '@/modules/discovery/hooks/useDiscovery';
+import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
 import { colors } from '@/shared/constants/theme';
 
-const DISTANCE_OPTIONS = [5, 10, 25, 50, 100];
-
-function Stepper({ value, onDecrement, onIncrement }: { value: number; onDecrement: () => void; onIncrement: () => void }) {
+function FilterCard({ children }: { children: React.ReactNode }) {
   return (
-    <View className="flex-row items-center gap-4">
-      <Pressable onPress={onDecrement}>
-        <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
-          <View className="h-10 w-10 items-center justify-center">
-            <Minus size={16} color={colors.ink.DEFAULT} />
-          </View>
-        </GlassSurface>
-      </Pressable>
-      <Text className="w-10 text-center font-display text-[22px] text-ink">{value}</Text>
-      <Pressable onPress={onIncrement}>
-        <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
-          <View className="h-10 w-10 items-center justify-center">
-            <Plus size={16} color={colors.ink.DEFAULT} />
-          </View>
-        </GlassSurface>
-      </Pressable>
-    </View>
+    <View className="mb-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/75 px-5 py-4">{children}</View>
   );
 }
 
+/** Écran Filtres conforme à la maquette : sliders distance/âge, centres
+ *  d'intérêt (catalogue BD), profils vérifiés, CTA « Voir N profils ». */
 export function FiltersScreen() {
   const router = useRouter();
-  const { distanceKm, ageMin, ageMax, verifiedOnly, setDistanceKm, setAgeRange, toggleVerifiedOnly } =
-    useFiltersStore();
+  const {
+    distanceKm,
+    ageMin,
+    ageMax,
+    verifiedOnly,
+    interestIds,
+    setDistanceKm,
+    setAgeRange,
+    toggleVerifiedOnly,
+    toggleInterest,
+    reset,
+  } = useFiltersStore();
+  const interestsQuery = useInterestsQuery();
+  const countQuery = useDiscoveryCount();
+
+  const interests = interestsQuery.data ?? [];
+  const count = countQuery.data;
 
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream" />
-      <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 24 }}>
+      <ScrollView contentContainerClassName="px-6 pb-10" style={{ paddingTop: 60 }}>
         <View className="mb-6 flex-row items-center justify-between">
-          <Text className="font-display text-[26px] uppercase text-ink">Filtres</Text>
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()} accessibilityLabel="Retour">
             <GlassSurface variant="light" radius={15} style={{ width: 40, height: 40 }}>
               <View className="h-10 w-10 items-center justify-center">
-                <X size={17} color={colors.ink.DEFAULT} />
+                <ChevronLeft size={19} color={colors.ink.DEFAULT} />
               </View>
             </GlassSurface>
           </Pressable>
+          <Text className="font-display text-[24px] uppercase text-ink">Filtres</Text>
+          <Pressable onPress={reset} hitSlop={8}>
+            <Text className="font-heading text-[11.5px] uppercase text-brand">Réinitialiser</Text>
+          </Pressable>
         </View>
 
-        <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/40">
-          Distance maximale
-        </Text>
-        <View className="mb-7 flex-row flex-wrap gap-2">
-          {DISTANCE_OPTIONS.map((option) => (
-            <Chip
-              key={option}
-              label={`${option} km`}
-              selected={distanceKm === option}
-              onPress={() => setDistanceKm(option)}
-            />
-          ))}
-        </View>
+        <FilterCard>
+          <View className="mb-2 flex-row items-center justify-between">
+            <Text className="font-heading-semibold text-[13px] uppercase text-ink">Distance</Text>
+            <Text className="font-heading text-[12.5px] text-brand">{distanceKm} km</Text>
+          </View>
+          <Slider min={5} max={200} step={5} value={distanceKm} onChange={setDistanceKm} />
+        </FilterCard>
 
-        <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/40">Tranche d'âge</Text>
-        <View className="mb-7 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4">
-          <Stepper
-            value={ageMin}
-            onDecrement={() => setAgeRange(Math.max(18, ageMin - 1), ageMax)}
-            onIncrement={() => setAgeRange(Math.min(ageMax, ageMin + 1), ageMax)}
-          />
-          <Text className="font-body-medium text-[12px] text-ink-muted">à</Text>
-          <Stepper
-            value={ageMax}
-            onDecrement={() => setAgeRange(ageMin, Math.max(ageMin, ageMax - 1))}
-            onIncrement={() => setAgeRange(ageMin, Math.min(99, ageMax + 1))}
-          />
-        </View>
+        <FilterCard>
+          <View className="mb-2 flex-row items-center justify-between">
+            <Text className="font-heading-semibold text-[13px] uppercase text-ink">Tranche d'âge</Text>
+            <Text className="font-heading text-[12.5px] text-brand">
+              {ageMin} – {ageMax}
+            </Text>
+          </View>
+          <DualSlider min={18} max={70} step={1} lowValue={ageMin} highValue={ageMax} onChange={setAgeRange} />
+        </FilterCard>
 
-        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-5 py-4">
-          <Text className="font-heading-semibold text-[13px] uppercase text-ink">Profils vérifiés uniquement</Text>
-          <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
-        </View>
+        <FilterCard>
+          <Text className="mb-3 font-heading-semibold text-[13px] uppercase text-ink">Centres d'intérêt</Text>
+          {interestsQuery.isLoading ? (
+            <ActivityIndicator color={colors.brand.DEFAULT} />
+          ) : (
+            <View className="flex-row flex-wrap gap-2">
+              {interests.map((interest) => (
+                <Chip
+                  key={interest.id}
+                  label={interest.label}
+                  size="sm"
+                  selected={interestIds.includes(interest.id)}
+                  onPress={() => toggleInterest(interest.id)}
+                />
+              ))}
+            </View>
+          )}
+        </FilterCard>
 
-        <GradientButton label="Appliquer les filtres" onPress={() => router.back()} />
+        <FilterCard>
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-3">
+              <Text className="mb-0.5 font-heading-semibold text-[13px] uppercase text-ink">Profils vérifiés</Text>
+              <Text className="font-body text-[11px] text-ink-muted">Uniquement les comptes certifiés</Text>
+            </View>
+            <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
+          </View>
+        </FilterCard>
+
+        <GradientButton
+          label={
+            countQuery.isLoading || count == null
+              ? 'Voir les profils'
+              : `Voir ${count} profil${count > 1 ? 's' : ''}`
+          }
+          onPress={() => router.back()}
+          style={{ marginTop: 10 }}
+        />
       </ScrollView>
     </View>
   );

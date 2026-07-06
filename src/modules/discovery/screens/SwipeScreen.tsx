@@ -11,6 +11,7 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
 import { useDiscoveryFeed, useSwipe } from '@/modules/discovery/hooks/useDiscovery';
+import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { useHasUnreadNotifications } from '@/modules/notifications/hooks/useNotifications';
 import type { DiscoveryFeedMode, DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
 import { SwipeCard, type SwipeDirection } from '@/modules/discovery/components/SwipeCard';
@@ -37,8 +38,14 @@ export function SwipeScreen() {
   const swipe = useSwipe();
   const feedError = useAppError(feed.error);
   const hasUnreadNotifications = useHasUnreadNotifications();
+  const entitlements = useEntitlements();
 
   const profiles = feed.data ?? [];
+
+  // Compteur de swipes restants pour les comptes sans forfait (null = illimité).
+  const swipesLimit = entitlements.data?.swipesLimit ?? null;
+  const swipesRemaining =
+    swipesLimit == null ? null : Math.max(0, swipesLimit - (entitlements.data?.swipesUsedToday ?? 0));
 
   // A new deck (filters changed, chip changed, refetch) restarts at the top.
   useEffect(() => {
@@ -60,14 +67,19 @@ export function SwipeScreen() {
               pathname: '/matches/celebration',
               params: { id: profile.id, name: profile.firstName },
             });
+          } else if (swipesRemaining != null && swipesRemaining <= 1) {
+            // Dernier swipe gratuit consommé : proposer un forfait tout de suite.
+            router.push({ pathname: '/discover-like-limit', params: { reason: 'swipes' } });
           }
         },
         onError: (error) => {
           // Free-tier limits are enforced by the DB swipe trigger — the raised
           // exception codes arrive in the error message.
           const message = error instanceof Error ? error.message : '';
-          if (message.includes('LIKE_LIMIT_REACHED')) {
-            router.push('/discover-like-limit');
+          if (message.includes('SWIPE_LIMIT_REACHED') || message.includes('LIKE_LIMIT_REACHED')) {
+            router.push({ pathname: '/discover-like-limit', params: { reason: 'swipes' } });
+          } else if (message.includes('FAVORITES_LIMIT_REACHED')) {
+            router.push({ pathname: '/discover-like-limit', params: { reason: 'favorites' } });
           } else if (message.includes('SUPER_LIKE_PREMIUM_ONLY') || message.includes('SUPER_LIKE_LIMIT_REACHED')) {
             router.push('/premium');
           }
@@ -118,6 +130,16 @@ export function SwipeScreen() {
             }}
           />
         ))}
+        {swipesRemaining != null ? (
+          <Pressable
+            onPress={() => router.push('/premium/pricing')}
+            className="ml-auto rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5"
+          >
+            <Text className="font-heading text-[10.5px] uppercase text-brand">
+              {swipesRemaining} swipe{swipesRemaining > 1 ? 's' : ''}
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
 
       <View className="mx-[18px] mt-6 flex-1" style={{ marginBottom: 210 }}>

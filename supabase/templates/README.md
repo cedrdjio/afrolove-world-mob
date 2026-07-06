@@ -11,6 +11,11 @@ logo distant). À coller manuellement dans le dashboard Supabase :
 | `reset-password.html` | Reset password |
 | `change-email.html` | Change email address |
 
+> ⚠️ **Reset password** : le template affiche désormais le code `{{ .Token }}`
+> en plus du lien. L'app mobile demande ce code (le lien navigateur ne
+> ramenait pas dans l'app) — recollez impérativement la nouvelle version du
+> template dans le dashboard, sinon les membres ne verront pas de code.
+
 ## Logo
 
 Les templates pointent vers le bucket public `branding` :

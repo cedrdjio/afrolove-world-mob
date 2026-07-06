@@ -1,6 +1,8 @@
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '@/shared/services/supabase/client';
 
-export type NotificationType = 'match' | 'message' | 'like' | 'kyc';
+/** 'admin' = annonces diffusées depuis le back-office. */
+export type NotificationType = 'match' | 'message' | 'like' | 'kyc' | 'admin';
 
 export interface AppNotification {
   id: string;
@@ -41,7 +43,30 @@ async function markAllRead(profileId: string): Promise<void> {
   if (error) throw error;
 }
 
+/**
+ * Flux temps réel des nouvelles notifications (la table est dans la
+ * publication supabase_realtime ; la RLS s'applique aux lignes reçues).
+ * C'est ce qui fait arriver instantanément les annonces envoyées depuis le
+ * dashboard. L'appelant doit unsubscribe() au démontage.
+ */
+function subscribeToNotifications(profileId: string, onInsert: () => void): RealtimeChannel {
+  return supabase
+    .channel(`notifications:${profileId}`)
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'notifications', filter: `profile_id=eq.${profileId}` },
+      () => onInsert(),
+    )
+    .subscribe();
+}
+
+function unsubscribe(channel: RealtimeChannel): void {
+  supabase.removeChannel(channel).catch(() => {});
+}
+
 export const notificationsService = {
   fetchNotifications,
   markAllRead,
+  subscribeToNotifications,
+  unsubscribe,
 };

@@ -10,7 +10,7 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 import type BottomSheet from '@gorhom/bottom-sheet';
-import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand } from 'lucide-react-native';
+import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, MessageCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
@@ -38,11 +38,23 @@ interface ProfileDetailViewProps {
    *  someone else; 'preview' shows a "this is what others see" banner and
    *  no actions, for the user's own Profile Preview screen. */
   variant: 'discovery' | 'preview';
+  /** Cartouches « compatibilité » / « points communs » de la maquette. */
+  discoveryStats?: { compatibility: number; commonInterests: number };
   onGalleryPress: () => void;
   onLike?: () => void;
+  /** Fourni uniquement quand un match existe déjà — ouvre la conversation. */
+  onMessage?: () => void;
 }
 
-export function ProfileDetailView({ profile, displayData, variant, onGalleryPress, onLike }: ProfileDetailViewProps) {
+export function ProfileDetailView({
+  profile,
+  displayData,
+  variant,
+  discoveryStats,
+  onGalleryPress,
+  onLike,
+  onMessage,
+}: ProfileDetailViewProps) {
   const router = useRouter();
   const [activePhoto, setActivePhoto] = useState(0);
   const sheetRef = useRef<BottomSheet>(null);
@@ -153,13 +165,30 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
             </View>
             {profile.isVerified ? <VerifiedBadge tone="chip" /> : null}
           </View>
-          {profile.city ? (
+          {profile.city || profile.distanceKm != null ? (
             <View className="mb-5 flex-row items-center gap-1.5">
               <MapPin size={13} color={colors.ink.muted} />
               <Text className="font-body-medium text-[13px] text-ink-muted">
-                {profile.city}
-                {profile.country ? `, ${profile.country}` : ''}
+                {[profile.city, profile.country, profile.distanceKm != null ? `à ${profile.distanceKm} km` : null]
+                  .filter(Boolean)
+                  .join(' · ')}
               </Text>
+            </View>
+          ) : null}
+
+          {/* Cartouches façon maquette : % compatibilité + points communs. */}
+          {variant === 'discovery' && discoveryStats ? (
+            <View className="mb-6 flex-row gap-2.5">
+              <View className="flex-1 items-center rounded-2xl border-[1.5px] border-white/90 bg-white/70 py-3.5">
+                <Text className="mb-0.5 font-display text-[24px] text-brand">{discoveryStats.compatibility}%</Text>
+                <Text className="font-body-medium text-[10.5px] text-ink-muted">compatibilité</Text>
+              </View>
+              <View className="flex-1 items-center rounded-2xl border-[1.5px] border-white/90 bg-white/70 py-3.5">
+                <Text className="mb-0.5 font-display text-[24px] text-gold">{discoveryStats.commonInterests}</Text>
+                <Text className="font-body-medium text-[10.5px] text-ink-muted">
+                  point{discoveryStats.commonInterests > 1 ? 's' : ''} commun{discoveryStats.commonInterests > 1 ? 's' : ''}
+                </Text>
+              </View>
             </View>
           ) : null}
 
@@ -258,8 +287,9 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
       </View>
 
       {variant === 'discovery' ? (
-        <View className="absolute inset-x-0 bottom-0 flex-row gap-3 bg-cream px-6 pb-9 pt-4">
-          <Pressable onPress={() => router.back()}>
+        /* Rangée d'actions façon maquette : passer · message/like · liker. */
+        <View className="absolute inset-x-0 bottom-0 flex-row items-center gap-3 bg-cream px-6 pb-9 pt-4">
+          <Pressable onPress={() => router.back()} accessibilityLabel="Fermer">
             <GlassSurface
               variant="lightStrong"
               radius={26}
@@ -270,13 +300,31 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
               </View>
             </GlassSurface>
           </Pressable>
-          <GradientButton
-            label="J'aime"
-            icon={<Heart size={16} color="#fff" fill="#fff" />}
-            iconPosition="left"
-            onPress={onLike}
-            style={{ flex: 1 }}
-          />
+          {onMessage ? (
+            <>
+              <GradientButton
+                label="Envoyer un message"
+                icon={<MessageCircle size={16} color="#fff" />}
+                iconPosition="left"
+                onPress={onMessage}
+                style={{ flex: 1 }}
+              />
+              <View
+                className="h-[52px] w-[52px] items-center justify-center rounded-[26px] bg-brand/[0.12]"
+                accessibilityLabel="Déjà liké"
+              >
+                <Heart size={20} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
+              </View>
+            </>
+          ) : (
+            <GradientButton
+              label="J'aime"
+              icon={<Heart size={16} color="#fff" fill="#fff" />}
+              iconPosition="left"
+              onPress={onLike}
+              style={{ flex: 1 }}
+            />
+          )}
         </View>
       ) : null}
 

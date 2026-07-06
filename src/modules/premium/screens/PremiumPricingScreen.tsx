@@ -104,7 +104,7 @@ export function PremiumPricingScreen() {
                   </View>
                   <View className="flex-1">
                     <Text className="font-heading text-[12.5px] uppercase text-ink">Inscription Gratuite</Text>
-                    <Text className="font-body text-[10.5px] text-ink-muted">5 likes par jour</Text>
+                    <Text className="font-body text-[10.5px] text-ink-muted">15 swipes / jour · 10 favoris</Text>
                   </View>
                 </View>
                 <Text className="font-display text-[18px] text-ink">0€</Text>

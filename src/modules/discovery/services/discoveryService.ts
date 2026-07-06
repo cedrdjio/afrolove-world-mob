@@ -41,10 +41,26 @@ async function searchProfiles(filters: DiscoveryFilters): Promise<DiscoveryProfi
     p_verified_only: filters.verifiedOnly,
     p_new_only: filters.mode === 'new',
     p_online_recently: filters.mode === 'online',
+    p_interest_ids: filters.interestIds?.length ? filters.interestIds : undefined,
     p_limit: DECK_SIZE,
   });
   if (error) throw error;
   return (data ?? []).map(mapRow);
+}
+
+/** Nombre de profils correspondant aux filtres — bouton « Voir N profils ». */
+async function countProfiles(
+  filters: Pick<DiscoveryFilters, 'ageMin' | 'ageMax' | 'maxDistanceKm' | 'verifiedOnly' | 'interestIds'>,
+): Promise<number> {
+  const { data, error } = await supabase.rpc('count_search_profiles', {
+    p_age_min: filters.ageMin,
+    p_age_max: filters.ageMax,
+    p_max_distance_km: filters.maxDistanceKm ?? undefined,
+    p_verified_only: filters.verifiedOnly,
+    p_interest_ids: filters.interestIds?.length ? filters.interestIds : undefined,
+  });
+  if (error) throw error;
+  return data ?? 0;
 }
 
 /**
@@ -84,6 +100,7 @@ async function searchByText(query: string): Promise<DiscoveryProfile[]> {
 
 export const discoveryService = {
   searchProfiles,
+  countProfiles,
   swipe,
   searchByText,
 };

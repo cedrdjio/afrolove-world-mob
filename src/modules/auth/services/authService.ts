@@ -66,6 +66,17 @@ async function verifySignupOtp(email: string, token: string) {
   return data;
 }
 
+/**
+ * Le lien email ouvre le navigateur et ne revient pas toujours dans l'app —
+ * le code à saisir dans l'app, lui, fonctionne partout. Le même email de
+ * récupération contient les deux.
+ */
+async function verifyRecoveryOtp(email: string, token: string) {
+  const { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'recovery' });
+  if (error) throw error;
+  return data;
+}
+
 async function resendSignupEmail(email: string, redirectTo: string) {
   const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectTo } });
   if (error) throw error;
@@ -88,6 +99,7 @@ export const authService = {
   sendPasswordResetEmail,
   updatePassword,
   verifySignupOtp,
+  verifyRecoveryOtp,
   resendSignupEmail,
   setSessionFromTokens,
 };

@@ -61,6 +61,8 @@ export interface Profile {
   privacyPrefs: Record<string, boolean>;
   lastActiveAt: string | null;
   locationUpdatedAt: string | null;
+  /** Distance avec le profil connecté (get_public_profile) — null pour soi. */
+  distanceKm?: number | null;
   photos: ProfilePhoto[];
   interestIds: string[];
   languageIds: string[];
