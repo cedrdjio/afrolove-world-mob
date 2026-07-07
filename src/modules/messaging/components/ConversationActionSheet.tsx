@@ -89,7 +89,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
         handleIndicatorStyle={{ backgroundColor: 'rgba(46,36,64,0.16)', width: 40 }}
       >
         <BottomSheetView className="px-6 pb-8 pt-2">
-          <Text className="mb-3 font-heading text-[11px] uppercase tracking-widest text-ink/35">
+          <Text className="mb-3 font-heading text-[11px] text-ink/35">
             {conversation.partnerFirstName}
           </Text>
           <Pressable
@@ -104,7 +104,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
                 <Ban size={16} color={colors.danger} />
               )}
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Bloquer</Text>
+            <Text className="font-heading-semibold text-[14px] text-ink">Bloquer</Text>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -116,7 +116,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
             <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">
               <Flag size={16} color={colors.danger} />
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Signaler</Text>
+            <Text className="font-heading-semibold text-[14px] text-ink">Signaler</Text>
           </Pressable>
           <Pressable
             onPress={handleUnmatch}
@@ -130,7 +130,7 @@ export const ConversationActionSheet = forwardRef<BottomSheet, ConversationActio
                 <Trash2 size={16} color={colors.danger} />
               )}
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-danger">
+            <Text className="font-heading-semibold text-[14px] text-danger">
               Supprimer la conversation
             </Text>
           </Pressable>

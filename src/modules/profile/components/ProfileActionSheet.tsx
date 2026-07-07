@@ -72,7 +72,7 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
             <View className="h-9 w-9 items-center justify-center rounded-full bg-danger/10">
               <Flag size={16} color={colors.danger} />
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Signaler</Text>
+            <Text className="font-heading-semibold text-[14px] text-ink">Signaler</Text>
           </Pressable>
           <Pressable
             onPress={handleBlock}
@@ -86,13 +86,13 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
                 <UserX size={16} color={colors.danger} />
               )}
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Bloquer</Text>
+            <Text className="font-heading-semibold text-[14px] text-ink">Bloquer</Text>
           </Pressable>
           <Pressable onPress={handleShare} className="flex-row items-center gap-3.5 py-4">
             <View className="h-9 w-9 items-center justify-center rounded-full bg-brand/10">
               <Share2 size={16} color={colors.brand.DEFAULT} />
             </View>
-            <Text className="font-heading-semibold text-[14px] uppercase text-ink">Partager</Text>
+            <Text className="font-heading-semibold text-[14px] text-ink">Partager</Text>
           </Pressable>
         </BottomSheetView>
       </BottomSheet>

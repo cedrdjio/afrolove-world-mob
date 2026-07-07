@@ -41,7 +41,7 @@ export function EditScreenLayout({
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">{title}</Text>
+          <Text className="font-display text-[20px] text-ink">{title}</Text>
           <View style={{ width: 44 }} />
         </View>
 

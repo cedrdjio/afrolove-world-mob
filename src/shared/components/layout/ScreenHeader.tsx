@@ -21,7 +21,7 @@ export function ScreenHeader({ title, onBack, right, variant = 'light' }: Screen
       </IconButton>
       {title ? (
         <Text
-          className="font-display text-[20px] uppercase tracking-wide"
+          className="font-display text-[20px] tracking-wide"
           style={{ color: variant === 'light' ? colors.ink.DEFAULT : colors.white }}
         >
           {title}

@@ -45,7 +45,8 @@ export function FiltersScreen() {
       <ScreenBackground theme="cream" />
       <ScrollView contentContainerClassName="px-6 pb-10" style={{ paddingTop: 60 }}>
         <View className="mb-6 flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} accessibilityLabel="Retour">
+          <Text className="font-display text-[26px] text-ink">Filtres</Text>
+          <Pressable onPress={() => router.back()}>
             <GlassSurface variant="light" radius={15} style={{ width: 40, height: 40 }}>
               <View className="h-10 w-10 items-center justify-center">
                 <ChevronLeft size={19} color={colors.ink.DEFAULT} />
@@ -58,52 +59,39 @@ export function FiltersScreen() {
           </Pressable>
         </View>
 
-        <FilterCard>
-          <View className="mb-2 flex-row items-center justify-between">
-            <Text className="font-heading-semibold text-[13px] uppercase text-ink">Distance</Text>
-            <Text className="font-heading text-[12.5px] text-brand">{distanceKm} km</Text>
-          </View>
-          <Slider min={5} max={200} step={5} value={distanceKm} onChange={setDistanceKm} />
-        </FilterCard>
+        <Text className="mb-3 font-heading text-[11px] text-ink/40">
+          Distance maximale
+        </Text>
+        <View className="mb-7 flex-row flex-wrap gap-2">
+          {DISTANCE_OPTIONS.map((option) => (
+            <Chip
+              key={option}
+              label={`${option} km`}
+              selected={distanceKm === option}
+              onPress={() => setDistanceKm(option)}
+            />
+          ))}
+        </View>
 
-        <FilterCard>
-          <View className="mb-2 flex-row items-center justify-between">
-            <Text className="font-heading-semibold text-[13px] uppercase text-ink">Tranche d'âge</Text>
-            <Text className="font-heading text-[12.5px] text-brand">
-              {ageMin} – {ageMax}
-            </Text>
-          </View>
-          <DualSlider min={18} max={70} step={1} lowValue={ageMin} highValue={ageMax} onChange={setAgeRange} />
-        </FilterCard>
+        <Text className="mb-3 font-heading text-[11px] text-ink/40">Tranche d'âge</Text>
+        <View className="mb-7 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
+          <Stepper
+            value={ageMin}
+            onDecrement={() => setAgeRange(Math.max(18, ageMin - 1), ageMax)}
+            onIncrement={() => setAgeRange(Math.min(ageMax, ageMin + 1), ageMax)}
+          />
+          <Text className="font-body-medium text-[12px] text-ink-muted">à</Text>
+          <Stepper
+            value={ageMax}
+            onDecrement={() => setAgeRange(ageMin, Math.max(ageMin, ageMax - 1))}
+            onIncrement={() => setAgeRange(ageMin, Math.min(99, ageMax + 1))}
+          />
+        </View>
 
-        <FilterCard>
-          <Text className="mb-3 font-heading-semibold text-[13px] uppercase text-ink">Centres d'intérêt</Text>
-          {interestsQuery.isLoading ? (
-            <ActivityIndicator color={colors.brand.DEFAULT} />
-          ) : (
-            <View className="flex-row flex-wrap gap-2">
-              {interests.map((interest) => (
-                <Chip
-                  key={interest.id}
-                  label={interest.label}
-                  size="sm"
-                  selected={interestIds.includes(interest.id)}
-                  onPress={() => toggleInterest(interest.id)}
-                />
-              ))}
-            </View>
-          )}
-        </FilterCard>
-
-        <FilterCard>
-          <View className="flex-row items-center justify-between">
-            <View className="flex-1 pr-3">
-              <Text className="mb-0.5 font-heading-semibold text-[13px] uppercase text-ink">Profils vérifiés</Text>
-              <Text className="font-body text-[11px] text-ink-muted">Uniquement les comptes certifiés</Text>
-            </View>
-            <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
-          </View>
-        </FilterCard>
+        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
+          <Text className="font-heading-semibold text-[13px] text-ink">Profils vérifiés uniquement</Text>
+          <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
+        </View>
 
         <GradientButton
           label={

@@ -1,30 +1,29 @@
+import { useState } from 'react';
 import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Search, Calendar, Crown, ArrowLeft, UserPlus, BadgeCheck } from 'lucide-react-native';
-import type { LucideIcon } from 'lucide-react-native';
-import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
+import { Crown, Check, ArrowLeft, BadgeCheck } from 'lucide-react-native';
+import { ScreenBackground } from '@/shared/components/layout';
+import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { IconButton } from '@/shared/components/ui/IconButton';
+import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { usePremiumPlans, usePurchasePlan, useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { colors, gradients } from '@/shared/constants/theme';
 
-/** Visual identity per plan key — the data (label, price, duration) comes
- *  from the premium_plans table so the dashboard can change offers without
- *  an app release. Unknown keys fall back to the last style. */
-const TIER_STYLES: Record<
-  string,
-  { Icon: LucideIcon; color: string; iconBg: string; highlight?: string; gradient?: readonly [string, string]; badge?: string }
-> = {
-  discovery_1d: { Icon: Search, color: '#2860B0', iconBg: 'rgba(30,100,180,0.08)' },
-  week_7d: { Icon: Calendar, color: '#C83030', iconBg: 'rgba(200,60,50,0.1)', highlight: 'rgba(200,60,50,0.26)', gradient: ['#C83030', '#8A1010'] },
-  month_1m: { Icon: Calendar, color: '#C07010', iconBg: 'rgba(200,110,20,0.1)', highlight: 'rgba(200,110,20,0.24)' },
-  quarter_3m: { Icon: Calendar, color: '#1A7A30', iconBg: 'rgba(30,140,60,0.09)', highlight: 'rgba(30,140,60,0.2)' },
-  year_1y: { Icon: Crown, color: '#9B7EDE', iconBg: 'rgba(155,126,222,0.14)', highlight: 'rgba(155,126,222,0.36)', gradient: gradients.gold, badge: 'Meilleure offre' },
-};
+const FEATURES = [
+  'Likes illimités chaque jour',
+  'Vois qui t’a déjà liké',
+  'Super likes et filtres avancés',
+];
+
+/** Plan mis en avant par défaut (le "POPULAIRE" de la maquette). */
+const DEFAULT_PLAN_KEY = 'month_1m';
+/** Plan qui porte le badge "Meilleure offre". */
+const BEST_PLAN_KEY = 'year_1y';
 
 function formatPrice(cents: number, currency: string): string {
   const amount = cents / 100;
@@ -32,147 +31,183 @@ function formatPrice(cents: number, currency: string): string {
   return `${Number.isInteger(amount) ? amount : amount.toFixed(2)}${symbol}`;
 }
 
+function durationLabel(days: number): string {
+  if (days === 1) return '24 heures';
+  if (days < 30) return `${days} jours`;
+  if (days < 365) return `${Math.round(days / 30)} mois`;
+  return '1 an';
+}
+
+/** Écran tarifs façon maquette 15 — fond nuit, couronne, avantages cochés,
+ *  cartes de plans sélectionnables et CTA gradient unique. */
 export function PremiumPricingScreen() {
   const router = useRouter();
   const plansQuery = usePremiumPlans();
   const entitlements = useEntitlements();
   const purchase = usePurchasePlan();
   const purchaseError = useAppError(purchase.error);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const plans = plansQuery.data ?? [];
+  const selectedKey =
+    selected ?? plans.find((p) => p.key === DEFAULT_PLAN_KEY)?.key ?? plans[0]?.key ?? null;
+  const selectedPlan = plans.find((p) => p.key === selectedKey) ?? null;
 
-  const handleChoose = (planKey: string, planLabel: string) => {
-    if (purchase.isPending) return;
+  const handleContinue = () => {
+    if (!selectedPlan || purchase.isPending) return;
     Haptics.selectionAsync().catch(() => {});
-    purchase.mutate(planKey, {
-      onSuccess: () => router.push({ pathname: '/premium/success', params: { plan: planLabel } }),
+    purchase.mutate(selectedPlan.key, {
+      onSuccess: () =>
+        router.push({ pathname: '/premium/success', params: { plan: selectedPlan.label } }),
       onError: () => router.push('/premium/failed'),
     });
   };
 
   return (
     <View className="flex-1">
-      <ScreenBackground theme="cream">
-        <GlowOrb size={210} color="rgba(106,79,192,0.09)" top={-40} right={-40} duration={9500} />
-      </ScreenBackground>
+      <ScreenBackground theme="deep" />
 
-      <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 20 }}>
-        <View className="mb-[18px] flex-row items-center justify-between">
-          <IconButton onPress={() => router.back()}>
-            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
+      <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 24 }}>
+        <View className="flex-row items-center justify-between">
+          <IconButton variant="dark" onPress={() => router.back()}>
+            <ArrowLeft size={19} color="#fff" strokeWidth={2} />
           </IconButton>
-          <View className="items-center">
-            <Text className="font-display text-[22px] uppercase text-ink">Nos Tarifs</Text>
-            <Text className="mt-0.5 font-body text-[10.5px] text-ink-muted">Des offres pour chaque besoin</Text>
-          </View>
           <View style={{ width: 44 }} />
         </View>
 
-        {entitlements.data?.isPremium ? (
-          <View className="mb-3 flex-row items-center gap-2 rounded-2xl border border-gold/25 bg-gold/[0.08] px-4 py-3">
-            <BadgeCheck size={15} color={colors.gold.DEFAULT} strokeWidth={2.4} />
-            <Text className="flex-1 font-body text-[12px] leading-[17px] text-ink">
-              Premium actif ({entitlements.data.planLabel}) jusqu'au{' '}
-              {entitlements.data.premiumUntil
-                ? new Date(entitlements.data.premiumUntil).toLocaleDateString('fr-FR')
-                : '—'}
-              . Un nouvel achat prolonge cette durée.
-            </Text>
-          </View>
-        ) : null}
+        <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+          <Animated.View entering={FadeInDown.duration(350)} className="items-center pt-2">
+            <LinearGradient
+              colors={gradients.gold}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 16,
+                shadowColor: '#9B7EDE',
+                shadowOpacity: 0.45,
+                shadowRadius: 26,
+                shadowOffset: { width: 0, height: 12 },
+                elevation: 8,
+              }}
+            >
+              <Crown size={32} color="#fff" strokeWidth={1.8} />
+            </LinearGradient>
+            <Text className="mb-1 font-display text-[28px] text-white">AfriLove Premium</Text>
+            <Text className="mb-6 font-body text-[13px] text-white/60">Rencontre sans limites</Text>
+          </Animated.View>
 
-        {purchaseError ? (
-          <View className="mb-3">
-            <ErrorState error={purchaseError} variant="inline" />
-          </View>
-        ) : null}
-
-        {plansQuery.isLoading ? (
-          <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
-          </View>
-        ) : (
-          <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-            <View className="gap-1.5">
-              <View
-                className="flex-row items-center justify-between rounded-[17px] border-[1.5px] border-white/90 px-4 py-3"
-                style={{ backgroundColor: 'rgba(255,255,255,0.72)' }}
-              >
-                <View className="flex-1 flex-row items-center gap-2.5">
-                  <View className="h-9 w-9 items-center justify-center rounded-[11px]" style={{ backgroundColor: 'rgba(62,53,82,0.06)' }}>
-                    <UserPlus size={17} color={colors.ink.DEFAULT} />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="font-heading text-[12.5px] uppercase text-ink">Inscription Gratuite</Text>
-                    <Text className="font-body text-[10.5px] text-ink-muted">15 swipes / jour · 10 favoris</Text>
-                  </View>
+          <Animated.View entering={FadeInDown.delay(80).duration(350)} className="mb-6 gap-2.5">
+            {FEATURES.map((feature) => (
+              <View key={feature} className="flex-row items-center gap-3">
+                <View className="h-6 w-6 items-center justify-center rounded-full bg-gold/25">
+                  <Check size={13} color={colors.gold.light} strokeWidth={3} />
                 </View>
-                <Text className="font-display text-[18px] text-ink">0€</Text>
+                <Text className="font-body-medium text-[13.5px] text-white/85">{feature}</Text>
               </View>
+            ))}
+          </Animated.View>
 
-              {plans.map((plan, index) => {
-                const style = TIER_STYLES[plan.key] ?? TIER_STYLES.year_1y;
+          {entitlements.data?.isPremium ? (
+            <GlassSurface variant="dark" radius={18} style={{ marginBottom: 14 }}>
+              <View className="flex-row items-center gap-2 px-4 py-3">
+                <BadgeCheck size={15} color={colors.gold.light} strokeWidth={2.4} />
+                <Text className="flex-1 font-body text-[12px] leading-[17px] text-white/85">
+                  Premium actif ({entitlements.data.planLabel}) jusqu'au{' '}
+                  {entitlements.data.premiumUntil
+                    ? new Date(entitlements.data.premiumUntil).toLocaleDateString('fr-FR')
+                    : '—'}
+                  . Un nouvel achat prolonge cette durée.
+                </Text>
+              </View>
+            </GlassSurface>
+          ) : null}
+
+          {purchaseError ? (
+            <View className="mb-3">
+              <ErrorState error={purchaseError} variant="inline" tone="onDark" />
+            </View>
+          ) : null}
+
+          {plansQuery.isLoading ? (
+            <View className="items-center py-14">
+              <ActivityIndicator size="large" color={colors.gold.DEFAULT} />
+            </View>
+          ) : (
+            <Animated.View
+              entering={FadeInDown.delay(160).duration(350)}
+              className="flex-row flex-wrap justify-center gap-2.5"
+            >
+              {plans.map((plan) => {
+                const isSelected = plan.key === selectedKey;
+                const isBest = plan.key === BEST_PLAN_KEY;
                 return (
-                  <Animated.View
+                  <Pressable
                     key={plan.key}
-                    entering={FadeInDown.delay(index * 60).springify().damping(17)}
+                    onPress={() => {
+                      Haptics.selectionAsync().catch(() => {});
+                      setSelected(plan.key);
+                    }}
+                    style={{ width: '31%' }}
                   >
                     <View
-                      className="relative flex-row items-center justify-between rounded-[17px] border-[1.5px] px-4 py-3"
+                      className="relative items-center rounded-[20px] px-2 pb-3.5 pt-4"
                       style={{
-                        backgroundColor: 'rgba(255,255,255,0.72)',
-                        borderColor: style.highlight ?? 'rgba(255,255,255,0.9)',
+                        backgroundColor: isSelected ? 'rgba(155,126,222,0.22)' : 'rgba(255,255,255,0.07)',
+                        borderWidth: 1.5,
+                        borderColor: isSelected ? colors.gold.DEFAULT : 'rgba(255,255,255,0.16)',
+                        shadowColor: isSelected ? '#9B7EDE' : 'transparent',
+                        shadowOpacity: isSelected ? 0.4 : 0,
+                        shadowRadius: 18,
+                        shadowOffset: { width: 0, height: 8 },
+                        elevation: isSelected ? 6 : 0,
                       }}
                     >
-                      {style.badge ? (
-                        <View className="absolute -top-2.5 right-3 rounded-full bg-brand px-2.5 py-1">
-                          <Text className="font-heading text-[8.5px] uppercase text-white">{style.badge}</Text>
+                      {isBest ? (
+                        <View
+                          className="absolute self-center rounded-full px-2.5 py-1"
+                          style={{ top: -10, backgroundColor: colors.gold.DEFAULT }}
+                        >
+                          <Text className="font-heading text-[8px] text-white">Meilleure offre</Text>
                         </View>
                       ) : null}
-                      <View className="flex-1 flex-row items-center gap-2.5">
-                        <View className="h-9 w-9 items-center justify-center rounded-[11px]" style={{ backgroundColor: style.iconBg }}>
-                          <style.Icon size={17} color={style.color} />
-                        </View>
-                        <View className="flex-1">
-                          <Text className="font-heading text-[12.5px] uppercase text-ink">{plan.label}</Text>
-                          <Text className="font-body text-[10.5px] text-ink-muted">{plan.description}</Text>
-                        </View>
-                      </View>
-                      <View className="items-end">
-                        <Text className="mb-1 font-display text-[18px]" style={{ color: style.color }}>
-                          {formatPrice(plan.priceCents, plan.currency)}
-                          {plan.durationDays === 1 ? (
-                            <Text className="font-body text-[10px] text-ink-muted">/j</Text>
-                          ) : null}
-                        </Text>
-                        <Pressable onPress={() => handleChoose(plan.key, plan.label)} disabled={purchase.isPending}>
-                          {style.gradient ? (
-                            <LinearGradient colors={style.gradient as [string, string]} className="rounded-md px-2 py-1">
-                              <Text className="font-heading text-[9px] uppercase text-white">
-                                {purchase.isPending && purchase.variables === plan.key ? '…' : 'Choisir'}
-                              </Text>
-                            </LinearGradient>
-                          ) : (
-                            <View className="rounded-md px-2 py-1" style={{ backgroundColor: style.iconBg }}>
-                              <Text className="font-heading text-[9px] uppercase" style={{ color: style.color }}>
-                                {purchase.isPending && purchase.variables === plan.key ? '…' : 'Choisir'}
-                              </Text>
-                            </View>
-                          )}
-                        </Pressable>
-                      </View>
+                      <Text className="mb-1.5 font-heading text-[10px] text-white/60">
+                        {durationLabel(plan.durationDays)}
+                      </Text>
+                      <Text className="mb-0.5 font-display text-[21px] text-white">
+                        {formatPrice(plan.priceCents, plan.currency)}
+                      </Text>
+                      <Text className="text-center font-body text-[9px] leading-[13px] text-white/[0.42]">
+                        {plan.label}
+                      </Text>
                     </View>
-                  </Animated.View>
+                  </Pressable>
                 );
               })}
-            </View>
+            </Animated.View>
+          )}
 
-            <Text className="mt-4 text-center font-body text-[10.5px] leading-[15px] text-ink/35">
-              Paiement sécurisé. Les achats prolongent la durée Premium en cours.{'\n'}
-              www.afriloveworld.com · +33 6 98 89 19 75
-            </Text>
-          </ScrollView>
-        )}
+          <Text className="mt-5 text-center font-body text-[10.5px] leading-[15px] text-white/[0.35]">
+            Sans engagement · les achats prolongent la durée Premium en cours.{'\n'}
+            www.afriloveworld.com · +33 6 98 89 19 75
+          </Text>
+        </ScrollView>
+
+        <GradientButton
+          label={
+            selectedPlan
+              ? `Continuer — ${formatPrice(selectedPlan.priceCents, selectedPlan.currency)}`
+              : 'Continuer'
+          }
+          loading={purchase.isPending}
+          disabled={!selectedPlan}
+          onPress={handleContinue}
+          style={{ marginTop: 14 }}
+        />
       </View>
     </View>
   );

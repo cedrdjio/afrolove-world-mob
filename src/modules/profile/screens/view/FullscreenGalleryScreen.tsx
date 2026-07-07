@@ -52,8 +52,8 @@ function ZoomableImage({
     .onEnd(() => {
       savedScale.value = scale.value;
       if (scale.value <= 1) {
-        translateX.value = withSpring(0);
-        translateY.value = withSpring(0);
+        translateX.value = withSpring(0, { damping: 20, stiffness: 200, overshootClamping: true });
+        translateY.value = withSpring(0, { damping: 20, stiffness: 200, overshootClamping: true });
         savedTranslateX.value = 0;
         savedTranslateY.value = 0;
       }

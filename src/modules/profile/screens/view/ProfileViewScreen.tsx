@@ -1,7 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { FullScreenLoader } from '@/shared/components/feedback';
+import { ArrowLeft } from 'lucide-react-native';
+import { FullScreenLoader, ErrorState } from '@/shared/components/feedback';
+import { ScreenBackground } from '@/shared/components/layout';
+import { IconButton } from '@/shared/components/ui/IconButton';
+import { colors } from '@/shared/constants/theme';
+import { useAppError } from '@/shared/hooks/useAppError';
 import { useOtherProfileQuery } from '@/modules/profile/hooks/useOtherProfileQuery';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useProfileDisplayData } from '@/modules/profile/hooks/useProfileDisplayData';
@@ -14,15 +19,28 @@ export function ProfileViewScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const profileQuery = useOtherProfileQuery(id);
-  const myProfileQuery = useProfileQuery();
-  const conversationsQuery = useConversationsQuery();
+  const profileError = useAppError(profileQuery.error);
   const displayData = useProfileDisplayData(profileQuery.data);
   const swipe = useSwipe();
 
-  // Chaque ouverture de fiche alimente le compteur « Vues » du profil visité.
-  useEffect(() => {
-    if (id) profileService.recordProfileView(id).catch(() => {});
-  }, [id]);
+  // L'écran restait bloqué sur un loader infini quand la requête échouait
+  // (RPC indisponible, profil supprimé, hors-ligne…) — sans même un bouton
+  // retour. On affiche maintenant un vrai état d'erreur avec retry.
+  if (profileQuery.isError && profileError) {
+    return (
+      <View className="flex-1">
+        <ScreenBackground theme="cream" />
+        <View className="absolute left-[18px] top-14 z-10">
+          <IconButton onPress={() => router.back()}>
+            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
+          </IconButton>
+        </View>
+        <ErrorState error={profileError} onRetry={() => profileQuery.refetch()} />
+      </View>
+    );
+  }
+
+  if (!profileQuery.data || !displayData) return <FullScreenLoader />;
 
   const profile = profileQuery.data;
 

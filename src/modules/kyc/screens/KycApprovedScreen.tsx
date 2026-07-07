@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { BadgeCheck } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDelay } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
@@ -13,7 +13,7 @@ export function KycApprovedScreen() {
   const scale = useSharedValue(0);
 
   useEffect(() => {
-    scale.value = withDelay(150, withSpring(1, { damping: 8, stiffness: 120 }));
+    scale.value = withDelay(150, withTiming(1, { duration: 380 }));
   }, [scale]);
 
   const iconStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
@@ -44,7 +44,7 @@ export function KycApprovedScreen() {
           </LinearGradient>
         </Animated.View>
 
-        <Text className="mb-3 text-center font-display-black text-[30px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[30px] text-white">
           Profil vérifié !
         </Text>
         <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">

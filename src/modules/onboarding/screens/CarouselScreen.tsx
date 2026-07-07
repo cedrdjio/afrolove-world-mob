@@ -1,32 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, ScrollView, useWindowDimensions, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, useWindowDimensions, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { Heart, Globe, ShieldCheck } from 'lucide-react-native';
-import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
-import { BrandLogo } from '@/shared/components/ui/BrandLogo';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GhostButton } from '@/shared/components/ui/GhostButton';
-import { gradients } from '@/shared/constants/theme';
+import { images } from '@/shared/constants/images';
 
+/** Maquette — écrans de présentation : photo plein écran par slide,
+ *  scrim aubergine et carte de verre pour le texte. */
 const SLIDES = [
   {
-    Icon: Heart,
-    brand: true,
-    title: 'Rencontrez\nle monde entier',
+    image: images.slideAmour,
+    title: "L'amour sans frontières",
     description: 'Des rencontres afro-européennes sincères, portées par la culture et le cœur.',
   },
   {
-    Icon: Globe,
-    brand: false,
+    image: images.slideDiaspora,
     title: 'La diaspora,\npartout dans le monde',
     description: 'Rencontrez des membres de la communauté africaine où que vous soyez.',
   },
   {
-    Icon: ShieldCheck,
-    brand: false,
+    image: images.slideConfiance,
     title: 'Une communauté\nvérifiée',
     description: 'Profils vérifiés et modération active pour des rencontres en toute confiance.',
   },
@@ -36,14 +33,14 @@ function Dot({ active }: { active: boolean }) {
   const width = useSharedValue(active ? 24 : 8);
 
   useEffect(() => {
-    width.value = withSpring(active ? 24 : 8, { damping: 16, stiffness: 220 });
+    width.value = withTiming(active ? 24 : 8, { duration: 220 });
   }, [active, width]);
 
   const style = useAnimatedStyle(() => ({ width: width.value }));
 
   return (
     <Animated.View
-      className={active ? 'h-2 rounded-full bg-brand' : 'h-2 rounded-full bg-ink/[0.14]'}
+      className={active ? 'h-2 rounded-full bg-white' : 'h-2 rounded-full bg-white/30'}
       style={style}
     />
   );
@@ -71,12 +68,7 @@ export function CarouselScreen() {
   };
 
   return (
-    <View className="flex-1">
-      <ScreenBackground theme="cream">
-        <GlowOrb size={320} color="rgba(139,105,214,0.2)" top={-80} right={-70} duration={9500} />
-        <GlowOrb size={260} color="rgba(155,126,222,0.16)" bottom={120} left={-60} duration={11000} delay={1200} />
-      </ScreenBackground>
-
+    <View className="flex-1 bg-deep">
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -87,47 +79,30 @@ export function CarouselScreen() {
         style={{ flex: 1 }}
       >
         {SLIDES.map((slide, i) => (
-          <View key={i} style={{ width }} className="flex-1 items-center justify-center px-7">
-            <GlassSurface variant="lightSoft" radius={34} style={{ width: '100%' }}>
-              <View className="items-center px-7 py-10">
-                {slide.brand ? (
-                  <Animated.View entering={FadeInDown.springify().damping(13)}>
-                    <BrandLogo size={116} style={{ marginBottom: 28 }} />
-                  </Animated.View>
-                ) : (
-                  <Animated.View entering={FadeInDown.springify().damping(13)}>
-                    <LinearGradient
-                      colors={gradients.brand}
-                      style={{
-                        width: 104,
-                        height: 104,
-                        borderRadius: 32,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: 28,
-                        shadowColor: '#6A4FC0',
-                        shadowOpacity: 0.35,
-                        shadowRadius: 28,
-                        shadowOffset: { width: 0, height: 14 },
-                      }}
-                    >
-                      <slide.Icon size={42} color="#fff" strokeWidth={1.6} />
-                    </LinearGradient>
-                  </Animated.View>
-                )}
-                <Text className="mb-3 text-center font-display text-[28px] leading-[1.08] text-ink">
-                  {slide.title}
-                </Text>
-                <Text className="text-center font-body text-[13.5px] leading-[21px] text-ink-muted">
-                  {slide.description}
-                </Text>
-              </View>
-            </GlassSurface>
+          <View key={i} style={{ width }} className="flex-1">
+            <Image source={slide.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
+            <LinearGradient
+              colors={['rgba(24,15,42,0.35)', 'transparent', 'rgba(34,25,55,0.5)', 'rgba(24,15,42,0.95)']}
+              locations={[0, 0.3, 0.6, 1]}
+              style={StyleSheet.absoluteFill}
+            />
+            <View className="flex-1 justify-end px-5" style={{ paddingBottom: 210 }}>
+              <GlassSurface variant="dark" radius={26}>
+                <View className="px-6 py-6">
+                  <Text className="mb-2.5 font-display text-[27px] leading-[1.12] text-white">
+                    {slide.title}
+                  </Text>
+                  <Text className="font-body text-[13.5px] leading-[21px] text-white/75">
+                    {slide.description}
+                  </Text>
+                </View>
+              </GlassSurface>
+            </View>
           </View>
         ))}
       </ScrollView>
 
-      <View className="px-6 pb-8">
+      <View className="absolute inset-x-0 bottom-0 px-6 pb-8">
         <View className="mb-6 flex-row items-center justify-center gap-2">
           {SLIDES.map((_, i) => (
             <Dot key={i} active={i === index} />
@@ -135,7 +110,7 @@ export function CarouselScreen() {
         </View>
         <GradientButton label={isLast ? 'Commencer' : 'Suivant'} onPress={handleNext} style={{ marginBottom: 12 }} />
         {!isLast ? (
-          <GhostButton label="Passer" tone="onLight" onPress={() => router.push('/(onboarding)/name')} />
+          <GhostButton label="Passer" tone="onDark" onPress={() => router.push('/(onboarding)/name')} />
         ) : null}
       </View>
     </View>

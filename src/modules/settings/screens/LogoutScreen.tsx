@@ -24,7 +24,7 @@ export function LogoutScreen() {
         <View className="mb-5 h-16 w-16 items-center justify-center rounded-full bg-brand/[0.1]">
           <LogOut size={28} color={colors.brand.DEFAULT} strokeWidth={1.7} />
         </View>
-        <Text className="mb-2.5 text-center font-display text-[26px] uppercase leading-none text-ink">
+        <Text className="mb-2.5 text-center font-display text-[26px] leading-none text-ink">
           Se déconnecter ?
         </Text>
         <Text className="mb-9 text-center font-body text-[13px] leading-[20px] text-ink-muted">

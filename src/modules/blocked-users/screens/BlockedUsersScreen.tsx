@@ -39,7 +39,7 @@ export function BlockedUsersScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Profils bloqués</Text>
+          <Text className="font-display text-[20px] text-ink">Profils bloqués</Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -59,7 +59,7 @@ export function BlockedUsersScreen() {
           />
         ) : pendingUnblock ? (
           <View className="flex-1 items-center justify-center px-4">
-            <Text className="mb-2.5 text-center font-display text-[24px] uppercase leading-none text-ink">
+            <Text className="mb-2.5 text-center font-display text-[24px] leading-none text-ink">
               Débloquer {pendingUnblock.firstName} ?
             </Text>
             <Text className="mb-8 text-center font-body text-[13px] leading-[20px] text-ink-muted">
@@ -73,7 +73,7 @@ export function BlockedUsersScreen() {
               {unblock.isPending ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text className="font-heading text-[13px] uppercase tracking-wide text-white">Débloquer</Text>
+                <Text className="font-heading text-[13px] tracking-wide text-white">Débloquer</Text>
               )}
             </Pressable>
             <Pressable onPress={() => setPendingUnblock(null)}>
@@ -85,11 +85,11 @@ export function BlockedUsersScreen() {
             data={users}
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => (
-              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45).springify().damping(17)}>
-                <View className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
+              <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45)}>
+                <View className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
                   <Avatar source={item.avatarUrl ?? undefined} seed={item.firstName} size={48} />
                   <View className="flex-1">
-                    <Text className="mb-0.5 font-heading text-[14px] uppercase text-ink">{item.firstName}</Text>
+                    <Text className="mb-0.5 font-heading text-[14px] text-ink">{item.firstName}</Text>
                     <Text className="font-body text-[11px] text-ink-muted">
                       Bloqué le {new Date(item.blockedAt).toLocaleDateString('fr-FR')}
                     </Text>
@@ -98,7 +98,7 @@ export function BlockedUsersScreen() {
                     onPress={() => setPendingUnblock(item)}
                     className="rounded-xl bg-brand/10 px-3.5 py-2 active:opacity-70"
                   >
-                    <Text className="font-heading text-[11px] uppercase text-brand">Débloquer</Text>
+                    <Text className="font-heading text-[11px] text-brand">Débloquer</Text>
                   </Pressable>
                 </View>
               </Animated.View>

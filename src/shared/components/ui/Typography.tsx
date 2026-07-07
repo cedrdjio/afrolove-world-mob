@@ -2,10 +2,10 @@ import { Text, type TextProps } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 
 /**
- * Typography primitives matching the design system:
- * - Display  → Barlow Condensed, uppercase headings ("Bon retour", "Vos passions")
- * - Heading  → Barlow, semibold labels/buttons/uppercase micro-copy
- * - Body     → Montserrat, paragraph copy
+ * Typography primitives matching the design system (charte lavande) :
+ * - Display  → Plus Jakarta Sans Bold, titres en casse normale ("Bon retour")
+ * - Heading  → Plus Jakarta Sans, labels/boutons — jamais en capitales
+ * - Body     → Nunito, paragraphes
  */
 
 export function DisplayText({ className, ...props }: TextProps) {
@@ -23,7 +23,7 @@ export function HeadingText({ className, ...props }: TextProps) {
 export function LabelText({ className, ...props }: TextProps) {
   return (
     <Text
-      className={cn('font-heading-semibold uppercase tracking-wider text-ink-faint', className)}
+      className={cn('font-heading-semibold text-ink-faint', className)}
       {...props}
     />
   );

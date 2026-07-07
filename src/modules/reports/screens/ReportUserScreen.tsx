@@ -39,18 +39,18 @@ export function ReportUserScreen() {
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
-          <Text className="font-display text-[20px] uppercase text-ink">Signaler</Text>
+          <Text className="font-display text-[20px] text-ink">Signaler</Text>
           <View style={{ width: 44 }} />
         </View>
 
-        <View className="mb-5 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5">
+        <View className="mb-5 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
           <Avatar seed={id ?? '1'} size={44} />
-          <Text className="font-heading-semibold text-[14px] uppercase text-ink">
+          <Text className="font-heading-semibold text-[14px] text-ink">
             Signalement du profil #{id}
           </Text>
         </View>
 
-        <Text className="mb-2.5 font-heading text-[11px] uppercase tracking-widest text-ink/40">
+        <Text className="mb-2.5 font-heading text-[11px] text-ink/40">
           Pourquoi signalez-vous ce profil ?
         </Text>
         <View className="mb-4 gap-2">
@@ -61,11 +61,11 @@ export function ReportUserScreen() {
                 key={reason.key}
                 onPress={() => setSelectedReason(reason.key)}
                 className={`flex-row items-center justify-between rounded-2xl border-[1.5px] px-4 py-3.5 ${
-                  selected ? 'border-danger/40 bg-danger/[0.06]' : 'border-white/90 bg-white/70'
+                  selected ? 'border-danger/40 bg-danger/[0.06]' : 'border-white/70 bg-white/[0.55]'
                 }`}
               >
                 <View className="flex-1 pr-3">
-                  <Text className={`mb-0.5 font-heading-semibold text-[13.5px] uppercase ${selected ? 'text-danger' : 'text-ink'}`}>
+                  <Text className={`mb-0.5 font-heading-semibold text-[13.5px] ${selected ? 'text-danger' : 'text-ink'}`}>
                     {reason.label}
                   </Text>
                   <Text className="font-body text-[11px] text-ink-muted">{reason.description}</Text>
@@ -82,7 +82,7 @@ export function ReportUserScreen() {
           placeholder="Détails supplémentaires (optionnel)"
           placeholderTextColor="rgba(46,36,64,0.25)"
           multiline
-          className="mb-4 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5 font-body text-[13px] text-ink"
+          className="mb-4 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5 font-body text-[13px] text-ink"
           style={{ minHeight: 80, textAlignVertical: 'top' }}
         />
 

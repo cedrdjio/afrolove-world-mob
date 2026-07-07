@@ -23,7 +23,7 @@ export function InterestsScreen() {
     <OnboardingLayout orbPosition="topRight">
       <OnboardingHeader step={5} total={8} />
 
-      <Text className="mb-1 font-display text-[34px] uppercase leading-none text-ink">Vos passions</Text>
+      <Text className="mb-1 font-display text-[34px] leading-none text-ink">Vos passions</Text>
       <Text className="mb-[18px] font-body text-[12.5px] text-ink-muted">
         Sélectionnez au moins {MIN_INTERESTS} centres d'intérêt.
       </Text>

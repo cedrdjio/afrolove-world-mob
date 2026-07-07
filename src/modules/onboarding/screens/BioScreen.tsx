@@ -21,17 +21,17 @@ export function BioScreen() {
       <OnboardingHeader step={6} total={8} />
 
       <View
-        className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/70"
+        className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]"
         style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
       >
         <PenLine size={26} color={colors.brand.DEFAULT} strokeWidth={1.8} />
       </View>
-      <Text className="mb-2 font-display text-[36px] uppercase leading-none text-ink">Parlez-nous{'\n'}de vous</Text>
+      <Text className="mb-2 font-display text-[36px] leading-none text-ink">Parlez-nous{'\n'}de vous</Text>
       <Text className="mb-6 font-body text-[13px] leading-5 text-ink-muted">
         Une bonne bio attire 3× plus de matches. Soyez authentique.
       </Text>
 
-      <View className="flex-1 rounded-[18px] border-2 border-brand/35 bg-white/70 p-[18px]">
+      <View className="flex-1 rounded-[18px] border-2 border-brand/35 bg-white/[0.55] p-[18px]">
         <TextInput
           autoFocus
           value={bio}

@@ -59,29 +59,15 @@ export function DailyLikeLimitScreen() {
           )}
         </LinearGradient>
 
-        {isFavorites ? (
-          <>
-            <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
-              Favoris{'\n'}au complet
-            </Text>
-            <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">
-              Un compte gratuit peut garder 10 favoris en attente de réponse.{'\n'}
-              Passez à un forfait pour liker sans limite.
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
-              Limite quotidienne{'\n'}atteinte
-            </Text>
-            <Text className="mb-2 text-center font-body text-[13.5px] leading-[21px] text-white/50">
-              Vous avez utilisé vos 15 swipes gratuits pour aujourd'hui.
-            </Text>
-            <Text className="mb-10 font-heading-semibold text-[12px] uppercase tracking-widest text-gold">
-              Réinitialisation dans {timeUntilMidnight()}
-            </Text>
-          </>
-        )}
+        <Text className="mb-3 text-center font-display-black text-[28px] text-white">
+          Limite quotidienne{'\n'}atteinte
+        </Text>
+        <Text className="mb-2 text-center font-body text-[13.5px] leading-[21px] text-white/50">
+          Vous avez utilisé tous vos likes gratuits pour aujourd'hui.
+        </Text>
+        <Text className="mb-10 font-heading-semibold text-[12px] text-gold">
+          Réinitialisation dans {timeUntilMidnight()}
+        </Text>
 
         <GradientButton
           label="Voir les forfaits"

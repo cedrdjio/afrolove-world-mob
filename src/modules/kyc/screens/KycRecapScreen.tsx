@@ -55,11 +55,11 @@ export function KycRecapScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 60, paddingBottom: 26 }}>
         <KycHeader step={3} />
 
-        <Animated.View entering={FadeInDown.springify().damping(16)} className="mb-[22px] items-center">
+        <Animated.View entering={FadeInDown} className="mb-[22px] items-center">
           <View className="mb-3.5 h-[68px] w-[68px] items-center justify-center rounded-[22px] border-[1.5px] border-success/25 bg-success/[0.1]">
             <Check size={32} color={colors.success} strokeWidth={1.8} />
           </View>
-          <Text className="mb-1.5 text-center font-display text-[28px] uppercase leading-none text-ink">
+          <Text className="mb-1.5 text-center font-display text-[28px] leading-none text-ink">
             Dossier complet !{'\n'}
             <Text className="text-brand">Vérifiez avant envoi</Text>
           </Text>
@@ -76,15 +76,15 @@ export function KycRecapScreen() {
 
         <View className="mb-[18px] gap-2.5">
           <Animated.View
-            entering={FadeInDown.delay(90).springify().damping(16)}
-            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5"
+            entering={FadeInDown.delay(90)}
+            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
           >
             <View className="h-9 w-[52px] flex-row overflow-hidden rounded-lg border border-brand/20">
               {frontUri ? <Image source={{ uri: frontUri }} style={{ flex: 1 }} contentFit="cover" /> : null}
               {backUri ? <Image source={{ uri: backUri }} style={{ flex: 1 }} contentFit="cover" /> : null}
             </View>
             <View className="flex-1">
-              <Text className="mb-0.5 font-heading text-[13px] uppercase text-ink">
+              <Text className="mb-0.5 font-heading text-[13px] text-ink">
                 {DOC_LABELS[docType]} {backUri ? 'Recto + Verso' : 'Recto'}
               </Text>
               <Text className="font-body text-[11px] text-ink-muted">
@@ -97,14 +97,14 @@ export function KycRecapScreen() {
           </Animated.View>
 
           <Animated.View
-            entering={FadeInDown.delay(160).springify().damping(16)}
-            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/70 px-4 py-3.5"
+            entering={FadeInDown.delay(160)}
+            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
           >
             <View className="h-9 w-[52px] overflow-hidden rounded-lg">
               {selfieUri ? <Image source={{ uri: selfieUri }} style={{ flex: 1 }} contentFit="cover" /> : null}
             </View>
             <View className="flex-1">
-              <Text className="mb-0.5 font-heading text-[13px] uppercase text-ink">Selfie + Document</Text>
+              <Text className="mb-0.5 font-heading text-[13px] text-ink">Selfie + Document</Text>
               <Text className="font-body text-[11px] text-ink-muted">Visage + pièce visibles</Text>
             </View>
             <View className="h-[26px] w-[26px] items-center justify-center rounded-full bg-success/[0.12]">
@@ -114,7 +114,7 @@ export function KycRecapScreen() {
         </View>
 
         <Animated.View
-          entering={FadeInDown.delay(230).springify().damping(16)}
+          entering={FadeInDown.delay(230)}
           className="mb-4 flex-row items-center gap-2.5 rounded-2xl border border-success/[0.18] bg-success/[0.08] px-3.5 py-3"
         >
           <ShieldCheck size={14} color={colors.success} />

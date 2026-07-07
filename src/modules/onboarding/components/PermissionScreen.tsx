@@ -36,7 +36,7 @@ export function PermissionScreen({ Icon, title, description, primaryLabel, onPri
         >
           <Icon size={44} color="#fff" strokeWidth={1.6} />
         </LinearGradient>
-        <Text className="mb-3 text-center font-display text-[30px] uppercase leading-[1.05] text-ink">
+        <Text className="mb-3 text-center font-display text-[30px] leading-[1.05] text-ink">
           {title}
         </Text>
         <Text className="text-center font-body text-[13.5px] leading-[21px] text-ink-muted">{description}</Text>

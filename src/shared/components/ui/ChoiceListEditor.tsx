@@ -18,10 +18,10 @@ export function ChoiceListEditor({ options, value, onChange }: ChoiceListEditorP
             key={option}
             onPress={() => onChange(option)}
             className={`flex-row items-center justify-between rounded-2xl border-[1.5px] px-4 py-4 ${
-              selected ? 'border-brand/40 bg-brand/[0.08]' : 'border-white/90 bg-white/70'
+              selected ? 'border-brand/40 bg-brand/[0.08]' : 'border-white/70 bg-white/[0.55]'
             }`}
           >
-            <Text className={`font-heading-semibold text-[14px] uppercase ${selected ? 'text-brand' : 'text-ink'}`}>
+            <Text className={`font-heading-semibold text-[14px] ${selected ? 'text-brand' : 'text-ink'}`}>
               {option}
             </Text>
             {selected ? <Check size={17} color={colors.brand.DEFAULT} strokeWidth={2.5} /> : null}

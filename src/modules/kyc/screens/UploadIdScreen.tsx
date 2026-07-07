@@ -59,12 +59,12 @@ export function UploadIdScreen() {
         <KycHeader step={1} />
 
         <View
-          className="mb-3.5 h-[60px] w-[60px] items-center justify-center rounded-[18px] bg-white/70"
+          className="mb-3.5 h-[60px] w-[60px] items-center justify-center rounded-[18px] bg-white/[0.55]"
           style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 16, shadowOffset: { width: 0, height: 4 } }}
         >
           <IdCard size={28} color={colors.brand.DEFAULT} strokeWidth={1.6} />
         </View>
-        <Text className="mb-1.5 font-display text-[30px] uppercase leading-none text-ink">
+        <Text className="mb-1.5 font-display text-[30px] leading-none text-ink">
           Votre pièce{'\n'}
           <Text className="text-brand">d'identité</Text>
         </Text>
@@ -86,7 +86,7 @@ export function UploadIdScreen() {
                 <View style={{ marginBottom: 6 }}>
                   <doc.Icon size={22} color={selected ? colors.brand.DEFAULT : colors.ink.muted} strokeWidth={1.8} />
                 </View>
-                <Text className={`font-heading text-[11px] uppercase ${selected ? 'text-brand' : 'text-ink-muted'}`}>
+                <Text className={`font-heading text-[11px] ${selected ? 'text-brand' : 'text-ink-muted'}`}>
                   {doc.label}
                 </Text>
               </Pressable>
@@ -110,7 +110,7 @@ export function UploadIdScreen() {
                 >
                   <ScanLine size={20} color="#fff" />
                 </LinearGradient>
-                <Text className="font-heading text-[10px] uppercase text-brand">Recto</Text>
+                <Text className="font-heading text-[10px] text-brand">Recto</Text>
               </>
             )}
             {frontUri ? (
@@ -130,14 +130,14 @@ export function UploadIdScreen() {
             ) : (
               <>
                 <IdCard size={26} color="rgba(106,79,192,0.45)" strokeWidth={1.5} />
-                <Text className="font-heading text-[10px] uppercase text-brand/50">Verso</Text>
+                <Text className="font-heading text-[10px] text-brand/50">Verso</Text>
               </>
             )}
           </Pressable>
         </View>
 
         <View className="mb-4 rounded-2xl border-[1.5px] border-white/[0.88] bg-white/65 px-4 py-3.5">
-          <Text className="mb-2 font-heading text-[9.5px] uppercase tracking-widest text-ink/[0.38]">
+          <Text className="mb-2 font-heading text-[11px] text-ink/[0.38]">
             Conseils pour une bonne photo
           </Text>
           <View className="gap-1.5">

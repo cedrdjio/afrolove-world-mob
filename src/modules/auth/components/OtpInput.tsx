@@ -19,7 +19,7 @@ export function OtpInput({ onComplete }: OtpInputProps) {
       textContentType="oneTimeCode"
       placeholder="••••••"
       placeholderTextColor="rgba(46,36,64,0.25)"
-      className="h-14 rounded-2xl border-[1.5px] border-white/90 bg-white/70 text-center font-display text-[22px] text-ink"
+      className="h-14 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] text-center font-display text-[22px] text-ink"
       style={{
         letterSpacing: 6,
         shadowColor: colors.ink.soft,

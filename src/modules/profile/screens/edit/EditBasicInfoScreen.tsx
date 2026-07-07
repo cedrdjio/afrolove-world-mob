@@ -42,7 +42,7 @@ function DateField({
   max?: number;
 }) {
   return (
-    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/90 bg-white/70 px-3 py-4">
+    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/70 bg-white/[0.45] px-3 py-4">
       <TextInput
         value={value}
         onChangeText={(t) => {
@@ -56,7 +56,7 @@ function DateField({
         placeholderTextColor="rgba(46,36,64,0.2)"
         className="w-full text-center font-display text-[24px] text-ink"
       />
-      <Text className="font-heading text-[9px] uppercase tracking-widest text-ink-faint">{label}</Text>
+      <Text className="font-heading text-[9px] text-ink-faint">{label}</Text>
     </View>
   );
 }
@@ -113,9 +113,9 @@ export function EditBasicInfoScreen() {
     return calculateAge(toIsoBirthDate(day, month, year));
   }, [validDate, day, month, year]);
 
+  // Le nom civil est facultatif : le profil vit sur le pseudo (first_name).
   const isValid =
     firstName.trim().length >= 2 &&
-    lastName.trim().length >= 2 &&
     validDate &&
     age !== null &&
     age >= 18 &&
@@ -127,7 +127,7 @@ export function EditBasicInfoScreen() {
     updateProfile.mutate(
       {
         first_name: firstName.trim(),
-        last_name: lastName.trim(),
+        last_name: lastName.trim() || null,
         gender,
         looking_for: lookingFor,
         birth_date: toIsoBirthDate(day, month, year),
@@ -160,10 +160,15 @@ export function EditBasicInfoScreen() {
         </View>
       ) : (
         <>
-          <GlassInput label="Prénom" placeholder="Prénom" value={firstName} onChangeText={setFirstName} />
-          <GlassInput label="Nom" placeholder="Nom" value={lastName} onChangeText={setLastName} />
+          <GlassInput label="Pseudo" placeholder="Ton pseudo" value={firstName} onChangeText={setFirstName} />
+          <GlassInput
+            label="Nom (privé, facultatif)"
+            placeholder="Nom"
+            value={lastName}
+            onChangeText={setLastName}
+          />
 
-          <Text className="mb-2 font-heading-semibold text-[9.5px] uppercase tracking-widest text-ink-faint">
+          <Text className="mb-2 font-heading-semibold text-[11.5px] text-ink-faint">
             Date de naissance
           </Text>
           <View className="mb-1 flex-row gap-3">
@@ -181,7 +186,7 @@ export function EditBasicInfoScreen() {
             <View className="mb-4" />
           )}
 
-          <Text className="mb-2 font-heading-semibold text-[9.5px] uppercase tracking-widest text-ink-faint">
+          <Text className="mb-2 font-heading-semibold text-[11px] text-ink-faint">
             Je suis
           </Text>
           <View className="mb-5 gap-2.5">
@@ -197,7 +202,7 @@ export function EditBasicInfoScreen() {
             ))}
           </View>
 
-          <Text className="mb-2 font-heading-semibold text-[9.5px] uppercase tracking-widest text-ink-faint">
+          <Text className="mb-2 font-heading-semibold text-[11px] text-ink-faint">
             Je recherche
           </Text>
           <View className="gap-2.5">

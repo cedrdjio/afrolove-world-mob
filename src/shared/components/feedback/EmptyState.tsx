@@ -24,7 +24,7 @@ export function EmptyState({ icon, title, description, actionLabel, onAction }: 
           style={{ width: 120, height: 120, marginBottom: 14 }}
         />
       )}
-      <Text className="mb-2 text-center font-display text-[26px] uppercase text-ink">{title}</Text>
+      <Text className="mb-2 text-center font-display text-[26px] text-ink">{title}</Text>
       {description ? (
         <Text className="mb-8 text-center font-body text-[13px] leading-5 text-ink-muted">{description}</Text>
       ) : null}

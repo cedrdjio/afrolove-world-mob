@@ -60,7 +60,7 @@ export function EditLifestyleScreen() {
           <View key={category.key} className="mb-5">
             <View className="mb-2.5 flex-row items-center gap-1.5">
               <category.Icon size={12} color={colors.ink.muted} />
-              <Text className="font-heading text-[10px] uppercase tracking-widest text-ink/40">
+              <Text className="font-heading text-[10px] text-ink/40">
                 {category.label}
               </Text>
             </View>
@@ -85,7 +85,7 @@ export function EditLifestyleScreen() {
         <View className="mb-5">
           <View className="mb-2.5 flex-row items-center gap-1.5">
             <HeartHandshake size={12} color={colors.ink.muted} />
-            <Text className="font-heading text-[10px] uppercase tracking-widest text-ink/40">
+            <Text className="font-heading text-[10px] text-ink/40">
               Objectif relationnel
             </Text>
           </View>

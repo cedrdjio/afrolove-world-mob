@@ -59,7 +59,7 @@ export function AccountStatusScreen() {
 
       <View className="flex-1 items-center justify-center px-8">
         <Animated.View
-          entering={FadeInDown.springify().damping(14)}
+          entering={FadeInDown}
           className={`mb-7 h-24 w-24 items-center justify-center rounded-full border-[1.5px] ${
             isBanned ? 'border-danger/30 bg-danger/[0.12]' : 'border-gold/30 bg-gold/[0.1]'
           }`}
@@ -71,7 +71,7 @@ export function AccountStatusScreen() {
           )}
         </Animated.View>
 
-        <Text className="mb-3 text-center font-display-black text-[28px] uppercase text-white">
+        <Text className="mb-3 text-center font-display-black text-[28px] text-white">
           {isBanned ? 'Compte suspendu' : 'Compte désactivé'}
         </Text>
         <Text className="mb-6 text-center font-body text-[13.5px] leading-[21px] text-white/50">
@@ -82,7 +82,7 @@ export function AccountStatusScreen() {
 
         {isBanned && profileQuery.data.statusReason ? (
           <View className="mb-8 w-full rounded-2xl border border-white/[0.14] bg-white/[0.08] p-4">
-            <Text className="mb-1 font-heading text-[10px] uppercase tracking-widest text-white/40">Motif</Text>
+            <Text className="mb-1 font-heading text-[10px] text-white/40">Motif</Text>
             <Text className="font-body text-[12.5px] leading-[18px] text-white/80">
               {profileQuery.data.statusReason}
             </Text>

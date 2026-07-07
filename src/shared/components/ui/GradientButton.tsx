@@ -71,7 +71,7 @@ export function GradientButton({
             <>
               {icon && iconPosition === 'left' ? icon : null}
               <Text
-                className="font-heading text-[14px] uppercase tracking-wide text-white"
+                className="font-heading text-[14px] tracking-wide text-white"
                 style={{ letterSpacing: 0.5 }}
               >
                 {label}

@@ -89,8 +89,8 @@ function PhotoTile({
       const rawIndex = index + deltaRow * COLUMNS + deltaCol;
       const targetIndex = Math.max(0, Math.min(photoCount - 1, rawIndex));
 
-      translateX.value = withSpring(0);
-      translateY.value = withSpring(0);
+      translateX.value = withSpring(0, { damping: 20, stiffness: 200, overshootClamping: true });
+      translateY.value = withSpring(0, { damping: 20, stiffness: 200, overshootClamping: true });
       isDragging.value = false;
       if (targetIndex !== index) runOnJS(finishDrag)(targetIndex);
     });
@@ -136,7 +136,7 @@ function PhotoTile({
 
         {photo.isPrimary ? (
           <View className="absolute bottom-1.5 left-1.5 rounded-full bg-brand px-2 py-1">
-            <Text className="font-heading text-[8px] uppercase text-white">Principale</Text>
+            <Text className="font-heading text-[8px] text-white">Principale</Text>
           </View>
         ) : (
           <Pressable
@@ -238,7 +238,7 @@ export function EditPhotosScreen() {
               <Plus size={18} color={colors.brand.DEFAULT} />
             </View>
             {addingSlot && uploadProgress !== null ? (
-              <Text className="font-heading text-[9px] uppercase text-brand/60">{uploadProgress}%</Text>
+              <Text className="font-heading text-[9px] text-brand/60">{uploadProgress}%</Text>
             ) : null}
           </Pressable>
         ) : null}
