@@ -18,11 +18,11 @@ logo distant). À coller manuellement dans le dashboard Supabase :
 
 ## Logo
 
-Les templates pointent vers le bucket public `branding`. Le hero étant sombre
-(dégradé lavande/aubergine), ils utilisent la variante sur fond sombre :
+Les templates pointent vers le bucket public `branding`. Le logo détouré est
+posé directement sur le dégradé lavande/aubergine du hero :
 
 ```
-https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo-fond-sombre.png
+https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo-transparent.png
 ```
 
 Variantes déjà disponibles dans le bucket (pour changer, remplacez le nom du
@@ -30,10 +30,10 @@ fichier dans l'URL des trois templates) :
 
 | Fichier | Usage |
 | --- | --- |
-| `logo-fond-sombre.png` | Logo sur fond sombre — **utilisé ici** (hero sombre) |
+| `logo-transparent.png` | Logo détouré (fond transparent) — **utilisé ici** |
+| `logo-fond-sombre.png` | Logo sur fond sombre |
 | `logo-fond-lavande.png` | Logo sur fond lavande |
 | `logo-fond-clair.png` | Logo sur fond clair |
-| `logo-transparent.png` | Logo détouré (fond transparent) |
 | `icone-app-cercle.png` | Icône de l'app, cercle |
 | `icone-app-arrondie.png` | Icône de l'app, carré arrondi |
 
