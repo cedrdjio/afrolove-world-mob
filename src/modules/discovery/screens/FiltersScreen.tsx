@@ -1,55 +1,61 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { X, Minus, Plus } from 'lucide-react-native';
+import { ChevronLeft } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
+import { Slider, DualSlider } from '@/shared/components/ui/RangeSlider';
 import { useFiltersStore } from '@/modules/discovery/stores/filtersStore';
+import { useDiscoveryCount } from '@/modules/discovery/hooks/useDiscovery';
+import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
 import { colors } from '@/shared/constants/theme';
 
-const DISTANCE_OPTIONS = [5, 10, 25, 50, 100];
-
-function Stepper({ value, onDecrement, onIncrement }: { value: number; onDecrement: () => void; onIncrement: () => void }) {
+function FilterCard({ children }: { children: React.ReactNode }) {
   return (
-    <View className="flex-row items-center gap-4">
-      <Pressable onPress={onDecrement}>
-        <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
-          <View className="h-10 w-10 items-center justify-center">
-            <Minus size={16} color={colors.ink.DEFAULT} />
-          </View>
-        </GlassSurface>
-      </Pressable>
-      <Text className="w-10 text-center font-display text-[22px] text-ink">{value}</Text>
-      <Pressable onPress={onIncrement}>
-        <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
-          <View className="h-10 w-10 items-center justify-center">
-            <Plus size={16} color={colors.ink.DEFAULT} />
-          </View>
-        </GlassSurface>
-      </Pressable>
-    </View>
+    <View className="mb-3.5 rounded-2xl border-[1.5px] border-white/90 bg-white/75 px-5 py-4">{children}</View>
   );
 }
 
+/** Écran Filtres conforme à la maquette : sliders distance/âge, centres
+ *  d'intérêt (catalogue BD), profils vérifiés, CTA « Voir N profils ». */
 export function FiltersScreen() {
   const router = useRouter();
-  const { distanceKm, ageMin, ageMax, verifiedOnly, setDistanceKm, setAgeRange, toggleVerifiedOnly } =
-    useFiltersStore();
+  const {
+    distanceKm,
+    ageMin,
+    ageMax,
+    verifiedOnly,
+    interestIds,
+    setDistanceKm,
+    setAgeRange,
+    toggleVerifiedOnly,
+    toggleInterest,
+    reset,
+  } = useFiltersStore();
+  const interestsQuery = useInterestsQuery();
+  const countQuery = useDiscoveryCount();
+
+  const interests = interestsQuery.data ?? [];
+  const count = countQuery.data;
 
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream" />
-      <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 24 }}>
+      <ScrollView contentContainerClassName="px-6 pb-10" style={{ paddingTop: 60 }}>
         <View className="mb-6 flex-row items-center justify-between">
           <Text className="font-display text-[26px] text-ink">Filtres</Text>
           <Pressable onPress={() => router.back()}>
             <GlassSurface variant="light" radius={15} style={{ width: 40, height: 40 }}>
               <View className="h-10 w-10 items-center justify-center">
-                <X size={17} color={colors.ink.DEFAULT} />
+                <ChevronLeft size={19} color={colors.ink.DEFAULT} />
               </View>
             </GlassSurface>
+          </Pressable>
+          <Text className="font-display text-[24px] uppercase text-ink">Filtres</Text>
+          <Pressable onPress={reset} hitSlop={8}>
+            <Text className="font-heading text-[11.5px] uppercase text-brand">Réinitialiser</Text>
           </Pressable>
         </View>
 
@@ -87,7 +93,15 @@ export function FiltersScreen() {
           <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
         </View>
 
-        <GradientButton label="Appliquer les filtres" onPress={() => router.back()} />
+        <GradientButton
+          label={
+            countQuery.isLoading || count == null
+              ? 'Voir les profils'
+              : `Voir ${count} profil${count > 1 ? 's' : ''}`
+          }
+          onPress={() => router.back()}
+          style={{ marginTop: 10 }}
+        />
       </ScrollView>
     </View>
   );

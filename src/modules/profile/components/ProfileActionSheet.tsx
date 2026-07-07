@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useMemo } from 'react';
-import { View, Text, Pressable, Share, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, Share, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Flag, UserX, Share2 } from 'lucide-react-native';
 import { useBlockUser } from '@/modules/reports/hooks/useModeration';
@@ -28,6 +29,31 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
       Share.share({ message: `Découvre le profil de ${profileName} sur AfriLove World.` }).catch(() => {});
     };
 
+    // Confirmation avant blocage, puis retour visible de succès — sans quoi
+    // l'action semblait ne rien faire (« aucun élément effectif »).
+    const handleBlock = () => {
+      Alert.alert(
+        `Bloquer ${profileName} ?`,
+        'Cette personne disparaîtra de vos découvertes, recherches et conversations, et ne pourra plus vous contacter.',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          {
+            text: 'Bloquer',
+            style: 'destructive',
+            onPress: () =>
+              blockUser.mutate(profileId, {
+                onSuccess: () => {
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  Alert.alert('Profil bloqué', `${profileName} ne peut plus vous voir ni vous contacter.`);
+                  router.back();
+                },
+                onError: () => Alert.alert('Erreur', "Le blocage n'a pas pu être appliqué. Réessayez."),
+              }),
+          },
+        ],
+      );
+    };
+
     return (
       <BottomSheet
         ref={ref}
@@ -49,12 +75,7 @@ export const ProfileActionSheet = forwardRef<BottomSheet, ProfileActionSheetProp
             <Text className="font-heading-semibold text-[14px] text-ink">Signaler</Text>
           </Pressable>
           <Pressable
-            onPress={() =>
-              blockUser.mutate(profileId, {
-                // Leave the now-hidden profile once the block is effective.
-                onSuccess: () => router.back(),
-              })
-            }
+            onPress={handleBlock}
             disabled={blockUser.isPending}
             className="flex-row items-center gap-3.5 border-b border-ink/[0.06] py-4"
           >

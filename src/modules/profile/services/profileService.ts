@@ -111,6 +111,7 @@ async function fetchPublicProfile(profileId: string): Promise<Profile> {
     privacyPrefs: {},
     lastActiveAt: row.last_active_at,
     locationUpdatedAt: null,
+    distanceKm: row.distance_km ?? null,
     photos: (row.photo_urls ?? []).map((url: string, index: number) => ({
       id: url,
       url,
@@ -151,10 +152,17 @@ async function setLanguages(userId: string, languageIds: string[]): Promise<void
   if (insertError) throw insertError;
 }
 
+/** Alimente le compteur « Vues » de Mon profil — best effort, jamais bloquant. */
+async function recordProfileView(profileId: string): Promise<void> {
+  const { error } = await supabase.rpc('record_profile_view', { p_profile_id: profileId });
+  if (error) throw error;
+}
+
 export const profileService = {
   fetchOwnProfile,
   fetchPublicProfile,
   updateProfile,
   setInterests,
   setLanguages,
+  recordProfileView,
 };

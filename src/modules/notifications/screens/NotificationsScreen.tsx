@@ -3,7 +3,7 @@ import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Bell, ArrowLeft, Heart, MessageCircle, Star, ShieldCheck } from 'lucide-react-native';
+import { Bell, ArrowLeft, Heart, MessageCircle, Star, ShieldCheck, Megaphone } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
@@ -22,6 +22,7 @@ const FILTERS: { key: 'all' | NotificationType; label: string }[] = [
   { key: 'message', label: 'Messages' },
   { key: 'like', label: 'Likes' },
   { key: 'kyc', label: 'Vérification' },
+  { key: 'admin', label: 'Annonces' },
 ];
 
 const TYPE_STYLE: Record<NotificationType, { Icon: LucideIcon; accent: string }> = {
@@ -29,6 +30,7 @@ const TYPE_STYLE: Record<NotificationType, { Icon: LucideIcon; accent: string }>
   message: { Icon: MessageCircle, accent: colors.gold.DEFAULT },
   like: { Icon: Star, accent: '#9B7EDE' },
   kyc: { Icon: ShieldCheck, accent: colors.success },
+  admin: { Icon: Megaphone, accent: colors.ink.muted },
 };
 
 export function NotificationsScreen() {
@@ -112,7 +114,9 @@ export function NotificationsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-6 pb-8"
           renderItem={({ item, index }) => {
-            const { Icon, accent } = TYPE_STYLE[item.type];
+            // Un type inconnu (nouveau type côté serveur) retombe sur le style
+            // « annonce » plutôt que de faire planter le rendu.
+            const { Icon, accent } = TYPE_STYLE[item.type] ?? TYPE_STYLE.admin;
             return (
               <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 40)}>
                 <Pressable

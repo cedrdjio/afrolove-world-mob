@@ -20,6 +20,12 @@ export interface Entitlements {
   superLikesUsedToday: number;
   superLikesLimit: number;
   likersCount: number;
+  swipesUsedToday: number;
+  /** null = illimité (premium) */
+  swipesLimit: number | null;
+  favoritesCount: number;
+  /** null = illimité (premium) */
+  favoritesLimit: number | null;
 }
 
 export interface LikerProfile {
@@ -63,10 +69,14 @@ async function fetchEntitlements(): Promise<Entitlements> {
     premiumUntil: row?.premium_until ?? null,
     planLabel: row?.plan_label ?? null,
     likesUsedToday: row?.likes_used_today ?? 0,
-    likesLimit: row?.likes_limit ?? 5,
+    likesLimit: row?.likes_limit ?? null,
     superLikesUsedToday: row?.super_likes_used_today ?? 0,
     superLikesLimit: row?.super_likes_limit ?? 0,
     likersCount: row?.likers_count ?? 0,
+    swipesUsedToday: row?.swipes_used_today ?? 0,
+    swipesLimit: row?.swipes_limit ?? null,
+    favoritesCount: row?.favorites_count ?? 0,
+    favoritesLimit: row?.favorites_limit ?? null,
   };
 }
 

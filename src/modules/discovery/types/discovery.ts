@@ -24,4 +24,6 @@ export interface DiscoveryFilters {
   maxDistanceKm: number | null;
   verifiedOnly: boolean;
   mode: DiscoveryFeedMode;
+  /** Ids de la table interests ; vide = pas de filtre. */
+  interestIds?: string[];
 }

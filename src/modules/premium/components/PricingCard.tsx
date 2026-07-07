@@ -14,6 +14,7 @@ export function PricingCard({ plan }: { plan: PremiumPlan }) {
   const isBuying = purchase.isPending && purchase.variables === plan.key;
 
   const handlePress = () => {
+    if (loading) return;
     Haptics.selectionAsync().catch(() => {});
     if (plan.key === 'free' || purchase.isPending) return;
     purchase.mutate(plan.key, {
@@ -25,9 +26,9 @@ export function PricingCard({ plan }: { plan: PremiumPlan }) {
   return (
     <View
       className="relative rounded-2xl px-2.5 py-3"
-      style={{ backgroundColor: tone.bg, borderWidth: plan.badge ? 1.5 : 1, borderColor: tone.border }}
+      style={{ backgroundColor: tone.bg, borderWidth: badge ? 1.5 : 1, borderColor: tone.border }}
     >
-      {plan.badge ? (
+      {badge ? (
         <View
           className="absolute self-center rounded-full px-2.5 py-1"
           style={{ top: -10, backgroundColor: '#9B7EDE' }}

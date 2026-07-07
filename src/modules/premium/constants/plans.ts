@@ -1,13 +1,6 @@
-export interface PremiumPlan {
-  key: string;
-  label: string;
-  price: string;
-  suffix?: string;
-  description: string;
-  tone: 'neutral' | 'blue' | 'red' | 'orange' | 'green' | 'gold';
-  cta: string;
-  badge?: string;
-}
+/** Styles visuels des cartes tarifs — les données (libellé, prix, durée)
+ *  viennent de la table premium_plans, jamais d'ici. */
+export type PlanTone = 'neutral' | 'blue' | 'red' | 'orange' | 'green' | 'gold';
 
 // Les clés correspondent exactement à premium_plans.key en base — c'est ce
 // qui part dans purchase_subscription_dev(p_plan_key).

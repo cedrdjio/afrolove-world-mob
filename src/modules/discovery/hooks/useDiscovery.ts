@@ -17,13 +17,39 @@ export function useDiscoveryFeed(mode: DiscoveryFeedMode) {
   const ageMin = useFiltersStore((s) => s.ageMin);
   const ageMax = useFiltersStore((s) => s.ageMax);
   const verifiedOnly = useFiltersStore((s) => s.verifiedOnly);
+  const interestIds = useFiltersStore((s) => s.interestIds);
 
   return useQuery({
-    queryKey: ['discovery', mode, distanceKm, ageMin, ageMax, verifiedOnly],
+    queryKey: ['discovery', mode, distanceKm, ageMin, ageMax, verifiedOnly, interestIds],
     queryFn: () =>
-      discoveryService.searchProfiles({ ageMin, ageMax, maxDistanceKm: distanceKm, verifiedOnly, mode }),
+      discoveryService.searchProfiles({
+        ageMin,
+        ageMax,
+        maxDistanceKm: distanceKm,
+        verifiedOnly,
+        mode,
+        interestIds,
+      }),
     enabled: isAuthenticated,
     staleTime: 60_000,
+  });
+}
+
+/** Compteur live du bouton « Voir N profils » de l'écran Filtres. */
+export function useDiscoveryCount() {
+  const { isAuthenticated } = useAuth();
+  const distanceKm = useFiltersStore((s) => s.distanceKm);
+  const ageMin = useFiltersStore((s) => s.ageMin);
+  const ageMax = useFiltersStore((s) => s.ageMax);
+  const verifiedOnly = useFiltersStore((s) => s.verifiedOnly);
+  const interestIds = useFiltersStore((s) => s.interestIds);
+
+  return useQuery({
+    queryKey: ['discovery-count', distanceKm, ageMin, ageMax, verifiedOnly, interestIds],
+    queryFn: () =>
+      discoveryService.countProfiles({ ageMin, ageMax, maxDistanceKm: distanceKm, verifiedOnly, interestIds }),
+    enabled: isAuthenticated,
+    staleTime: 30_000,
   });
 }
 

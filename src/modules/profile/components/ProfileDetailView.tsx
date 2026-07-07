@@ -49,8 +49,12 @@ interface ProfileDetailViewProps {
    *  someone else; 'preview' shows a "this is what others see" banner and
    *  no actions, for the user's own Profile Preview screen. */
   variant: 'discovery' | 'preview';
+  /** Cartouches « compatibilité » / « points communs » de la maquette. */
+  discoveryStats?: { compatibility: number; commonInterests: number };
   onGalleryPress: () => void;
   onLike?: () => void;
+  /** Fourni uniquement quand un match existe déjà — ouvre la conversation. */
+  onMessage?: () => void;
 }
 
 /** Fiche profil façon maquette 05 : identité sur la photo, contenu en

@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Search as SearchIcon, Heart, Star, Eye, BadgeCheck, Lock } from 'lucide-react-native';
+import { Search as SearchIcon, Heart, Star, BadgeCheck, Lock } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
@@ -22,10 +24,12 @@ function SectionTitle({ children }: { children: string }) {
 
 export function MatchListScreen() {
   const router = useRouter();
+  const [tab, setTab] = useState<MatchesTab>('matches');
   const conversationsQuery = useConversationsQuery();
   const entitlements = useEntitlements();
   const isPremium = entitlements.data?.isPremium ?? false;
   const likersCount = entitlements.data?.likersCount ?? 0;
+  const favoritesLimit = entitlements.data?.favoritesLimit ?? null;
   const likersQuery = useLikers(isPremium);
   const favoritesQuery = useFavorites();
 
@@ -33,6 +37,13 @@ export function MatchListScreen() {
   const newMatchesCount = matches.filter((m) => !m.lastMessage).length;
   const likers = likersQuery.data ?? [];
   const favorites = (favoritesQuery.data ?? []).filter((f) => !f.isMatched);
+  const favoritesFull = favoritesLimit != null && favorites.length >= favoritesLimit;
+
+  const TABS: { key: MatchesTab; label: string }[] = [
+    { key: 'matches', label: `Matchs${matches.length > 0 ? ` (${matches.length})` : ''}` },
+    { key: 'likers', label: `Ils t'ont liké${likersCount > 0 ? ` (${likersCount})` : ''}` },
+    { key: 'favorites', label: `Favoris${favorites.length > 0 ? ` (${favorites.length})` : ''}` },
+  ];
 
   return (
     <View className="flex-1">
@@ -57,9 +68,35 @@ export function MatchListScreen() {
           <SearchIcon size={15} color="rgba(62,53,82,0.28)" />
           <Text className="font-body text-[13px] text-ink/30">Rechercher un match…</Text>
         </Pressable>
+
+        {/* Onglets Matchs / Ils t'ont liké / Favoris */}
+        <View className="mb-5 flex-row rounded-2xl border-[1.5px] border-white/90 bg-white/60 p-1">
+          {TABS.map((item) => (
+            <Pressable key={item.key} onPress={() => setTab(item.key)} className="flex-1">
+              {tab === item.key ? (
+                <LinearGradient
+                  colors={gradients.brand}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{ borderRadius: 12, paddingVertical: 9 }}
+                >
+                  <Text className="text-center font-heading text-[10.5px] uppercase text-white" numberOfLines={1}>
+                    {item.label}
+                  </Text>
+                </LinearGradient>
+              ) : (
+                <View className="py-[9px]">
+                  <Text className="text-center font-heading text-[10.5px] uppercase text-ink/45" numberOfLines={1}>
+                    {item.label}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          ))}
+        </View>
       </View>
 
-      {conversationsQuery.isLoading ? (
+      {conversationsQuery.isLoading || entitlements.isLoading ? (
         <View className="items-center pt-10">
           <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
         </View>
@@ -101,19 +138,19 @@ export function MatchListScreen() {
                       <Text className="font-heading text-[10px] text-ink" numberOfLines={1}>
                         {item.partnerFirstName}
                       </Text>
-                    </Pressable>
-                  </Animated.View>
-                )}
-              />
+                      {liker.isVerified ? <BadgeCheck size={12} color={colors.gold.DEFAULT} strokeWidth={2.6} /> : null}
+                    </View>
+                  </Pressable>
+                </Animated.View>
+              ))}
             </View>
-          )}
-
-          {/* Qui vous a aimé — premium reveal, real count for everyone. */}
-          <View className="px-[22px]">
-            <SectionTitle>Qui vous a aimé</SectionTitle>
-            {isPremium && likers.length > 0 ? (
-              <View className="mb-6 flex-row flex-wrap gap-2.5">
-                {likers.slice(0, 8).map((liker, index) => (
+          </ScrollView>
+        ) : (
+          /* Non premium : grille floutée + cadenas, compteur réel, CTA. */
+          <View className="flex-1">
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="px-[22px] pb-44">
+              <View className="flex-row flex-wrap justify-between">
+                {Array.from({ length: Math.min(likersCount, 8) }).map((_, index) => (
                   <Animated.View
                     key={liker.id}
                     entering={FadeInDown.delay(Math.min(index, 6) * 50)}
@@ -165,14 +202,25 @@ export function MatchListScreen() {
                           <Lock size={15} color={colors.brand.DEFAULT} strokeWidth={2.2} />
                         </View>
                       </View>
-                    </Animated.View>
-                  ))}
-                </View>
+                    </View>
+                  </Animated.View>
+                ))}
+              </View>
+            </ScrollView>
+
+            <View className="absolute inset-x-[22px] bottom-24 rounded-3xl border-[1.5px] border-white/90 bg-white/80 p-4">
+              <Text className="mb-0.5 text-center font-heading text-[13px] uppercase text-ink">
+                {likersCount} personne{likersCount > 1 ? 's' : ''} craque{likersCount > 1 ? 'nt' : ''} pour toi
+              </Text>
+              <Text className="mb-3 text-center font-body text-[11.5px] text-ink-muted">
+                Débloque tous les likes avec Premium
+              </Text>
+              <Pressable onPress={() => router.push('/premium/pricing')} className="active:opacity-90">
                 <LinearGradient
                   colors={gradients.brand}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={{ borderRadius: 999, paddingVertical: 13, marginTop: 12 }}
+                  style={{ borderRadius: 999, paddingVertical: 13 }}
                 >
                   <Text className="text-center font-heading text-[12.5px] tracking-wide text-white">
                     {likersCount} personne{likersCount > 1 ? 's' : ''} craque{likersCount > 1 ? 'nt' : ''} pour toi — Passer à Premium
