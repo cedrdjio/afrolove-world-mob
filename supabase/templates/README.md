@@ -18,17 +18,27 @@ logo distant). À coller manuellement dans le dashboard Supabase :
 
 ## Logo
 
-Les templates pointent vers le bucket public `branding` :
+Les templates pointent vers le bucket public `branding`. Le hero étant sombre
+(dégradé lavande/aubergine), ils utilisent la variante sur fond sombre :
 
 ```
-https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo.png
+https://xhpwmondzarbnzciruis.supabase.co/storage/v1/object/public/branding/logo-fond-sombre.png
 ```
 
-Uploadez votre logo (PNG carré, idéalement 112×112 px pour le retina) dans
-**Storage → branding → logo.png**. Tant que le fichier n'existe pas, les
-clients email affichent le texte alternatif « AfriLove World ».
-Si vous passez plus tard par un CDN, remplacez simplement l'URL de l'image
-dans les trois fichiers avant de les recoller dans le dashboard.
+Variantes déjà disponibles dans le bucket (pour changer, remplacez le nom du
+fichier dans l'URL des trois templates) :
+
+| Fichier | Usage |
+| --- | --- |
+| `logo-fond-sombre.png` | Logo sur fond sombre — **utilisé ici** (hero sombre) |
+| `logo-fond-lavande.png` | Logo sur fond lavande |
+| `logo-fond-clair.png` | Logo sur fond clair |
+| `logo-transparent.png` | Logo détouré (fond transparent) |
+| `icone-app-cercle.png` | Icône de l'app, cercle |
+| `icone-app-arrondie.png` | Icône de l'app, carré arrondi |
+
+> Astuce : ces fichiers sont volumineux (700 Ko – 1 Mo). Pour un email, une
+> version ~128×128 px allège nettement le chargement — optionnel.
 
 ## Objets d'email conseillés (champ "Subject")
 
