@@ -30,11 +30,16 @@ export function usePurchasePlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (planKey: string) => premiumService.purchasePlan(planKey),
-    onSuccess: () => {
-      // Premium unlocks limits and the likers list everywhere at once.
-      queryClient.invalidateQueries({ queryKey: [ENTITLEMENTS_QUERY_KEY] });
-      queryClient.invalidateQueries({ queryKey: [LIKERS_QUERY_KEY] });
+    mutationFn: (input: { planKey: string; phone: string; paymentMethod?: string }) =>
+      premiumService.purchasePlan(input),
+    onSuccess: (result) => {
+      // Only a settled payment changes entitlements; canceled/pending leave the
+      // current state untouched. Premium unlocks limits and the likers list
+      // everywhere at once.
+      if (result.outcome === 'succeeded') {
+        queryClient.invalidateQueries({ queryKey: [ENTITLEMENTS_QUERY_KEY] });
+        queryClient.invalidateQueries({ queryKey: [LIKERS_QUERY_KEY] });
+      }
     },
   });
 }

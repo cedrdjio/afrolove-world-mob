@@ -1,0 +1,12 @@
+project_id = "xhpwmondzarbnzciruis"
+
+# payment-initiate is called by the app with its Supabase session — keep the
+# JWT check on (this is the default, listed here for clarity).
+[functions.payment-initiate]
+verify_jwt = true
+
+# payment-webhook is called by CamerPay's servers, not a signed-in user, so the
+# platform JWT check must be off. Authenticity is enforced in code via the
+# HMAC-SHA256 signature on the payload.
+[functions.payment-webhook]
+verify_jwt = false

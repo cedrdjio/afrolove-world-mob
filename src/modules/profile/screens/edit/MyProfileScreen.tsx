@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
@@ -19,7 +20,6 @@ import { colors, gradients } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useProfileStats } from '@/modules/profile/hooks/useProfileStats';
 import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
-import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { computeProfileCompletion, calculateAge } from '@/modules/profile/types/profile';
 
 function AnimatedProgressBar({ percent }: { percent: number }) {
@@ -45,18 +45,13 @@ function AnimatedProgressBar({ percent }: { percent: number }) {
   );
 }
 
-/** Écran « Mon profil » conforme à la maquette 08 : carte identité avec
- *  progression, stats Vues/Likes/Matchs, carte Ma bio éditable et carte
- *  AfriLove Premium qui reflète l'abonnement réel. */
 export function MyProfileScreen() {
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const statsQuery = useProfileStats();
   const interestsQuery = useInterestsQuery();
-  const entitlements = useEntitlements();
 
   const profile = profileQuery.data;
-  const isPremium = entitlements.data?.isPremium ?? false;
 
   const completionPercent = useMemo(() => {
     if (!profile) return 0;
@@ -77,11 +72,11 @@ export function MyProfileScreen() {
   }
 
   const age = profile.birthDate ? calculateAge(profile.birthDate) : null;
-  const locationLabel = [profile.city, profile.country].filter(Boolean).join(' · ');
+  const locationLabel = [profile.city, profile.country].filter(Boolean).join(', ');
   const stats = [
-    { value: statsQuery.data ? String(statsQuery.data.viewsCount) : '—', label: 'Vues', color: colors.ink.DEFAULT },
-    { value: statsQuery.data ? String(statsQuery.data.likesReceived) : '—', label: 'Likes', color: colors.brand.DEFAULT },
-    { value: statsQuery.data ? String(statsQuery.data.matchesCount) : '—', label: 'Matchs', color: colors.gold.DEFAULT },
+    { value: String(statsQuery.data?.likesReceived ?? '—'), label: 'Likes reçus', color: colors.brand.DEFAULT },
+    { value: String(statsQuery.data?.matchesCount ?? '—'), label: 'Matches', color: colors.gold.DEFAULT },
+    { value: statsQuery.data ? `${statsQuery.data.matchRate}%` : '—', label: 'Taux match', color: colors.success },
   ];
 
   return (
@@ -113,30 +108,16 @@ export function MyProfileScreen() {
               >
                 <Text className="font-heading text-[11px] text-brand">Modifier</Text>
               </Pressable>
-              <View className="flex-1">
-                <View className="flex-row items-center gap-1.5">
-                  <Text className="font-display text-[22px] text-ink" numberOfLines={1}>
-                    {profile.firstName ?? 'Moi'}
-                    {age != null ? `, ${age}` : ''}
-                  </Text>
-                  {profile.isVerified ? (
-                    <BadgeCheck size={15} color={colors.gold.DEFAULT} strokeWidth={2.6} />
-                  ) : null}
-                </View>
-                {locationLabel ? (
-                  <View className="mt-0.5 flex-row items-center gap-1.5">
-                    <MapPin size={11} color={colors.ink.muted} />
-                    <Text className="font-body-medium text-[11.5px] text-ink-muted">{locationLabel}</Text>
-                  </View>
-                ) : null}
-              </View>
               <Pressable
-                onPress={() => router.push('/edit-profile')}
-                className="rounded-full bg-brand/10 px-3 py-2 active:opacity-80"
+                onPress={() => router.push('/settings')}
+                hitSlop={6}
+                className="h-[34px] w-[34px] items-center justify-center rounded-full bg-white/90 active:opacity-80"
+                accessibilityLabel="Paramètres"
               >
-                <Text className="font-heading text-[10px] uppercase text-brand">Modifier</Text>
+                <Settings size={16} color={colors.brand.DEFAULT} strokeWidth={2.1} />
               </Pressable>
             </View>
+          </View>
 
           {completionPercent < 100 ? (
             <Animated.View
@@ -213,7 +194,6 @@ export function MyProfileScreen() {
               )}
             </Pressable>
           </Animated.View>
-        ) : null}
 
           {interestLabels.length > 0 ? (
             <Animated.View

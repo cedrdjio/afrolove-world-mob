@@ -83,6 +83,30 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_invites: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          invited_by: string | null
+          role: Database["public"]["Enums"]["admin_role"]
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["admin_role"]
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["admin_role"]
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -657,6 +681,88 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_transactions: {
+        Row: {
+          amount: number
+          amount_source_cents: number | null
+          created_at: string
+          currency: string
+          id: string
+          invoice_id: string
+          paid_at: string | null
+          payment_method: string | null
+          plan_key: string
+          profile_id: string
+          provider: string
+          provider_tx_id: string | null
+          provider_uuid: string | null
+          raw: Json | null
+          status: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          amount_source_cents?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_id: string
+          paid_at?: string | null
+          payment_method?: string | null
+          plan_key: string
+          profile_id: string
+          provider?: string
+          provider_tx_id?: string | null
+          provider_uuid?: string | null
+          raw?: Json | null
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          amount_source_cents?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          plan_key?: string
+          profile_id?: string
+          provider?: string
+          provider_tx_id?: string | null
+          provider_uuid?: string | null
+          raw?: Json | null
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_plan_key_fkey"
+            columns: ["plan_key"]
+            isOneToOne: false
+            referencedRelation: "premium_plans"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "payment_transactions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       premium_plans: {
         Row: {
           currency: string
@@ -758,6 +864,10 @@ export type Database = {
           created_at: string
           id: string
           is_primary: boolean
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_note: string | null
+          moderation_status: string
           position: number
           profile_id: string
           url: string
@@ -766,6 +876,10 @@ export type Database = {
           created_at?: string
           id?: string
           is_primary?: boolean
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_note?: string | null
+          moderation_status?: string
           position?: number
           profile_id: string
           url: string
@@ -774,6 +888,10 @@ export type Database = {
           created_at?: string
           id?: string
           is_primary?: boolean
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_note?: string | null
+          moderation_status?: string
           position?: number
           profile_id?: string
           url?: string
@@ -1289,6 +1407,7 @@ export type Database = {
         Returns: Json
       }
       admin_cancel_broadcast: { Args: { p_id: string }; Returns: undefined }
+      admin_cancel_invite: { Args: { p_email: string }; Returns: undefined }
       admin_cancel_subscription: {
         Args: { p_refund?: boolean; p_subscription_id: string }
         Returns: undefined
@@ -1337,6 +1456,15 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_list_photos: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+          p_status?: string
+        }
+        Returns: Json
+      }
       admin_list_reports: {
         Args: {
           p_limit?: number
@@ -1377,6 +1505,10 @@ export type Database = {
         Returns: Json
       }
       admin_login_logs: { Args: { p_limit?: number }; Returns: Json }
+      admin_moderate_photo: {
+        Args: { p_action: string; p_note?: string; p_photo_id: string }
+        Returns: undefined
+      }
       admin_moderation_stats: { Args: never; Returns: Json }
       admin_notification_history: { Args: { p_limit?: number }; Returns: Json }
       admin_premium_stats: { Args: never; Returns: Json }
@@ -1480,6 +1612,10 @@ export type Database = {
           p_verified_only?: boolean
         }
         Returns: number
+      }
+      fail_camerpay_payment: {
+        Args: { p_provider_uuid: string; p_raw?: Json; p_status: string }
+        Returns: undefined
       }
       get_my_blocked_profiles: {
         Args: never
@@ -1639,6 +1775,17 @@ export type Database = {
           is_verified: boolean
           last_active_at: string
         }[]
+      }
+      settle_camerpay_payment: {
+        Args: {
+          p_amount: number
+          p_paid_at?: string
+          p_payment_method?: string
+          p_provider_tx_id?: string
+          p_provider_uuid: string
+          p_raw?: Json
+        }
+        Returns: string
       }
     }
     Enums: {
