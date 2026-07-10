@@ -9,9 +9,7 @@ import { ScreenBackground } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
-import { ErrorState } from '@/shared/components/feedback/ErrorState';
-import { useAppError } from '@/shared/hooks/useAppError';
-import { usePremiumPlans, usePurchasePlan, useEntitlements } from '@/modules/premium/hooks/usePremium';
+import { usePremiumPlans, useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { colors, gradients } from '@/shared/constants/theme';
 
 const FEATURES = [
@@ -44,8 +42,6 @@ export function PremiumPricingScreen() {
   const router = useRouter();
   const plansQuery = usePremiumPlans();
   const entitlements = useEntitlements();
-  const purchase = usePurchasePlan();
-  const purchaseError = useAppError(purchase.error);
   const [selected, setSelected] = useState<string | null>(null);
 
   const plans = plansQuery.data ?? [];
@@ -53,13 +49,14 @@ export function PremiumPricingScreen() {
     selected ?? plans.find((p) => p.key === DEFAULT_PLAN_KEY)?.key ?? plans[0]?.key ?? null;
   const selectedPlan = plans.find((p) => p.key === selectedKey) ?? null;
 
+  // Le choix du forfait mène à l'écran de paiement (saisie du numéro Mobile
+  // Money, détection de l'opérateur, puis lancement CamerPay).
   const handleContinue = () => {
-    if (!selectedPlan || purchase.isPending) return;
+    if (!selectedPlan) return;
     Haptics.selectionAsync().catch(() => {});
-    purchase.mutate(selectedPlan.key, {
-      onSuccess: () =>
-        router.push({ pathname: '/premium/success', params: { plan: selectedPlan.label } }),
-      onError: () => router.push('/premium/failed'),
+    router.push({
+      pathname: '/premium/checkout',
+      params: { plan: selectedPlan.key, label: selectedPlan.label },
     });
   };
 
@@ -125,12 +122,6 @@ export function PremiumPricingScreen() {
                 </Text>
               </View>
             </GlassSurface>
-          ) : null}
-
-          {purchaseError ? (
-            <View className="mb-3">
-              <ErrorState error={purchaseError} variant="inline" tone="onDark" />
-            </View>
           ) : null}
 
           {plansQuery.isLoading ? (
@@ -203,7 +194,6 @@ export function PremiumPricingScreen() {
               ? `Continuer — ${formatPrice(selectedPlan.priceCents, selectedPlan.currency)}`
               : 'Continuer'
           }
-          loading={purchase.isPending}
           disabled={!selectedPlan}
           onPress={handleContinue}
           style={{ marginTop: 14 }}

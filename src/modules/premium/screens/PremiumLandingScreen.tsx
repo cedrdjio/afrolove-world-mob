@@ -2,11 +2,9 @@ import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-nati
 import { useRouter } from 'expo-router';
 import { X, Heart, Eye, Star, Zap, Globe2, Crown, BadgeCheck } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
-import { ErrorState } from '@/shared/components/feedback/ErrorState';
-import { useAppError } from '@/shared/hooks/useAppError';
 import { PricingCard } from '@/modules/premium/components/PricingCard';
 import { BEST_PLAN_KEY } from '@/modules/premium/constants/plans';
-import { usePremiumPlans, usePurchasePlan, useEntitlements } from '@/modules/premium/hooks/usePremium';
+import { usePremiumPlans, useEntitlements } from '@/modules/premium/hooks/usePremium';
 import type { PremiumPlan } from '@/modules/premium/services/premiumService';
 import { colors } from '@/shared/constants/theme';
 
@@ -22,17 +20,16 @@ export function PremiumLandingScreen() {
   const router = useRouter();
   const plansQuery = usePremiumPlans();
   const entitlements = useEntitlements();
-  const purchase = usePurchasePlan();
-  const purchaseError = useAppError(purchase.error);
 
   const plans = plansQuery.data ?? [];
   const isPremium = entitlements.data?.isPremium ?? false;
 
+  // Le choix d'un forfait mène à l'écran de paiement (numéro Mobile Money +
+  // opérateur), qui lance CamerPay et route vers succès / échec.
   const handleChoose = (plan: PremiumPlan) => {
-    if (purchase.isPending) return;
-    purchase.mutate(plan.key, {
-      onSuccess: () => router.push({ pathname: '/premium/success', params: { plan: plan.label } }),
-      onError: () => router.push('/premium/failed'),
+    router.push({
+      pathname: '/premium/checkout',
+      params: { plan: plan.key, label: plan.label },
     });
   };
 
@@ -68,7 +65,7 @@ export function PremiumLandingScreen() {
           <View className="mb-[18px] flex-row items-center gap-3 rounded-2xl border border-gold/40 bg-gold/[0.16] px-4 py-3.5">
             <BadgeCheck size={18} color={colors.gold.DEFAULT} strokeWidth={2.2} />
             <View className="flex-1">
-              <Text className="mb-0.5 font-heading text-[12px] uppercase text-gold">
+              <Text className="mb-0.5 font-heading text-[12px] text-gold">
                 Premium actif — {entitlements.data?.planLabel ?? ''}
               </Text>
               <Text className="font-body text-[11.5px] leading-[16px] text-white/60">
@@ -93,12 +90,6 @@ export function PremiumLandingScreen() {
           ))}
         </View>
 
-        {purchaseError ? (
-          <View className="mb-3">
-            <ErrorState error={purchaseError} variant="inline" />
-          </View>
-        ) : null}
-
         {plansQuery.isLoading ? (
           <View className="items-center py-8">
             <ActivityIndicator size="large" color={colors.gold.DEFAULT} />
@@ -110,7 +101,6 @@ export function PremiumLandingScreen() {
                 <PricingCard
                   plan={plan}
                   onChoose={handleChoose}
-                  loading={purchase.isPending && purchase.variables === plan.key}
                   badge={plan.key === BEST_PLAN_KEY ? 'Meilleur' : undefined}
                 />
               </View>

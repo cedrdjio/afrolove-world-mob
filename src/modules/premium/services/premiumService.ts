@@ -1,4 +1,6 @@
 import { supabase } from '@/shared/services/supabase/client';
+import { paymentService } from '@/modules/premium/payments';
+import type { PaymentResult } from '@/modules/premium/payments';
 
 export interface PremiumPlan {
   key: string;
@@ -81,18 +83,18 @@ async function fetchEntitlements(): Promise<Entitlements> {
 }
 
 /**
- * DEV purchase: activates the plan instantly through the DB stub. The whole
- * business logic (stacking, expiry, limits, gating) already lives in the
- * database — when Moneroo/Stripe are integrated, this function becomes
- * "open provider checkout, then poll entitlements", the webhook calls the
- * same grant_subscription() core, and nothing else in the app changes.
+ * Real purchase: opens the active payment provider's checkout (CamerPay today)
+ * and resolves with a normalized outcome. Premium itself is granted server-side
+ * by the provider webhook, which calls the same grant_subscription() core the
+ * dev stub used — stacking, expiry, limits and gating are unchanged. The caller
+ * routes on `outcome`; entitlements are re-fetched on 'succeeded'.
  */
-async function purchasePlan(planKey: string): Promise<{ premiumUntil: string }> {
-  const { data, error } = await supabase.rpc('purchase_subscription_dev', { p_plan_key: planKey });
-  if (error) throw error;
-  const row = data?.[0];
-  if (!row) throw new Error("L'activation a échoué.");
-  return { premiumUntil: row.premium_until };
+async function purchasePlan(input: {
+  planKey: string;
+  phone: string;
+  paymentMethod?: string;
+}): Promise<PaymentResult> {
+  return paymentService.checkout(input);
 }
 
 async function fetchFavorites(): Promise<FavoriteProfile[]> {
