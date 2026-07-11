@@ -4,7 +4,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, CheckCircle2 } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui/IconButton';
 import { GlassInput } from '@/shared/components/ui/GlassInput';
@@ -28,7 +28,7 @@ const EXPIRED_LINK_ERROR = {
 
 export function LoginScreen() {
   const router = useRouter();
-  const { linkError } = useLocalSearchParams<{ linkError?: string }>();
+  const { linkError, reset } = useLocalSearchParams<{ linkError?: string; reset?: string }>();
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
   const googleAuth = useGoogleAuth();
@@ -77,6 +77,13 @@ export function LoginScreen() {
           ) : linkError ? (
             <View className="mb-4">
               <ErrorState error={EXPIRED_LINK_ERROR} variant="inline" />
+            </View>
+          ) : reset ? (
+            <View className="mb-4 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-brand/25 bg-brand/[0.08] px-4 py-3.5">
+              <CheckCircle2 size={16} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+              <Text className="flex-1 font-body-medium text-[12.5px] leading-[17px] text-ink">
+                Mot de passe mis à jour. Connecte-toi avec ton nouveau mot de passe.
+              </Text>
             </View>
           ) : null}
 

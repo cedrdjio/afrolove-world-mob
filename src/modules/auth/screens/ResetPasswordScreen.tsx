@@ -29,7 +29,10 @@ export function ResetPasswordScreen() {
 
   const onSubmit = (values: ResetPasswordFormValues) => {
     resetPassword.mutate(values.password, {
-      onSuccess: () => router.replace('/(auth)/success'),
+      // New password set + recovery session ended → send the user to Login to
+      // sign in with it, not to the signup "account verified → onboarding"
+      // success screen (which left password-reset users stuck in onboarding).
+      onSuccess: () => router.replace({ pathname: '/(auth)/login', params: { reset: '1' } }),
     });
   };
 
