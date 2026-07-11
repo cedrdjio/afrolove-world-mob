@@ -799,6 +799,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_favorites: {
+        Row: {
+          created_at: string
+          profile_id: string
+          target_id: string
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+          target_id: string
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_favorites_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_favorites_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_interests: {
         Row: {
           interest_id: string
@@ -1389,6 +1422,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_favorite: { Args: { p_target_id: string }; Returns: undefined }
       admin_analytics: { Args: { p_days?: number }; Returns: Json }
       admin_audience_count: { Args: { p_audience: Json }; Returns: number }
       admin_audience_profiles: {
@@ -1659,6 +1693,12 @@ export type Database = {
           swipes_used_today: number
         }[]
       }
+      get_my_favorite_ids: {
+        Args: never
+        Returns: {
+          target_id: string
+        }[]
+      }
       get_my_favorites: {
         Args: never
         Returns: {
@@ -1721,6 +1761,17 @@ export type Database = {
           wants_children: string
         }[]
       }
+      get_saved_favorites: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          city: string
+          first_name: string
+          is_verified: boolean
+          profile_id: string
+          saved_at: string
+        }[]
+      }
       grant_subscription: {
         Args: {
           p_plan_key: string
@@ -1746,6 +1797,7 @@ export type Database = {
         Args: { p_profile_id: string }
         Returns: undefined
       }
+      remove_favorite: { Args: { p_target_id: string }; Returns: undefined }
       search_profiles: {
         Args: {
           p_age_max?: number

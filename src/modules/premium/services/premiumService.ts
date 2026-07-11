@@ -40,8 +40,14 @@ export interface LikerProfile {
   likedAt: string;
 }
 
-export interface FavoriteProfile extends LikerProfile {
-  isMatched: boolean;
+/** Favori = profil sauvegardé via le bouton favori (premium only), pas un like. */
+export interface FavoriteProfile {
+  id: string;
+  firstName: string;
+  avatarUrl: string | null;
+  city: string | null;
+  isVerified: boolean;
+  savedAt: string;
 }
 
 async function fetchPlans(): Promise<PremiumPlan[]> {
@@ -97,8 +103,10 @@ async function purchasePlan(input: {
   return paymentService.checkout(input);
 }
 
+/** Profils sauvegardés en favori (vide pour les non-premium : ils ne peuvent
+ *  rien enregistrer, la garde premium est dans add_favorite). */
 async function fetchFavorites(): Promise<FavoriteProfile[]> {
-  const { data, error } = await supabase.rpc('get_my_favorites');
+  const { data, error } = await supabase.rpc('get_saved_favorites');
   if (error) throw error;
   return (data ?? []).map((row) => ({
     id: row.profile_id,
@@ -106,10 +114,26 @@ async function fetchFavorites(): Promise<FavoriteProfile[]> {
     avatarUrl: row.avatar_url,
     city: row.city,
     isVerified: row.is_verified,
-    action: row.action as 'like' | 'super_like',
-    likedAt: row.liked_at,
-    isMatched: row.is_matched,
+    savedAt: row.saved_at,
   }));
+}
+
+/** Ids des profils déjà en favori — pour l'état du bouton dans Discover. */
+async function fetchFavoriteIds(): Promise<string[]> {
+  const { data, error } = await supabase.rpc('get_my_favorite_ids');
+  if (error) throw error;
+  return (data ?? []).map((row) => row.target_id);
+}
+
+/** Premium only : la RPC lève PREMIUM_REQUIRED pour les non-abonnés. */
+async function addFavorite(targetId: string): Promise<void> {
+  const { error } = await supabase.rpc('add_favorite', { p_target_id: targetId });
+  if (error) throw error;
+}
+
+async function removeFavorite(targetId: string): Promise<void> {
+  const { error } = await supabase.rpc('remove_favorite', { p_target_id: targetId });
+  if (error) throw error;
 }
 
 /** Empty for non-premium accounts (enforced in the RPC itself). */
@@ -132,5 +156,8 @@ export const premiumService = {
   fetchEntitlements,
   purchasePlan,
   fetchFavorites,
+  fetchFavoriteIds,
+  addFavorite,
+  removeFavorite,
   fetchLikers,
 };

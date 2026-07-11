@@ -1,5 +1,5 @@
 import { View, Pressable } from 'react-native';
-import { X, Star, Heart, Zap } from 'lucide-react-native';
+import { X, Star, Heart, Zap, Bookmark } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,9 +12,11 @@ interface ActionButtonsProps {
   onSuperLike: () => void;
   onLike: () => void;
   onBoost: () => void;
+  onFavorite: () => void;
+  isFavorited: boolean;
 }
 
-export function ActionButtons({ onNope, onSuperLike, onLike, onBoost }: ActionButtonsProps) {
+export function ActionButtons({ onNope, onSuperLike, onLike, onBoost, onFavorite, isFavorited }: ActionButtonsProps) {
   const heartbeat = useSharedValue(1);
 
   useEffect(() => {
@@ -36,7 +38,24 @@ export function ActionButtons({ onNope, onSuperLike, onLike, onBoost }: ActionBu
   };
 
   return (
-    <View className="flex-row items-center justify-center gap-4">
+    <View className="flex-row items-center justify-center gap-3.5">
+      <Pressable onPress={withHaptics(onFavorite)}>
+        <GlassSurface
+          variant="lightStrong"
+          radius={24}
+          style={{ width: 48, height: 48, shadowColor: colors.ink.soft, shadowOpacity: 0.12, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}
+        >
+          <View className="h-12 w-12 items-center justify-center">
+            <Bookmark
+              size={19}
+              color={colors.gold.DEFAULT}
+              fill={isFavorited ? colors.gold.DEFAULT : 'transparent'}
+              strokeWidth={2}
+            />
+          </View>
+        </GlassSurface>
+      </Pressable>
+
       <Pressable onPress={withHaptics(onNope)}>
         <GlassSurface
           variant="lightStrong"

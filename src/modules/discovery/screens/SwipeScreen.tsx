@@ -11,7 +11,7 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
 import { useDiscoveryFeed, useSwipe } from '@/modules/discovery/hooks/useDiscovery';
-import { useEntitlements } from '@/modules/premium/hooks/usePremium';
+import { useEntitlements, useFavoriteIds, useToggleFavorite } from '@/modules/premium/hooks/usePremium';
 import { useHasUnreadNotifications } from '@/modules/notifications/hooks/useNotifications';
 import type { DiscoveryFeedMode, DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
 import { SwipeCard, type SwipeDirection } from '@/modules/discovery/components/SwipeCard';
@@ -39,6 +39,9 @@ export function SwipeScreen() {
   const feedError = useAppError(feed.error);
   const hasUnreadNotifications = useHasUnreadNotifications();
   const entitlements = useEntitlements();
+  const isPremium = entitlements.data?.isPremium ?? false;
+  const favoriteIds = useFavoriteIds();
+  const toggleFavorite = useToggleFavorite();
 
   const profiles = feed.data ?? [];
 
@@ -91,6 +94,27 @@ export function SwipeScreen() {
   const topProfile = visibleCards[0];
   const triggerSwipe = (direction: SwipeDirection) => {
     if (topProfile) handleSwiped(direction, topProfile);
+  };
+
+  const topIsFavorited = topProfile ? (favoriteIds.data?.has(topProfile.id) ?? false) : false;
+
+  // Favori = mettre un profil de côté (premium only). Les non-premium tombent
+  // sur le paywall ; la RPC re-vérifie côté serveur par sécurité.
+  const handleFavorite = () => {
+    if (!topProfile || toggleFavorite.isPending) return;
+    if (!isPremium) {
+      router.push('/premium/pricing');
+      return;
+    }
+    toggleFavorite.mutate(
+      { targetId: topProfile.id, isFavorited: topIsFavorited },
+      {
+        onError: (error) => {
+          const message = error instanceof Error ? error.message : '';
+          if (message.includes('PREMIUM_REQUIRED')) router.push('/premium/pricing');
+        },
+      },
+    );
   };
 
   return (
@@ -182,6 +206,8 @@ export function SwipeScreen() {
             onSuperLike={() => triggerSwipe('up')}
             onLike={() => triggerSwipe('right')}
             onBoost={() => router.push('/premium')}
+            onFavorite={handleFavorite}
+            isFavorited={topIsFavorited}
           />
         </View>
       ) : null}

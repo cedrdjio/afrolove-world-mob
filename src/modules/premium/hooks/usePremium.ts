@@ -4,6 +4,7 @@ import { useAuth } from '@/modules/auth/hooks/useAuth';
 
 export const ENTITLEMENTS_QUERY_KEY = 'entitlements' as const;
 export const FAVORITES_QUERY_KEY = 'favorites' as const;
+export const FAVORITE_IDS_QUERY_KEY = 'favorite-ids' as const;
 export const LIKERS_QUERY_KEY = 'likers' as const;
 
 export function usePremiumPlans() {
@@ -51,6 +52,35 @@ export function useFavorites() {
     queryFn: premiumService.fetchFavorites,
     enabled: isAuthenticated,
     staleTime: 30_000,
+  });
+}
+
+/** Ensemble des ids de profils déjà en favori (pour l'état du bouton Discover). */
+export function useFavoriteIds() {
+  const { user, isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: [FAVORITE_IDS_QUERY_KEY, user?.id],
+    queryFn: premiumService.fetchFavoriteIds,
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+    select: (ids) => new Set(ids),
+  });
+}
+
+/**
+ * Ajoute / retire un favori. La garde premium vit dans la RPC add_favorite
+ * (lève PREMIUM_REQUIRED) ; l'appelant intercepte cette erreur pour ouvrir le
+ * paywall. onSuccess rafraîchit la liste et l'état des boutons.
+ */
+export function useToggleFavorite() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ targetId, isFavorited }: { targetId: string; isFavorited: boolean }) =>
+      isFavorited ? premiumService.removeFavorite(targetId) : premiumService.addFavorite(targetId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [FAVORITES_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [FAVORITE_IDS_QUERY_KEY] });
+    },
   });
 }
 

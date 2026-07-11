@@ -63,9 +63,8 @@ export function useSwipe() {
       return discoveryService.swipe(user.id, targetId, action);
     },
     onSuccess: (result) => {
-      // A swipe consumes quota and feeds "Mes favoris".
+      // A swipe consumes quota (free-tier limits live in the DB trigger).
       queryClient.invalidateQueries({ queryKey: ['entitlements'] });
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
       if (result.isMatch) {
         queryClient.invalidateQueries({ queryKey: ['matches'] });
         queryClient.invalidateQueries({ queryKey: ['conversations'] });
