@@ -10,3 +10,14 @@ verify_jwt = true
 # HMAC-SHA256 signature on the payload.
 [functions.payment-webhook]
 verify_jwt = false
+
+# payment-status is called by the app with its Supabase session while waiting
+# for a payment confirmation — JWT check on.
+[functions.payment-status]
+verify_jwt = true
+
+# payment-return only bridges the browser redirect after payment back to the
+# app deep link (afrolove://premium/callback). The caller is the customer's
+# browser redirected by CamerPay — no Supabase session, JWT check off.
+[functions.payment-return]
+verify_jwt = false

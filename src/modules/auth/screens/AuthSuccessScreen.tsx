@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { View, Text } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Check } from 'lucide-react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,6 +10,11 @@ import { gradients } from '@/shared/constants/theme';
 
 export function AuthSuccessScreen() {
   const router = useRouter();
+  // context=reset après un changement de mot de passe ; défaut = vérification
+  // d'email à l'inscription. L'écran de résolution route ensuite au bon
+  // endroit (app si l'onboarding est déjà fait, onboarding sinon).
+  const { context } = useLocalSearchParams<{ context?: string }>();
+  const isPasswordReset = context === 'reset';
   const scale = useSharedValue(0);
 
   useEffect(() => {
@@ -46,10 +51,12 @@ export function AuthSuccessScreen() {
         </Animated.View>
 
         <Text className="mb-3 text-center font-display-black text-[32px] text-white">
-          Compte vérifié !
+          {isPasswordReset ? 'Mot de passe mis à jour !' : 'Compte vérifié !'}
         </Text>
         <Text className="mb-10 text-center font-body text-[13.5px] leading-[21px] text-white/50">
-          Bienvenue dans la communauté AfriLove World.{'\n'}Configurons votre profil.
+          {isPasswordReset
+            ? 'Votre nouveau mot de passe est actif.\nVous pouvez reprendre vos rencontres.'
+            : 'Bienvenue dans la communauté AfriLove World.\nConfigurons votre profil.'}
         </Text>
 
         <GradientButton

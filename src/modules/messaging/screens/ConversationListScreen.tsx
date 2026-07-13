@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { MessageCircle } from 'lucide-react-native';
-import type BottomSheet from '@gorhom/bottom-sheet';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { CountBadge } from '@/shared/components/ui/Badges';
@@ -22,13 +21,11 @@ export function ConversationListScreen() {
   const conversationsQuery = useConversationsQuery();
   const conversationsError = useAppError(conversationsQuery.error);
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
-  const sheetRef = useRef<BottomSheet>(null);
 
   const conversations = conversationsQuery.data ?? [];
 
   const openActions = (conversation: Conversation) => {
     setActiveConversation(conversation);
-    sheetRef.current?.expand();
   };
 
   return (
@@ -98,7 +95,12 @@ export function ConversationListScreen() {
         />
       )}
 
-      <ConversationActionSheet ref={sheetRef} conversation={activeConversation} />
+      {activeConversation ? (
+        <ConversationActionSheet
+          conversation={activeConversation}
+          onClose={() => setActiveConversation(null)}
+        />
+      ) : null}
     </View>
   );
 }

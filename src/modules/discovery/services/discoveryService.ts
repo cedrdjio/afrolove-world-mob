@@ -15,6 +15,7 @@ interface SearchProfilesRow {
   distance_km: number | null;
   compatibility: number;
   interest_names: string[] | null;
+  last_active_at: string | null;
 }
 
 function mapRow(row: SearchProfilesRow): DiscoveryProfile {
@@ -30,6 +31,7 @@ function mapRow(row: SearchProfilesRow): DiscoveryProfile {
     distanceKm: row.distance_km,
     compatibility: row.compatibility,
     interestNames: row.interest_names ?? [],
+    lastActiveAt: row.last_active_at ?? null,
   };
 }
 

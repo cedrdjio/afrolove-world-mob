@@ -33,14 +33,24 @@ async function initiate(input: CheckoutInput): Promise<InitiateResponse> {
   return data as InitiateResponse;
 }
 
-/** Reads the current status of a checkout from our own table (RLS: own rows). */
+/**
+ * Asks the payment-status Edge Function, which re-checks with CamerPay and
+ * settles the transaction server-side — premium activates even if the webhook
+ * hasn't been configured or its callback got lost. Falls back to reading our
+ * own payment row (RLS: own rows) if the function is unreachable.
+ */
 async function fetchStatus(transactionUuid: string): Promise<string> {
-  const { data } = await supabase
+  const { data, error } = await supabase.functions.invoke('payment-status', {
+    body: { transactionUuid },
+  });
+  if (!error && typeof data?.status === 'string') return data.status;
+
+  const { data: row } = await supabase
     .from('payment_transactions')
     .select('status')
     .eq('provider_uuid', transactionUuid)
     .maybeSingle();
-  return data?.status ?? 'pending';
+  return row?.status ?? 'pending';
 }
 
 async function pollUntilResolved(

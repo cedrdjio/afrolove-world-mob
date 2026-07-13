@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -9,7 +9,6 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
-import type BottomSheet from '@gorhom/bottom-sheet';
 import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground } from '@/shared/components/layout';
@@ -62,7 +61,9 @@ interface ProfileDetailViewProps {
 export function ProfileDetailView({ profile, displayData, variant, onGalleryPress, onLike }: ProfileDetailViewProps) {
   const router = useRouter();
   const [activePhoto, setActivePhoto] = useState(0);
-  const sheetRef = useRef<BottomSheet>(null);
+  // La feuille d'actions n'est montée que lorsqu'elle est ouverte — un
+  // BottomSheet fermé mais monté avalait tous les touchers (page figée).
+  const [actionsOpen, setActionsOpen] = useState(false);
   const displayName = profile.firstName ?? '';
 
   const scrollY = useSharedValue(0);
@@ -285,7 +286,7 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
           <Text className="text-center font-display text-[17px] text-ink">{displayName}</Text>
         </Animated.View>
         {variant === 'discovery' ? (
-          <Pressable onPress={() => sheetRef.current?.expand()}>
+          <Pressable onPress={() => setActionsOpen(true)}>
             <GlassSurface variant="dark" radius={13} style={{ width: 42, height: 42 }}>
               <View className="h-[42px] w-[42px] items-center justify-center">
                 <MoreHorizontal size={17} color="#fff" />
@@ -331,8 +332,12 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
         </View>
       ) : null}
 
-      {variant === 'discovery' ? (
-        <ProfileActionSheet ref={sheetRef} profileId={profile.id} profileName={displayName} />
+      {variant === 'discovery' && actionsOpen ? (
+        <ProfileActionSheet
+          profileId={profile.id}
+          profileName={displayName}
+          onClose={() => setActionsOpen(false)}
+        />
       ) : null}
     </View>
   );

@@ -5,7 +5,8 @@
 // function (see supabase/config.toml) because the caller is CamerPay, not a
 // signed-in user; authenticity is proven by the HMAC-SHA256 signature instead.
 //
-// Required secret (supabase secrets set — never in client code):
+// Required secret (Supabase Vault `vault.create_secret(...)` — lu via le RPC
+// get_app_secret, service_role uniquement — ou `supabase secrets set`) :
 //   CAMERPAY_WEBHOOK_SECRET   the secret configured on CamerPay's dashboard
 //                             (/client/api), used to sign the payload.
 // SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are auto-injected by the platform.
@@ -43,14 +44,30 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+// Secrets applicatifs : Supabase Vault d'abord (RPC get_app_secret, réservé
+// au service_role), variable d'environnement en repli.
+const secretsCache = new Map<string, string>();
+async function getAppSecret(name: string): Promise<string | null> {
+  const cached = secretsCache.get(name);
+  if (cached) return cached;
+  const admin = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+  const { data } = await admin.rpc('get_app_secret', { p_name: name });
+  const value = (typeof data === 'string' && data.length > 0 ? data : null) ?? Deno.env.get(name) ?? null;
+  if (value) secretsCache.set(name, value);
+  return value;
+}
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'method_not_allowed' }, 405);
   }
 
-  const secret = Deno.env.get('CAMERPAY_WEBHOOK_SECRET');
+  const secret = await getAppSecret('CAMERPAY_WEBHOOK_SECRET');
   if (!secret) {
-    console.error('[payment-webhook] CAMERPAY_WEBHOOK_SECRET is not set');
+    console.error('[payment-webhook] CAMERPAY_WEBHOOK_SECRET is not set (Vault or env)');
     return jsonResponse({ error: 'webhook_not_configured' }, 500);
   }
 

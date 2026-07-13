@@ -29,7 +29,9 @@ export function ResetPasswordScreen() {
 
   const onSubmit = (values: ResetPasswordFormValues) => {
     resetPassword.mutate(values.password, {
-      onSuccess: () => router.replace('/(auth)/success'),
+      // context=reset : l'écran de succès adapte son message (pas de
+      // « Configurons votre profil » pour un compte déjà installé).
+      onSuccess: () => router.replace({ pathname: '/(auth)/success', params: { context: 'reset' } }),
     });
   };
 

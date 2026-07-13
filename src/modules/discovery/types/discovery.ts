@@ -13,6 +13,8 @@ export interface DiscoveryProfile {
   distanceKm: number | null;
   compatibility: number;
   interestNames: string[];
+  /** Dernier signe de vie (heartbeat) — complété en direct par la présence Realtime. */
+  lastActiveAt: string | null;
 }
 
 /** Chips above the deck — mapped onto RPC flags, not client-side filtering. */

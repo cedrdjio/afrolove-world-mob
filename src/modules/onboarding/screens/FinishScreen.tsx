@@ -33,6 +33,7 @@ export function FinishScreen() {
       {
         userId: user.id,
         firstName: onboarding.firstName,
+        lastName: onboarding.lastName,
         gender: onboarding.gender,
         birthDate: onboarding.birthDate,
         lookingFor: onboarding.lookingFor,

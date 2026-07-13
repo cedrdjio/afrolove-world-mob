@@ -5,12 +5,18 @@
 // in a browser; the actual premium grant happens later in payment-webhook, the
 // source of truth. This function never activates anything.
 //
-// Required secrets (supabase secrets set — never in client code):
+// Required secrets (Supabase Vault `vault.create_secret(...)` — lu via le RPC
+// get_app_secret, service_role uniquement — ou `supabase secrets set` ; jamais
+// dans le code client) :
 //   CAMERPAY_API_TOKEN        Bearer token for CamerPay's API (sandbox or live)
 // Optional secrets:
 //   CAMERPAY_BASE_URL         defaults to https://camerpay.biz
-//   CAMERPAY_RETURN_URL       where CamerPay sends the browser after payment;
-//                             defaults to the app deep link afrolove://premium/callback
+//   CAMERPAY_RETURN_URL       where CamerPay sends the browser after payment.
+//                             MUST be http(s) — CamerPay validates it as a URL
+//                             (a custom app scheme is rejected with 422, which
+//                             used to fail every initiation). Defaults to our
+//                             public payment-return function, which bridges
+//                             back to the app deep link.
 // SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY are auto-injected.
 
 import { createClient } from 'npm:@supabase/supabase-js@2.110.0';
@@ -19,7 +25,14 @@ import { createClient } from 'npm:@supabase/supabase-js@2.110.0';
 const EUR_TO_XAF = 655.957;
 
 const CAMERPAY_BASE = (Deno.env.get('CAMERPAY_BASE_URL') ?? 'https://camerpay.biz').replace(/\/$/, '');
-const RETURN_URL = Deno.env.get('CAMERPAY_RETURN_URL') ?? 'afrolove://premium/callback';
+
+// CamerPay requires a valid http(s) merchant_return_url — anything else is
+// rejected at initiation. Non-http overrides are ignored on purpose.
+function resolveReturnUrl(): string {
+  const override = Deno.env.get('CAMERPAY_RETURN_URL');
+  if (override && /^https?:\/\//i.test(override)) return override;
+  return `${Deno.env.get('SUPABASE_URL')}/functions/v1/payment-return`;
+}
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -35,6 +48,23 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+// Secrets applicatifs : Supabase Vault d'abord (RPC get_app_secret, réservé
+// au service_role), variable d'environnement en repli. Le Vault permet de
+// tourner les clés sans redéployer ni accéder à la CLI.
+const secretsCache = new Map<string, string>();
+async function getAppSecret(name: string): Promise<string | null> {
+  const cached = secretsCache.get(name);
+  if (cached) return cached;
+  const admin = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+  const { data } = await admin.rpc('get_app_secret', { p_name: name });
+  const value = (typeof data === 'string' && data.length > 0 ? data : null) ?? Deno.env.get(name) ?? null;
+  if (value) secretsCache.set(name, value);
+  return value;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
@@ -48,9 +78,9 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'missing_authorization' }, 401);
   }
 
-  const apiToken = Deno.env.get('CAMERPAY_API_TOKEN');
+  const apiToken = await getAppSecret('CAMERPAY_API_TOKEN');
   if (!apiToken) {
-    console.error('[payment-initiate] CAMERPAY_API_TOKEN is not set');
+    console.error('[payment-initiate] CAMERPAY_API_TOKEN is not set (Vault or env)');
     return jsonResponse({ error: 'payment_not_configured' }, 500);
   }
 
@@ -161,7 +191,7 @@ Deno.serve(async (req) => {
         customer_phone: phone || undefined,
         payment_method: paymentMethod || undefined,
         merchant_callback_url: callbackUrl,
-        merchant_return_url: RETURN_URL,
+        merchant_return_url: resolveReturnUrl(),
         source: 'api',
       }),
     });
