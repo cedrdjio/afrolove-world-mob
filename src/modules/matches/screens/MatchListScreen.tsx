@@ -1,18 +1,19 @@
+import { useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Search as SearchIcon, Heart, Star, Eye, BadgeCheck, Lock } from 'lucide-react-native';
-import { BlurView } from 'expo-blur';
+import { Search as SearchIcon, Heart, Star, BadgeCheck, Lock, ChevronRight, Bookmark } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
-import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { EmptyState } from '@/shared/components/feedback';
 import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import { useEntitlements, useFavorites, useLikers } from '@/modules/premium/hooks/usePremium';
 import { colors, gradients } from '@/shared/constants/theme';
+
+type MatchesTab = 'matchs' | 'favoris';
 
 function SectionTitle({ children }: { children: string }) {
   return (
@@ -22,6 +23,7 @@ function SectionTitle({ children }: { children: string }) {
 
 export function MatchListScreen() {
   const router = useRouter();
+  const [tab, setTab] = useState<MatchesTab>('matchs');
   const conversationsQuery = useConversationsQuery();
   const entitlements = useEntitlements();
   const isPremium = entitlements.data?.isPremium ?? false;
@@ -52,18 +54,48 @@ export function MatchListScreen() {
 
         <Pressable
           onPress={() => router.push('/matches-search')}
-          className="mb-5 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
+          className="mb-4 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
         >
           <SearchIcon size={15} color="rgba(62,53,82,0.28)" />
           <Text className="font-body text-[13px] text-ink/30">Rechercher un match…</Text>
         </Pressable>
+
+        {/* Onglets Matchs | Favoris */}
+        <View className="mb-5 flex-row rounded-full border-[1.5px] border-white/70 bg-white/[0.45] p-1">
+          {(
+            [
+              { key: 'matchs', label: 'Matchs' },
+              { key: 'favoris', label: `Favoris${favorites.length > 0 ? ` (${favorites.length})` : ''}` },
+            ] as { key: MatchesTab; label: string }[]
+          ).map(({ key, label }) => {
+            const active = tab === key;
+            return (
+              <Pressable key={key} onPress={() => setTab(key)} className="flex-1">
+                {active ? (
+                  <LinearGradient
+                    colors={gradients.brand}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{ borderRadius: 999, paddingVertical: 9 }}
+                  >
+                    <Text className="text-center font-heading text-[12.5px] text-white">{label}</Text>
+                  </LinearGradient>
+                ) : (
+                  <View style={{ paddingVertical: 9 }}>
+                    <Text className="text-center font-heading text-[12.5px] text-ink/45">{label}</Text>
+                  </View>
+                )}
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
 
       {conversationsQuery.isLoading ? (
         <View className="items-center pt-10">
           <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
         </View>
-      ) : (
+      ) : tab === 'matchs' ? (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-32">
           {matches.length === 0 ? (
             <View className="px-[22px] pb-4">
@@ -108,145 +140,112 @@ export function MatchListScreen() {
             </View>
           )}
 
-          {/* Qui vous a aimé — premium reveal, real count for everyone. */}
+          {/* Qui vous a aimé — visible en Premium ; sinon un simple rappel
+              discret (l'ancien gros bloc dégradé débordait et criait). */}
           <View className="px-[22px]">
-            <SectionTitle>Qui vous a aimé</SectionTitle>
             {isPremium && likers.length > 0 ? (
-              <View className="mb-6 flex-row flex-wrap gap-2.5">
-                {likers.slice(0, 8).map((liker, index) => (
-                  <Animated.View
-                    key={liker.id}
-                    entering={FadeInDown.delay(Math.min(index, 6) * 50)}
-                  >
-                    <Pressable
-                      onPress={() => router.push(`/profile/${liker.id}`)}
-                      className="items-center gap-1.5 active:opacity-80"
-                      style={{ width: 72 }}
-                    >
-                      <View>
-                        <Avatar
-                          source={liker.avatarUrl ?? undefined}
-                          seed={liker.firstName}
-                          size={72}
-                          ringColor={liker.action === 'super_like' ? colors.gold.DEFAULT : colors.brand.DEFAULT}
-                        />
-                        {liker.action === 'super_like' ? (
-                          <View className="absolute -bottom-0.5 -right-0.5 h-6 w-6 items-center justify-center rounded-full bg-gold">
-                            <Star size={11} color="#fff" fill="#fff" />
-                          </View>
-                        ) : null}
-                      </View>
-                      <View className="flex-row items-center gap-1">
-                        <Text className="font-heading text-[10px] text-ink" numberOfLines={1}>
-                          {liker.firstName}
-                        </Text>
-                        {liker.isVerified ? <BadgeCheck size={9} color={colors.gold.DEFAULT} strokeWidth={2.8} /> : null}
-                      </View>
-                    </Pressable>
-                  </Animated.View>
-                ))}
-              </View>
-            ) : likersCount > 0 ? (
-              /* Grille verrouillée façon maquette : des tuiles floutées, le
-                 compteur réel, et le CTA Premium pour tout dévoiler. */
-              <Pressable onPress={() => router.push('/premium')} className="mb-6 active:opacity-95">
-                <View className="flex-row flex-wrap gap-2">
-                  {Array.from({ length: Math.min(likersCount, 6) }).map((_, index) => (
+              <>
+                <SectionTitle>Qui vous a aimé</SectionTitle>
+                <View className="mb-6 flex-row flex-wrap gap-2.5">
+                  {likers.slice(0, 12).map((liker, index) => (
                     <Animated.View
-                      key={index}
-                      entering={FadeInDown.delay(index * 60)}
-                      className="overflow-hidden rounded-2xl border border-white/80"
-                      style={{ width: '31.5%', aspectRatio: 0.82 }}
+                      key={liker.id}
+                      entering={FadeInDown.delay(Math.min(index, 6) * 50)}
                     >
-                      <PhotoPlaceholder seed={index + 2} style={{ flex: 1 }} />
-                      <BlurView intensity={55} tint="light" style={{ position: 'absolute', inset: 0 }} />
-                      <View className="absolute inset-0 items-center justify-center bg-white/[0.12]">
-                        <View className="h-9 w-9 items-center justify-center rounded-full bg-white/[0.55]">
-                          <Lock size={15} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+                      <Pressable
+                        onPress={() => router.push(`/profile/${liker.id}`)}
+                        className="items-center gap-1.5 active:opacity-80"
+                        style={{ width: 72 }}
+                      >
+                        <View>
+                          <Avatar
+                            source={liker.avatarUrl ?? undefined}
+                            seed={liker.firstName}
+                            size={72}
+                            ringColor={liker.action === 'super_like' ? colors.gold.DEFAULT : colors.brand.DEFAULT}
+                          />
+                          {liker.action === 'super_like' ? (
+                            <View className="absolute -bottom-0.5 -right-0.5 h-6 w-6 items-center justify-center rounded-full bg-gold">
+                              <Star size={11} color="#fff" fill="#fff" />
+                            </View>
+                          ) : null}
                         </View>
-                      </View>
+                        <View className="flex-row items-center gap-1">
+                          <Text className="font-heading text-[10px] text-ink" numberOfLines={1}>
+                            {liker.firstName}
+                          </Text>
+                          {liker.isVerified ? <BadgeCheck size={9} color={colors.gold.DEFAULT} strokeWidth={2.8} /> : null}
+                        </View>
+                      </Pressable>
                     </Animated.View>
                   ))}
                 </View>
-                <LinearGradient
-                  colors={gradients.brand}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={{ borderRadius: 999, paddingVertical: 13, marginTop: 12 }}
-                >
-                  <Text className="text-center font-heading text-[12.5px] tracking-wide text-white">
-                    {likersCount} personne{likersCount > 1 ? 's' : ''} craque{likersCount > 1 ? 'nt' : ''} pour toi — Passer à Premium
-                  </Text>
-                </LinearGradient>
+              </>
+            ) : !isPremium && likersCount > 0 ? (
+              <Pressable
+                onPress={() => router.push('/premium')}
+                className="mb-6 flex-row items-center gap-3 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3 active:opacity-85"
+              >
+                <View className="h-9 w-9 items-center justify-center rounded-full bg-brand/10">
+                  <Lock size={14} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+                </View>
+                <Text className="flex-1 font-body text-[12.5px] text-ink-muted" numberOfLines={2}>
+                  <Text className="font-heading-semibold text-ink">{likersCount}</Text> personne
+                  {likersCount > 1 ? 's' : ''} t{likersCount > 1 ? "'ont" : "'a"} liké — visible avec Premium
+                </Text>
+                <ChevronRight size={16} color="rgba(46,36,64,0.25)" />
               </Pressable>
-            ) : (
-              <Pressable onPress={() => router.push('/premium')} className="mb-6 active:opacity-90">
-                <LinearGradient
-                  colors={gradients.brand}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={{ borderRadius: 20, padding: 18 }}
+            ) : null}
+          </View>
+        </ScrollView>
+      ) : (
+        /* Onglet Favoris — les profils que vous avez likés, en attente de
+           leur réponse. Un like/super-like depuis Discovery arrive ici. */
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="px-[22px] pb-32">
+          {favoritesQuery.isLoading ? (
+            <ActivityIndicator color={colors.brand.DEFAULT} style={{ marginTop: 24 }} />
+          ) : favorites.length === 0 ? (
+            <EmptyState
+              icon={<Bookmark size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
+              title="Aucun favori"
+              description="Likez un profil dans Découvrir : il apparaîtra ici en attendant sa réponse."
+              actionLabel="Découvrir des profils"
+              onAction={() => router.push('/(tabs)/discover')}
+            />
+          ) : (
+            favorites.map((favorite, index) => (
+              <Animated.View
+                key={favorite.id}
+                entering={FadeInDown.delay(Math.min(index, 8) * 45)}
+              >
+                <Pressable
+                  onPress={() => router.push(`/profile/${favorite.id}`)}
+                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3 active:opacity-85"
                 >
-                  <View className="flex-row items-center gap-3.5">
-                    <View className="h-12 w-12 items-center justify-center rounded-full bg-white/[0.18]">
-                      <Eye size={22} color="#fff" strokeWidth={1.9} />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="mb-0.5 font-heading text-[14px] text-white">
-                        Voyez qui vous a aimé
-                      </Text>
-                      <Text className="font-body text-[11.5px] text-white/70">
-                        Passez Premium pour découvrir leurs profils.
-                      </Text>
-                    </View>
-                  </View>
-                </LinearGradient>
-              </Pressable>
-            )}
-
-            {/* Mes favoris — the profiles I liked, awaiting their answer. */}
-            <SectionTitle>Mes favoris</SectionTitle>
-            {favoritesQuery.isLoading ? (
-              <ActivityIndicator color={colors.brand.DEFAULT} style={{ marginTop: 12 }} />
-            ) : favorites.length === 0 ? (
-              <Text className="font-body text-[12.5px] leading-[19px] text-ink-muted">
-                Les profils que vous likez apparaîtront ici en attendant leur réponse.
-              </Text>
-            ) : (
-              favorites.slice(0, 20).map((favorite, index) => (
-                <Animated.View
-                  key={favorite.id}
-                  entering={FadeInDown.delay(Math.min(index, 8) * 45)}
-                >
-                  <Pressable
-                    onPress={() => router.push(`/profile/${favorite.id}`)}
-                    className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3 active:opacity-85"
-                  >
-                    <Avatar source={favorite.avatarUrl ?? undefined} seed={favorite.firstName} size={46} />
-                    <View className="flex-1">
-                      <View className="flex-row items-center gap-1.5">
-                        <Text className="font-heading text-[13.5px] text-ink">{favorite.firstName}</Text>
-                        {favorite.isVerified ? (
-                          <BadgeCheck size={11} color={colors.gold.DEFAULT} strokeWidth={2.7} />
-                        ) : null}
-                      </View>
-                      {favorite.city ? (
-                        <Text className="font-body text-[11.5px] text-ink-muted">{favorite.city}</Text>
+                  <Avatar source={favorite.avatarUrl ?? undefined} seed={favorite.firstName} size={46} />
+                  <View className="flex-1">
+                    <View className="flex-row items-center gap-1.5">
+                      <Text className="font-heading text-[13.5px] text-ink">{favorite.firstName}</Text>
+                      {favorite.isVerified ? (
+                        <BadgeCheck size={11} color={colors.gold.DEFAULT} strokeWidth={2.7} />
                       ) : null}
                     </View>
-                    {favorite.action === 'super_like' ? (
-                      <View className="flex-row items-center gap-1 rounded-full bg-gold/[0.12] px-2.5 py-1.5">
-                        <Star size={10} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
-                        <Text className="font-heading text-[9px] text-gold">Super like</Text>
-                      </View>
-                    ) : (
-                      <Heart size={15} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
-                    )}
-                  </Pressable>
-                </Animated.View>
-              ))
-            )}
-          </View>
+                    {favorite.city ? (
+                      <Text className="font-body text-[11.5px] text-ink-muted">{favorite.city}</Text>
+                    ) : null}
+                  </View>
+                  {favorite.action === 'super_like' ? (
+                    <View className="flex-row items-center gap-1 rounded-full bg-gold/[0.12] px-2.5 py-1.5">
+                      <Star size={10} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
+                      <Text className="font-heading text-[9px] text-gold">Super like</Text>
+                    </View>
+                  ) : (
+                    <Heart size={15} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
+                  )}
+                </Pressable>
+              </Animated.View>
+            ))
+          )}
         </ScrollView>
       )}
     </View>

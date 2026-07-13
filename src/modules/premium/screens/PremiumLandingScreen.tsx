@@ -54,9 +54,11 @@ export function PremiumLandingScreen() {
             AfriLove{'\n'}
             <Text className="text-gold">Premium</Text>
           </Text>
-          <View className="mt-3 rounded-full border border-gold/40 bg-gold/[0.22] px-4 py-2">
-            <Text className="font-heading text-[11px] text-gold">7 jours gratuits</Text>
-          </View>
+          {!isPremium ? (
+            <View className="mt-3 rounded-full border border-gold/40 bg-gold/[0.22] px-4 py-2">
+              <Text className="font-heading text-[11px] text-gold">7 jours gratuits</Text>
+            </View>
+          ) : null}
         </View>
 
         {/* Abonnement déjà actif : on l'affiche clairement au lieu de
@@ -89,6 +91,14 @@ export function PremiumLandingScreen() {
             </View>
           ))}
         </View>
+
+        {/* Abonné : les forfaits deviennent des options de prolongation /
+            upgrade (chaque achat s'ajoute à la durée en cours). */}
+        {isPremium ? (
+          <Text className="mb-2.5 font-heading text-[11.5px] text-white/50">
+            Prolonger ou changer de forfait
+          </Text>
+        ) : null}
 
         {plansQuery.isLoading ? (
           <View className="items-center py-8">
