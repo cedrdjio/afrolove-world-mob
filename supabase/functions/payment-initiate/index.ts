@@ -9,8 +9,12 @@
 //   CAMERPAY_API_TOKEN        Bearer token for CamerPay's API (sandbox or live)
 // Optional secrets:
 //   CAMERPAY_BASE_URL         defaults to https://camerpay.biz
-//   CAMERPAY_RETURN_URL       where CamerPay sends the browser after payment;
-//                             defaults to the app deep link afrolove://premium/callback
+//   CAMERPAY_RETURN_URL       where CamerPay sends the browser after payment.
+//                             MUST be http(s) — CamerPay validates it as a URL
+//                             (a custom app scheme is rejected with 422, which
+//                             used to fail every initiation). Defaults to our
+//                             public payment-return function, which bridges
+//                             back to the app deep link.
 // SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY are auto-injected.
 
 import { createClient } from 'npm:@supabase/supabase-js@2.110.0';
@@ -19,7 +23,14 @@ import { createClient } from 'npm:@supabase/supabase-js@2.110.0';
 const EUR_TO_XAF = 655.957;
 
 const CAMERPAY_BASE = (Deno.env.get('CAMERPAY_BASE_URL') ?? 'https://camerpay.biz').replace(/\/$/, '');
-const RETURN_URL = Deno.env.get('CAMERPAY_RETURN_URL') ?? 'afrolove://premium/callback';
+
+// CamerPay requires a valid http(s) merchant_return_url — anything else is
+// rejected at initiation. Non-http overrides are ignored on purpose.
+function resolveReturnUrl(): string {
+  const override = Deno.env.get('CAMERPAY_RETURN_URL');
+  if (override && /^https?:\/\//i.test(override)) return override;
+  return `${Deno.env.get('SUPABASE_URL')}/functions/v1/payment-return`;
+}
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -161,7 +172,7 @@ Deno.serve(async (req) => {
         customer_phone: phone || undefined,
         payment_method: paymentMethod || undefined,
         merchant_callback_url: callbackUrl,
-        merchant_return_url: RETURN_URL,
+        merchant_return_url: resolveReturnUrl(),
         source: 'api',
       }),
     });

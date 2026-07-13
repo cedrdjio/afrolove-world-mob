@@ -2,6 +2,7 @@ import { Component, type ReactNode } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
 import { colors } from '@/shared/constants/theme';
+import { Sentry } from '@/shared/services/monitoring';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -30,6 +31,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (__DEV__) {
       console.error('[ErrorBoundary] Uncaught render error:', error, info.componentStack);
     }
+    // En production ce crash était invisible : impossible de diagnostiquer
+    // les « Une erreur est survenue » remontés par les utilisateurs.
+    Sentry.captureException(error, { extra: { componentStack: info.componentStack } });
   }
 
   handleRetry = () => this.setState({ error: null });

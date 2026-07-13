@@ -15,22 +15,36 @@ l'opérateur** (MTN 650-654/67x/68x, Orange 655-659/69x) avant d'appeler
 App ──(planKey, phone, paymentMethod)──▶ payment-initiate (Edge, JWT)
                      │  lit le prix en base, EUR→XAF, crée un payment_transactions,
                      │  appelle CamerPay /api/payment/initiate avec le token secret
+                     │  (merchant_return_url = payment-return, http(s) OBLIGATOIRE)
                      ▼
                    CamerPay ──▶ renvoie pay_url ──▶ l'app ouvre la page (WebBrowser)
                      │
    (paiement du client sur la page hébergée CamerPay)
                      │
-                     ▼
-                   CamerPay ──(callback signé HMAC)──▶ payment-webhook (Edge, PUBLIC)
-                                                          │  vérifie la signature,
-                                                          │  settle_camerpay_payment()
-                                                          │  → grant_subscription()
-                                                          ▼
-                                                        Premium actif
+        ┌────────────┴─────────────────────────────┐
+        ▼                                          ▼
+CamerPay ──(redirect navigateur)──▶        CamerPay ──(callback signé HMAC)──▶
+payment-return (Edge, PUBLIC)              payment-webhook (Edge, PUBLIC)
+  │  renvoie vers le deep link                │  vérifie la signature,
+  │  afrolove://premium/callback              │  settle_camerpay_payment()
+  ▼                                           │  → grant_subscription()
+L'app reprend la main                         ▼
+  │                                        Premium actif
+  └──(poll)──▶ payment-status (Edge, JWT)
+                 │  re-vérifie chez CamerPay /api/payment/{uuid}/status
+                 │  et règle la transaction via les mêmes RPC idempotents
+                 ▼
+              statut fiable même sans webhook configuré
 ```
 
-L'app **poll** `payment_transactions.status` (RLS : lignes propres) après la
-fermeture du navigateur : le webhook est la source de vérité, jamais le client.
+Après la fermeture du navigateur, l'app **poll** `payment-status` (fallback :
+lecture directe de `payment_transactions`, RLS lignes propres). Le règlement
+(webhook ou status-check) est la source de vérité, jamais le client.
+
+> ⚠️ `merchant_return_url` doit être une URL **http(s)** valide : CamerPay
+> rejette un scheme d'app (`afrolove://…`) avec « Le champ merchant return url
+> doit être une URL valide » et le paiement échoue dès l'initiation. C'est le
+> rôle du pont `payment-return`.
 
 ## 1. Migration
 
@@ -55,8 +69,11 @@ supabase secrets set CAMERPAY_WEBHOOK_SECRET="<secret_webhook_camerpay>"
 
 # Optionnels :
 #   CAMERPAY_BASE_URL    (défaut https://camerpay.biz)
-#   CAMERPAY_RETURN_URL  (défaut afrolove://premium/callback — mettre une URL
-#                         https si CamerPay refuse les schemes personnalisés)
+#   CAMERPAY_RETURN_URL  (défaut https://<project-ref>.supabase.co/functions/v1/payment-return ;
+#                         doit être http(s) — les schemes personnalisés sont
+#                         rejetés par CamerPay et sont ignorés par le code)
+#   APP_RETURN_SCHEME    (défaut afrolove://premium/callback — deep link vers
+#                         lequel payment-return renvoie le navigateur)
 ```
 
 `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` sont injectés
@@ -70,7 +87,10 @@ Le `verify_jwt` par fonction est déclaré dans `supabase/config.toml`
 ```bash
 supabase functions deploy payment-initiate
 supabase functions deploy payment-webhook
-# (si config.toml n'est pas pris en compte : ajouter --no-verify-jwt au webhook)
+supabase functions deploy payment-status
+supabase functions deploy payment-return
+# (si config.toml n'est pas pris en compte : ajouter --no-verify-jwt au webhook
+#  et à payment-return)
 ```
 
 ## 4. Dashboard CamerPay

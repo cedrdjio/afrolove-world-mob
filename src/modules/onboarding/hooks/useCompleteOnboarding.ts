@@ -7,6 +7,11 @@ export function useCompleteOnboarding() {
 
   return useMutation({
     mutationFn: (input: CompleteOnboardingInput) => onboardingService.completeOnboarding(input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] }),
+    // refetchType 'all' + promesse attendue : la query profil n'est pas
+    // montée sur l'écran Finish, et sans refetch forcé l'écran de résolution
+    // lisait le cache périmé (onboarding_completed=false) et renvoyait
+    // l'utilisateur au début de l'onboarding qu'il venait de terminer.
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY], refetchType: 'all' }),
   });
 }

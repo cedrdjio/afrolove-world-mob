@@ -13,7 +13,10 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
-    <View className="flex-1 items-center justify-center px-8">
+    // minHeight keeps the illustration, texts and CTA visually grouped even
+    // when the parent (e.g. a ScrollView slot) gives flex-1 no height basis —
+    // without it the content collapses and elements overlap the header above.
+    <View className="flex-1 items-center justify-center px-8" style={{ minHeight: 300 }}>
       {icon ? (
         <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-brand/10">{icon}</View>
       ) : (

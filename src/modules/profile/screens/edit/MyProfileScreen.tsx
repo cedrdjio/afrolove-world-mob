@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { MapPin, BadgeCheck, Settings, ShieldCheck, Star } from 'lucide-react-native';
+import { MapPin, BadgeCheck, Settings, ShieldCheck, Star, Camera, Eye } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { Chip } from '@/shared/components/ui/Chip';
@@ -83,17 +83,31 @@ export function MyProfileScreen() {
     <View className="flex-1">
       <ScreenBackground theme="cream" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-28">
-        <View style={{ height: 310 }} className="relative overflow-hidden">
+        <View
+          style={{ height: 330, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+          className="relative overflow-hidden"
+        >
           {profile.avatarUrl ? (
             <Image source={{ uri: profile.avatarUrl }} style={{ flex: 1 }} contentFit="cover" transition={250} />
           ) : (
             <PhotoPlaceholder seed={0} style={{ flex: 1 }} showIcon iconSize={44} />
           )}
           <LinearGradient
-            colors={['rgba(0,0,0,0.18)', 'transparent', colors.cream.DEFAULT]}
-            locations={[0, 0.4, 1]}
+            colors={['rgba(24,15,42,0.34)', 'transparent', 'rgba(24,15,42,0.55)']}
+            locations={[0, 0.42, 1]}
             style={{ position: 'absolute', inset: 0 }}
           />
+
+          {/* Raccourci photos — la photo se gère là où on la voit. */}
+          <Pressable
+            onPress={() => router.push('/edit-profile/photos')}
+            className="absolute bottom-4 right-[18px] flex-row items-center gap-1.5 rounded-full bg-white/90 px-3 py-2 active:opacity-85"
+          >
+            <Camera size={13} color={colors.brand.DEFAULT} strokeWidth={2.2} />
+            <Text className="font-heading text-[10.5px] text-brand">
+              {profile.photos.length} photo{profile.photos.length > 1 ? 's' : ''}
+            </Text>
+          </Pressable>
           <View className="absolute inset-x-[18px] flex-row items-center justify-between" style={{ top: 60 }}>
             <Text
               className="font-display text-[20px] text-white"
@@ -218,6 +232,17 @@ export function MyProfileScreen() {
                 <Text className="font-body-medium text-[10px] text-ink-muted">{stat.label}</Text>
               </View>
             ))}
+          </Animated.View>
+
+          {/* Voir sa fiche exactement comme les autres la voient. */}
+          <Animated.View entering={FadeInDown.delay(400)}>
+            <Pressable
+              onPress={() => router.push('/edit-profile/preview')}
+              className="mt-2.5 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-brand/[0.22] bg-brand/[0.06] py-3.5 active:opacity-85"
+            >
+              <Eye size={15} color={colors.brand.DEFAULT} strokeWidth={2} />
+              <Text className="font-heading text-[12px] text-brand">Aperçu public de mon profil</Text>
+            </Pressable>
           </Animated.View>
 
           {/* Carte Premium — maquette 08 : "Vois qui t'a déjà liké". */}

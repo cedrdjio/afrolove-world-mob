@@ -5,11 +5,13 @@ import { RequireCompletedOnboarding } from '@/modules/auth/components/RequireCom
 import { useLocationSync } from '@/modules/profile/hooks/useLocationSync';
 import { usePushSync } from '@/modules/notifications/hooks/usePush';
 import { useNotificationsRealtime } from '@/modules/notifications/hooks/useNotifications';
+import { usePresenceSync } from '@/shared/stores/presenceStore';
 
 export default function TabsLayout() {
   useLocationSync();
   usePushSync();
   useNotificationsRealtime();
+  usePresenceSync();
 
   return (
     <RequireCompletedOnboarding>

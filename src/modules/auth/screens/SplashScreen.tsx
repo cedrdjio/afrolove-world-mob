@@ -132,11 +132,11 @@ export function SplashScreen() {
         </View>
 
         <Animated.View entering={FadeIn.delay(280).duration(600)} className="items-center">
-          <Text className="font-display-black text-[38px] tracking-[3px] text-white">AFRILOVE</Text>
+          <Text className="font-display-black text-[38px] tracking-[1px] text-white">AfriLove</Text>
           <View className="mt-1.5 flex-row items-center gap-3">
             <View className="h-[2.5px] w-9 rounded-full bg-gold" />
-            <Text className="font-heading text-[13px] tracking-[10px] text-gold" style={{ marginRight: -10 }}>
-              WORLD
+            <Text className="font-heading text-[15px] tracking-[6px] text-gold" style={{ marginRight: -6 }}>
+              World
             </Text>
             <View className="h-[2.5px] w-9 rounded-full bg-gold" />
           </View>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
@@ -17,6 +18,8 @@ import type { DiscoveryFeedMode, DiscoveryProfile, SwipeAction } from '@/modules
 import { SwipeCard, type SwipeDirection } from '@/modules/discovery/components/SwipeCard';
 import { ActionButtons } from '@/modules/discovery/components/ActionButtons';
 import { NoProfilesState } from '@/modules/discovery/screens/NoProfilesScreen';
+import { usePresenceStore } from '@/shared/stores/presenceStore';
+import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 
 const FEED_MODES: { key: DiscoveryFeedMode; label: string }[] = [
   { key: 'all', label: 'Tous' },
@@ -32,13 +35,16 @@ const DIRECTION_TO_ACTION: Record<SwipeDirection, SwipeAction> = {
 
 export function SwipeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<DiscoveryFeedMode>('all');
   const [deckIndex, setDeckIndex] = useState(0);
+  const [commandedDirection, setCommandedDirection] = useState<SwipeDirection | null>(null);
   const feed = useDiscoveryFeed(mode);
   const swipe = useSwipe();
   const feedError = useAppError(feed.error);
   const hasUnreadNotifications = useHasUnreadNotifications();
   const entitlements = useEntitlements();
+  const onlineIds = usePresenceStore((s) => s.onlineIds);
 
   const profiles = feed.data ?? [];
 
@@ -50,13 +56,28 @@ export function SwipeScreen() {
   // A new deck (filters changed, chip changed, refetch) restarts at the top.
   useEffect(() => {
     setDeckIndex(0);
+    setCommandedDirection(null);
   }, [feed.dataUpdatedAt]);
 
+  // Deck épuisé ≠ « plus personne » : les profils déjà swipés étant exclus
+  // côté serveur, un refetch ramène les visages suivants. Sans ça, l'écran
+  // affichait « Vous avez tout vu » alors qu'un simple refresh montrait
+  // d'autres profils.
+  const deckExhausted = !feed.isLoading && !feed.isFetching && deckIndex >= profiles.length;
+  useEffect(() => {
+    if (deckExhausted && profiles.length > 0) {
+      feed.refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deckExhausted, profiles.length]);
+
   const visibleCards = profiles.slice(deckIndex, deckIndex + 3);
-  const isEmpty = !feed.isLoading && deckIndex >= profiles.length;
+  const isRefilling = feed.isFetching && deckIndex >= profiles.length;
+  const isEmpty = deckExhausted && profiles.length === 0;
 
   const handleSwiped = (direction: SwipeDirection, profile: DiscoveryProfile) => {
     setDeckIndex((i) => i + 1);
+    setCommandedDirection(null);
     swipe.mutate(
       { targetId: profile.id, action: DIRECTION_TO_ACTION[direction] },
       {
@@ -89,18 +110,24 @@ export function SwipeScreen() {
   };
 
   const topProfile = visibleCards[0];
+  // The buttons don't advance the deck directly: they command the top card,
+  // which plays its exit animation then reports back through onSwiped —
+  // exactly the same path as a finger swipe.
   const triggerSwipe = (direction: SwipeDirection) => {
-    if (topProfile) handleSwiped(direction, topProfile);
+    if (topProfile && !commandedDirection) setCommandedDirection(direction);
   };
 
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream" />
 
-      <View className="flex-row items-center justify-between px-5 pt-16">
+      <View
+        className="flex-row items-center justify-between px-5"
+        style={{ paddingTop: Math.max(insets.top, 24) + 12 }}
+      >
         <Pressable onPress={() => router.push('/discover-filters')}>
           <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
-            <View className="h-11 w-11 items-center justify-center gap-1">
+            <View className="h-11 w-11 items-center justify-center">
               <SlidersHorizontal size={17} color={colors.ink.DEFAULT} />
             </View>
           </GlassSurface>
@@ -143,7 +170,7 @@ export function SwipeScreen() {
       </View>
 
       <View className="mx-[18px] mt-6 flex-1" style={{ marginBottom: 210 }}>
-        {feed.isLoading ? (
+        {feed.isLoading || isRefilling ? (
           <Animated.View
             entering={FadeIn.duration(300)}
             className="flex-1 items-center justify-center rounded-[28px] border-[1.5px] border-white/80 bg-white/50"
@@ -167,6 +194,8 @@ export function SwipeScreen() {
                 profile={profile}
                 isTop={i === 0}
                 stackIndex={i}
+                commandedDirection={i === 0 ? commandedDirection : null}
+                isOnline={onlineIds.has(profile.id) || isRecentlyOnline(profile.lastActiveAt)}
                 onSwiped={(direction) => handleSwiped(direction, profile)}
                 onTap={() => router.push(`/profile/${profile.id}`)}
               />
@@ -175,7 +204,7 @@ export function SwipeScreen() {
         )}
       </View>
 
-      {!isEmpty && !feed.isLoading && !feedError ? (
+      {!isEmpty && !feed.isLoading && !isRefilling && !feedError ? (
         <View className="absolute inset-x-0" style={{ bottom: 118 }}>
           <ActionButtons
             onNope={() => triggerSwipe('left')}

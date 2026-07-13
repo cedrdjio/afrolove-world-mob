@@ -12,7 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
-import { Heart, BadgeCheck } from 'lucide-react-native';
+import { Heart, BadgeCheck, ShieldQuestion } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { colors } from '@/shared/constants/theme';
@@ -29,9 +29,22 @@ interface SwipeCardProps {
   onTap: () => void;
   isTop: boolean;
   stackIndex: number;
+  /** Renseigné quand un bouton d'action déclenche le swipe : la carte joue
+   *  la même animation de sortie qu'un geste avant de notifier onSwiped. */
+  commandedDirection?: SwipeDirection | null;
+  /** Présence Realtime — affiche la pastille « En ligne » sur la carte. */
+  isOnline?: boolean;
 }
 
-export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: SwipeCardProps) {
+export function SwipeCard({
+  profile,
+  onSwiped,
+  onTap,
+  isTop,
+  stackIndex,
+  commandedDirection = null,
+  isOnline = false,
+}: SwipeCardProps) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   // Springs toward its slot so a card sliding from the stack to the top
@@ -39,6 +52,7 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
   // feel fluid after every swipe.
   const stackProgress = useSharedValue(stackIndex);
   const crossedThreshold = useSharedValue(false);
+  const isLeaving = useSharedValue(false);
 
   useEffect(() => {
     stackProgress.value = withSpring(stackIndex, { damping: 18, stiffness: 160, overshootClamping: true });
@@ -55,9 +69,41 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
   }, []);
 
+  // The deck only advances once the exit animation has finished — advancing
+  // immediately unmounted the card mid-flight, making every swipe look like
+  // an abrupt teleport instead of a throw.
+  const animateOut = useCallback(
+    (direction: SwipeDirection) => {
+      'worklet';
+      if (isLeaving.value) return;
+      isLeaving.value = true;
+      const done = (finished?: boolean) => {
+        'worklet';
+        if (finished) runOnJS(finishSwipe)(direction);
+      };
+      if (direction === 'up') {
+        translateY.value = withTiming(-900, { duration: 260 }, done);
+      } else if (direction === 'right') {
+        translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: 260 }, done);
+      } else {
+        translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: 260 }, done);
+      }
+    },
+    [finishSwipe, isLeaving, translateX, translateY],
+  );
+
+  // Action-bar buttons (Nope / Super / Like) command the same exit animation
+  // as a finger swipe, so both paths look and behave identically.
+  useEffect(() => {
+    if (isTop && commandedDirection) {
+      animateOut(commandedDirection);
+    }
+  }, [isTop, commandedDirection, animateOut]);
+
   const pan = Gesture.Pan()
     .enabled(isTop)
     .onUpdate((event) => {
+      if (isLeaving.value) return;
       translateX.value = event.translationX;
       translateY.value = event.translationY;
 
@@ -72,20 +118,18 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
       }
     })
     .onEnd((event) => {
+      if (isLeaving.value) return;
       crossedThreshold.value = false;
       const goingUp = event.translationY < -SWIPE_THRESHOLD && Math.abs(event.translationX) < SWIPE_THRESHOLD;
       const goingRight = event.translationX > SWIPE_THRESHOLD;
       const goingLeft = event.translationX < -SWIPE_THRESHOLD;
 
       if (goingUp) {
-        translateY.value = withTiming(-800, { duration: 250 });
-        runOnJS(finishSwipe)('up');
+        animateOut('up');
       } else if (goingRight) {
-        translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: 250 });
-        runOnJS(finishSwipe)('right');
+        animateOut('right');
       } else if (goingLeft) {
-        translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: 250 });
-        runOnJS(finishSwipe)('left');
+        animateOut('left');
       } else {
         translateX.value = withSpring(0, { damping: 18, stiffness: 180, overshootClamping: true });
         translateY.value = withSpring(0, { damping: 18, stiffness: 180, overshootClamping: true });
@@ -190,18 +234,31 @@ export function SwipeCard({ profile, onSwiped, onTap, isTop, stackIndex }: Swipe
         <Heart size={11} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
         <Text className="font-heading text-[11px] text-ink">{profile.compatibility}% Match</Text>
       </View>
+      {/* Statut de vérification toujours visible — le badge « Non vérifié »
+          informe autant que le « Vérifié » (confiance avant le match). */}
       {profile.isVerified ? (
         <View className="absolute right-3.5 top-3.5 flex-row items-center gap-1 rounded-full border border-white/95 bg-white/[0.88] px-2.5 py-1.5">
           <BadgeCheck size={10} color={colors.gold.DEFAULT} strokeWidth={2.8} />
           <Text className="font-heading-semibold text-[10px] text-ink">Vérifié</Text>
         </View>
-      ) : null}
+      ) : (
+        <View className="absolute right-3.5 top-3.5 flex-row items-center gap-1 rounded-full border border-white/[0.25] bg-ink/[0.42] px-2.5 py-1.5">
+          <ShieldQuestion size={10} color="rgba(255,255,255,0.85)" strokeWidth={2.4} />
+          <Text className="font-heading-semibold text-[10px] text-white/85">Non vérifié</Text>
+        </View>
+      )}
 
       <View className="absolute inset-x-0 bottom-0 px-5 pb-[22px]">
         <View className="mb-1.5 flex-row items-baseline gap-2">
           <Text className="font-display text-[32px] text-white">{profile.firstName},</Text>
           <Text className="font-display-semibold text-[26px] text-white/80">{profile.age}</Text>
         </View>
+        {isOnline ? (
+          <View className="mb-1.5 flex-row items-center gap-1.5">
+            <View className="h-2 w-2 rounded-full bg-success" />
+            <Text className="font-heading-semibold text-[11px] text-white/90">En ligne</Text>
+          </View>
+        ) : null}
         {locationLine ? (
           <Text className="mb-3 font-body-medium text-[12.5px] text-white/75">{locationLine}</Text>
         ) : null}
