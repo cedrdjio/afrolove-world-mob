@@ -5,7 +5,9 @@
 // in a browser; the actual premium grant happens later in payment-webhook, the
 // source of truth. This function never activates anything.
 //
-// Required secrets (supabase secrets set — never in client code):
+// Required secrets (Supabase Vault `vault.create_secret(...)` — lu via le RPC
+// get_app_secret, service_role uniquement — ou `supabase secrets set` ; jamais
+// dans le code client) :
 //   CAMERPAY_API_TOKEN        Bearer token for CamerPay's API (sandbox or live)
 // Optional secrets:
 //   CAMERPAY_BASE_URL         defaults to https://camerpay.biz
@@ -46,6 +48,23 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+// Secrets applicatifs : Supabase Vault d'abord (RPC get_app_secret, réservé
+// au service_role), variable d'environnement en repli. Le Vault permet de
+// tourner les clés sans redéployer ni accéder à la CLI.
+const secretsCache = new Map<string, string>();
+async function getAppSecret(name: string): Promise<string | null> {
+  const cached = secretsCache.get(name);
+  if (cached) return cached;
+  const admin = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+  const { data } = await admin.rpc('get_app_secret', { p_name: name });
+  const value = (typeof data === 'string' && data.length > 0 ? data : null) ?? Deno.env.get(name) ?? null;
+  if (value) secretsCache.set(name, value);
+  return value;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
@@ -59,9 +78,9 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'missing_authorization' }, 401);
   }
 
-  const apiToken = Deno.env.get('CAMERPAY_API_TOKEN');
+  const apiToken = await getAppSecret('CAMERPAY_API_TOKEN');
   if (!apiToken) {
-    console.error('[payment-initiate] CAMERPAY_API_TOKEN is not set');
+    console.error('[payment-initiate] CAMERPAY_API_TOKEN is not set (Vault or env)');
     return jsonResponse({ error: 'payment_not_configured' }, 500);
   }
 

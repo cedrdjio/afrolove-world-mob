@@ -31,6 +31,22 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+// Secrets applicatifs : Supabase Vault d'abord (RPC get_app_secret, réservé
+// au service_role), variable d'environnement en repli.
+const secretsCache = new Map<string, string>();
+async function getAppSecret(name: string): Promise<string | null> {
+  const cached = secretsCache.get(name);
+  if (cached) return cached;
+  const admin = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+  const { data } = await admin.rpc('get_app_secret', { p_name: name });
+  const value = (typeof data === 'string' && data.length > 0 ? data : null) ?? Deno.env.get(name) ?? null;
+  if (value) secretsCache.set(name, value);
+  return value;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
@@ -90,9 +106,9 @@ Deno.serve(async (req) => {
     return jsonResponse({ status: payment.status });
   }
 
-  const apiToken = Deno.env.get('CAMERPAY_API_TOKEN');
+  const apiToken = await getAppSecret('CAMERPAY_API_TOKEN');
   if (!apiToken) {
-    console.error('[payment-status] CAMERPAY_API_TOKEN is not set');
+    console.error('[payment-status] CAMERPAY_API_TOKEN is not set (Vault or env)');
     return jsonResponse({ status: payment.status });
   }
 

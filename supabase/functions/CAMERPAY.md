@@ -59,6 +59,18 @@ supabase db push
 
 ## 2. Secrets (jamais dans le code / le repo)
 
+Les fonctions lisent chaque secret **d'abord dans Supabase Vault** (RPC
+`get_app_secret`, réservé au service_role — migration
+`app_secrets_vault_accessor`), puis en repli dans les variables
+d'environnement. Le Vault permet de poser/tourner les clés en SQL, sans CLI :
+
+```sql
+select vault.create_secret('<token_api_camerpay>', 'CAMERPAY_API_TOKEN');
+select vault.create_secret('<secret_webhook_camerpay>', 'CAMERPAY_WEBHOOK_SECRET');
+```
+
+Équivalent CLI (variables d'environnement classiques) :
+
 ```bash
 # Token API CamerPay (sandbox fourni ; remplacer par le live en prod)
 supabase secrets set CAMERPAY_API_TOKEN="<token_api_camerpay>"
