@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   View,
+  Text,
   Pressable,
   useWindowDimensions,
   ScrollView,
@@ -44,6 +45,11 @@ function ZoomableImage({
   const translateY = useSharedValue(0);
   const savedTranslateX = useSharedValue(0);
   const savedTranslateY = useSharedValue(0);
+  // État React miroir du zoom : le Pan RNGH doit être DÉSACTIVÉ tant que
+  // l'image n'est pas zoomée, sinon il capte tous les glissements
+  // horizontaux et la pagination du ScrollView ne reçoit plus rien —
+  // impossible de passer à la photo suivante.
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const pinch = Gesture.Pinch()
     .onUpdate((event) => {
@@ -60,7 +66,7 @@ function ZoomableImage({
     });
 
   const pan = Gesture.Pan()
-    .enabled(true)
+    .enabled(isZoomed)
     .onUpdate((event) => {
       if (scale.value <= 1) return;
       translateX.value = savedTranslateX.value + event.translationX;
@@ -88,11 +94,16 @@ function ZoomableImage({
   const composed = Gesture.Simultaneous(pinch, pan, doubleTap);
 
   // Disables the parent ScrollView's horizontal paging while this image is
-  // zoomed in, so panning to inspect a zoomed photo doesn't also flip pages.
+  // zoomed in (and enables our own pan), so panning a zoomed photo doesn't
+  // flip pages — and an unzoomed photo lets the pager work normally.
+  const handleZoomChange = (zoomed: boolean) => {
+    setIsZoomed(zoomed);
+    onZoomChange(zoomed);
+  };
   useAnimatedReaction(
     () => scale.value > 1.02,
     (zoomed, previouslyZoomed) => {
-      if (zoomed !== previouslyZoomed) runOnJS(onZoomChange)(zoomed);
+      if (zoomed !== previouslyZoomed) runOnJS(handleZoomChange)(zoomed);
     },
   );
 
@@ -157,6 +168,15 @@ export function FullscreenGalleryScreen() {
           <View key={photo.id} className={`h-1 flex-1 rounded-full ${i === index ? 'bg-white/90' : 'bg-white/30'}`} />
         ))}
       </View>
+
+      {/* Compteur photo — repère clair de la position dans la galerie. */}
+      {photos.length > 1 ? (
+        <View className="absolute left-5 rounded-full bg-white/[0.15] px-3 py-1.5" style={{ top: 76 }}>
+          <Text className="font-heading text-[11px] text-white">
+            {index + 1} / {photos.length}
+          </Text>
+        </View>
+      ) : null}
 
       <Pressable
         onPress={() => router.back()}

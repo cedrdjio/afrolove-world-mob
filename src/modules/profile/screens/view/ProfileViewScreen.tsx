@@ -11,6 +11,7 @@ import { useOtherProfileQuery } from '@/modules/profile/hooks/useOtherProfileQue
 import { useProfileDisplayData } from '@/modules/profile/hooks/useProfileDisplayData';
 import { ProfileDetailView } from '@/modules/profile/components/ProfileDetailView';
 import { useSwipe } from '@/modules/discovery/hooks/useDiscovery';
+import { useFavoriteIds, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
 
 export function ProfileViewScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,6 +20,8 @@ export function ProfileViewScreen() {
   const profileError = useAppError(profileQuery.error);
   const displayData = useProfileDisplayData(profileQuery.data);
   const swipe = useSwipe();
+  const favoriteIds = useFavoriteIds();
+  const toggleFavorite = useToggleFavorite();
 
   // L'écran restait bloqué sur un loader infini quand la requête échouait
   // (RPC indisponible, profil supprimé, hors-ligne…) — sans même un bouton
@@ -63,6 +66,8 @@ export function ProfileViewScreen() {
     );
   };
 
+  const isFavorite = favoriteIds.has(profile.id);
+
   return (
     <ProfileDetailView
       profile={profile}
@@ -70,6 +75,11 @@ export function ProfileViewScreen() {
       variant="discovery"
       onGalleryPress={() => router.push(`/profile/${profile.id}/gallery`)}
       onLike={handleLike}
+      isFavorite={isFavorite}
+      onToggleFavorite={() => {
+        if (toggleFavorite.isPending) return;
+        toggleFavorite.mutate({ targetId: profile.id, isFavorite });
+      }}
     />
   );
 }
