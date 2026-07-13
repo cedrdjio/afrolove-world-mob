@@ -9,7 +9,7 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
-import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles } from 'lucide-react-native';
+import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground } from '@/shared/components/layout';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
@@ -54,11 +54,22 @@ interface ProfileDetailViewProps {
   onLike?: () => void;
   /** Fourni uniquement quand un match existe déjà — ouvre la conversation. */
   onMessage?: () => void;
+  /** Signet favoris (≠ like) — garder ce profil de côté. */
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 /** Fiche profil façon maquette 05 : identité sur la photo, contenu en
  *  cartes de verre sur le dégradé lavande, barre d'actions flottante. */
-export function ProfileDetailView({ profile, displayData, variant, onGalleryPress, onLike }: ProfileDetailViewProps) {
+export function ProfileDetailView({
+  profile,
+  displayData,
+  variant,
+  onGalleryPress,
+  onLike,
+  isFavorite = false,
+  onToggleFavorite,
+}: ProfileDetailViewProps) {
   const router = useRouter();
   const [activePhoto, setActivePhoto] = useState(0);
   // La feuille d'actions n'est montée que lorsqu'elle est ouverte — un
@@ -319,6 +330,19 @@ export function ProfileDetailView({ profile, displayData, variant, onGalleryPres
                   </View>
                 </GlassSurface>
               </Pressable>
+              {onToggleFavorite ? (
+                <Pressable onPress={onToggleFavorite} accessibilityLabel="Ajouter aux favoris">
+                  <GlassSurface variant="light" radius={24} style={{ width: 52, height: 52 }}>
+                    <View className="h-[52px] w-[52px] items-center justify-center">
+                      <Bookmark
+                        size={19}
+                        color={colors.brand.DEFAULT}
+                        fill={isFavorite ? colors.brand.DEFAULT : 'none'}
+                      />
+                    </View>
+                  </GlassSurface>
+                </Pressable>
+              ) : null}
               <GradientButton
                 label="J'aime"
                 icon={<Heart size={16} color="#fff" fill="#fff" />}

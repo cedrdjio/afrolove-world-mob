@@ -20,6 +20,7 @@ import { ActionButtons } from '@/modules/discovery/components/ActionButtons';
 import { NoProfilesState } from '@/modules/discovery/screens/NoProfilesScreen';
 import { usePresenceStore } from '@/shared/stores/presenceStore';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
+import { useFavoriteIds, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
 
 const FEED_MODES: { key: DiscoveryFeedMode; label: string }[] = [
   { key: 'all', label: 'Tous' },
@@ -117,6 +118,16 @@ export function SwipeScreen() {
     if (topProfile && !commandedDirection) setCommandedDirection(direction);
   };
 
+  // Signet (≠ like) : garde le profil du dessus dans Mes Matches → Favoris,
+  // sans le swiper — on continue de se balader dans le deck.
+  const favoriteIds = useFavoriteIds();
+  const toggleFavorite = useToggleFavorite();
+  const topIsFavorite = topProfile ? favoriteIds.has(topProfile.id) : false;
+  const handleToggleFavorite = () => {
+    if (!topProfile || toggleFavorite.isPending) return;
+    toggleFavorite.mutate({ targetId: topProfile.id, isFavorite: topIsFavorite });
+  };
+
   return (
     <View className="flex-1">
       <ScreenBackground theme="cream" />
@@ -210,7 +221,8 @@ export function SwipeScreen() {
             onNope={() => triggerSwipe('left')}
             onSuperLike={() => triggerSwipe('up')}
             onLike={() => triggerSwipe('right')}
-            onBoost={() => router.push('/premium')}
+            onToggleFavorite={handleToggleFavorite}
+            isFavorite={topIsFavorite}
           />
         </View>
       ) : null}

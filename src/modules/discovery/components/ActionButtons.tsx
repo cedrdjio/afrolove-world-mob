@@ -1,5 +1,5 @@
 import { View, Pressable } from 'react-native';
-import { X, Star, Heart, Zap } from 'lucide-react-native';
+import { X, Star, Heart, Bookmark } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,10 +11,12 @@ interface ActionButtonsProps {
   onNope: () => void;
   onSuperLike: () => void;
   onLike: () => void;
-  onBoost: () => void;
+  /** Signet : garder le profil du dessus dans ses favoris (≠ like). */
+  onToggleFavorite: () => void;
+  isFavorite: boolean;
 }
 
-export function ActionButtons({ onNope, onSuperLike, onLike, onBoost }: ActionButtonsProps) {
+export function ActionButtons({ onNope, onSuperLike, onLike, onToggleFavorite, isFavorite }: ActionButtonsProps) {
   const heartbeat = useSharedValue(1);
 
   useEffect(() => {
@@ -82,14 +84,18 @@ export function ActionButtons({ onNope, onSuperLike, onLike, onBoost }: ActionBu
         </Pressable>
       </Animated.View>
 
-      <Pressable onPress={withHaptics(onBoost)}>
+      <Pressable onPress={withHaptics(onToggleFavorite)} accessibilityLabel="Ajouter aux favoris">
         <GlassSurface
           variant="lightStrong"
           radius={24}
           style={{ width: 48, height: 48, shadowColor: colors.ink.soft, shadowOpacity: 0.12, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}
         >
           <View className="h-12 w-12 items-center justify-center">
-            <Zap size={19} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
+            <Bookmark
+              size={19}
+              color={colors.brand.DEFAULT}
+              fill={isFavorite ? colors.brand.DEFAULT : 'none'}
+            />
           </View>
         </GlassSurface>
       </Pressable>

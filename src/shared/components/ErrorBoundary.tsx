@@ -3,6 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
 import { colors } from '@/shared/constants/theme';
 import { Sentry } from '@/shared/services/monitoring';
+import { logEvent } from '@/shared/services/logService';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -34,6 +35,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // En production ce crash était invisible : impossible de diagnostiquer
     // les « Une erreur est survenue » remontés par les utilisateurs.
     Sentry.captureException(error, { extra: { componentStack: info.componentStack } });
+    logEvent('error', 'crash', String(error.message ?? error), {
+      stack: info.componentStack?.slice(0, 1500),
+    });
   }
 
   handleRetry = () => this.setState({ error: null });

@@ -1,18 +1,20 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
-import { User, Lock, Bell, Eye, Ban, BadgeCheck, ShieldCheck, FileText, Star } from 'lucide-react-native';
+import { User, Lock, Bell, Eye, Ban, BadgeCheck, ShieldCheck, FileText, Star, ScrollText } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { GhostButton } from '@/shared/components/ui/GhostButton';
 import { SettingsRow } from '@/shared/components/ui/SettingsRow';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { calculateAge } from '@/modules/profile/types/profile';
+import { useIsAdmin } from '@/shared/hooks/useIsAdmin';
 import { colors } from '@/shared/constants/theme';
 
 export function SettingsHubScreen() {
   const router = useRouter();
   const profile = useProfileQuery().data;
+  const isAdmin = useIsAdmin();
 
   const displayName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ') || 'Mon profil';
   const subtitle = [
@@ -120,6 +122,19 @@ export function SettingsHubScreen() {
             isLast
           />
         </SettingsGroup>
+
+        {/* Journal d'activité — visible uniquement pour les admins : crashs,
+            paiements et erreurs remontés par les apps, en direct. */}
+        {isAdmin ? (
+          <SettingsGroup title="Administration">
+            <SettingsRow
+              icon={<ScrollText size={16} color={colors.brand.DEFAULT} />}
+              label="Journal d'activité"
+              onPress={() => router.push('/settings/logs')}
+              isLast
+            />
+          </SettingsGroup>
+        ) : null}
 
         <View className="mt-2 gap-2.5">
           <GhostButton label="Se déconnecter" tone="onLight" onPress={() => router.push('/settings/logout')} />

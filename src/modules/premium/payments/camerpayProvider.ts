@@ -1,5 +1,6 @@
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '@/shared/services/supabase/client';
+import { logEvent } from '@/shared/services/logService';
 import type { CheckoutInput, PaymentProvider, PaymentResult } from './types';
 
 // Where CamerPay sends the browser back to; must match the app scheme so the
@@ -79,24 +80,50 @@ export const camerpayProvider: PaymentProvider = {
   },
 
   async checkout(input: CheckoutInput): Promise<PaymentResult> {
-    const { payUrl, transactionUuid } = await initiate(input);
+    let payUrl: string;
+    let transactionUuid: string;
+    try {
+      ({ payUrl, transactionUuid } = await initiate(input));
+    } catch (error) {
+      logEvent('error', 'payment_initiate_failed', error instanceof Error ? error.message : String(error), {
+        planKey: input.planKey,
+        method: input.paymentMethod,
+      });
+      throw error;
+    }
+    logEvent('info', 'payment_initiated', undefined, {
+      planKey: input.planKey,
+      method: input.paymentMethod,
+      transactionUuid,
+    });
 
     // Opens CamerPay's hosted page; resolves when the browser is redirected to
     // RETURN_URL ('success') or the user dismisses the sheet ('cancel'/'dismiss').
     const session = await WebBrowser.openAuthSessionAsync(payUrl, RETURN_URL);
 
     // Came back through the return URL → likely paid, give the webhook time.
+    let result: PaymentResult;
     if (session.type === 'success') {
-      return (await pollUntilResolved(transactionUuid, POLL_WINDOW_RETURNED_MS)) ?? {
+      result = (await pollUntilResolved(transactionUuid, POLL_WINDOW_RETURNED_MS)) ?? {
         outcome: 'pending',
         providerRef: transactionUuid,
       };
+    } else {
+      // User closed the sheet. They may still have paid (then dismissed), so
+      // poll a short grace window; otherwise treat it as canceled.
+      result =
+        (await pollUntilResolved(transactionUuid, POLL_WINDOW_DISMISSED_MS)) ?? {
+          outcome: 'canceled',
+          providerRef: transactionUuid,
+        };
     }
 
-    // User closed the sheet. They may still have paid (then dismissed), so poll
-    // a short grace window; otherwise treat it as canceled.
-    const settled = await pollUntilResolved(transactionUuid, POLL_WINDOW_DISMISSED_MS);
-    if (settled) return settled;
-    return { outcome: 'canceled', providerRef: transactionUuid };
+    logEvent(result.outcome === 'failed' ? 'warn' : 'info', 'payment_outcome', result.outcome, {
+      planKey: input.planKey,
+      method: input.paymentMethod,
+      transactionUuid,
+      browserSession: session.type,
+    });
+    return result;
   },
 };

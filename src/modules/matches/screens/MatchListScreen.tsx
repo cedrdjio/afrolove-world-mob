@@ -4,13 +4,14 @@ import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Search as SearchIcon, Heart, Star, BadgeCheck, Lock, ChevronRight, Bookmark } from 'lucide-react-native';
+import { Search as SearchIcon, Star, BadgeCheck, Lock, ChevronRight, Bookmark } from 'lucide-react-native';
 import { ScreenBackground, GlowOrb } from '@/shared/components/layout';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { EmptyState } from '@/shared/components/feedback';
 import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
-import { useEntitlements, useFavorites, useLikers } from '@/modules/premium/hooks/usePremium';
+import { useEntitlements, useLikers } from '@/modules/premium/hooks/usePremium';
+import { useSavedFavorites, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
 import { colors, gradients } from '@/shared/constants/theme';
 
 type MatchesTab = 'matchs' | 'favoris';
@@ -29,12 +30,15 @@ export function MatchListScreen() {
   const isPremium = entitlements.data?.isPremium ?? false;
   const likersCount = entitlements.data?.likersCount ?? 0;
   const likersQuery = useLikers(isPremium);
-  const favoritesQuery = useFavorites();
+  // Favoris = signets gardés depuis Découvrir (table profile_favorites),
+  // pas les likes envoyés — deux notions distinctes.
+  const favoritesQuery = useSavedFavorites();
+  const toggleFavorite = useToggleFavorite();
 
   const matches = conversationsQuery.data ?? [];
   const newMatchesCount = matches.filter((m) => !m.lastMessage).length;
   const likers = likersQuery.data ?? [];
-  const favorites = (favoritesQuery.data ?? []).filter((f) => !f.isMatched);
+  const favorites = favoritesQuery.data ?? [];
 
   return (
     <View className="flex-1">
@@ -199,8 +203,8 @@ export function MatchListScreen() {
           </View>
         </ScrollView>
       ) : (
-        /* Onglet Favoris — les profils que vous avez likés, en attente de
-           leur réponse. Un like/super-like depuis Discovery arrive ici. */
+        /* Onglet Favoris — les profils gardés en signet depuis Découvrir.
+           Rien à voir avec un like : c'est votre sélection personnelle. */
         <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="px-[22px] pb-32">
           {favoritesQuery.isLoading ? (
             <ActivityIndicator color={colors.brand.DEFAULT} style={{ marginTop: 24 }} />
@@ -208,7 +212,7 @@ export function MatchListScreen() {
             <EmptyState
               icon={<Bookmark size={30} color={colors.brand.DEFAULT} strokeWidth={1.6} />}
               title="Aucun favori"
-              description="Likez un profil dans Découvrir : il apparaîtra ici en attendant sa réponse."
+              description="Dans Découvrir, touchez le signet 🔖 sur un profil qui vous plaît : il restera ici."
               actionLabel="Découvrir des profils"
               onAction={() => router.push('/(tabs)/discover')}
             />
@@ -234,14 +238,15 @@ export function MatchListScreen() {
                       <Text className="font-body text-[11.5px] text-ink-muted">{favorite.city}</Text>
                     ) : null}
                   </View>
-                  {favorite.action === 'super_like' ? (
-                    <View className="flex-row items-center gap-1 rounded-full bg-gold/[0.12] px-2.5 py-1.5">
-                      <Star size={10} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
-                      <Text className="font-heading text-[9px] text-gold">Super like</Text>
-                    </View>
-                  ) : (
-                    <Heart size={15} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
-                  )}
+                  <Pressable
+                    hitSlop={8}
+                    accessibilityLabel="Retirer des favoris"
+                    onPress={() =>
+                      toggleFavorite.mutate({ targetId: favorite.id, isFavorite: true })
+                    }
+                  >
+                    <Bookmark size={17} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
+                  </Pressable>
                 </Pressable>
               </Animated.View>
             ))
