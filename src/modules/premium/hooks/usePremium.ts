@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { premiumService } from '@/modules/premium/services/premiumService';
+import type { CheckoutInput } from '@/modules/premium/payments';
 import { useAuth } from '@/modules/auth/hooks/useAuth';
 
 export const ENTITLEMENTS_QUERY_KEY = 'entitlements' as const;
@@ -30,8 +31,7 @@ export function usePurchasePlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: { planKey: string; phone: string; paymentMethod?: string }) =>
-      premiumService.purchasePlan(input),
+    mutationFn: (input: CheckoutInput) => premiumService.purchasePlan(input),
     onSuccess: (result) => {
       // Only a settled payment changes entitlements; canceled/pending leave the
       // current state untouched. Premium unlocks limits and the likers list

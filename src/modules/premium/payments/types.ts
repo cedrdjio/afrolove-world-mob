@@ -20,13 +20,18 @@ export interface PaymentResult {
   providerRef?: string;
 }
 
+/** Méthodes acceptées par CamerPay (cf. OpenAPI /api/payment/initiate). */
+export type CheckoutMethod = 'mtn_momo' | 'orange_money' | 'stripe' | 'paypal';
+
 export interface CheckoutInput {
   /** Matches premium_plans.key in the database. */
   planKey: string;
-  /** Numéro Mobile Money du payeur (9 chiffres, validé côté app). */
-  phone: string;
-  /** Méthode détectée depuis le numéro (ex. 'mtn_momo', 'orange_money'). */
-  paymentMethod?: string;
+  /** Méthode choisie : mobile money (détectée depuis le numéro), carte
+   *  bancaire via Stripe, ou PayPal. */
+  paymentMethod: CheckoutMethod;
+  /** Numéro Mobile Money du payeur (9 chiffres, validé côté app) —
+   *  requis uniquement pour mtn_momo / orange_money. */
+  phone?: string;
 }
 
 export interface PaymentProvider {

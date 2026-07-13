@@ -6,10 +6,14 @@ reste en base : le webhook appelle le cœur partagé `grant_subscription()`.
 
 ## Architecture
 
-L'app collecte d'abord le **numéro Mobile Money** du payeur et **détecte
-l'opérateur** (MTN 650-654/67x/68x, Orange 655-659/69x) avant d'appeler
-`payment-initiate` — écran `PremiumCheckoutScreen`, validation dans
-`src/modules/premium/payments/mobileMoney.ts`.
+L'app propose **trois méthodes** sur l'écran `PremiumCheckoutScreen` :
+Mobile Money (numéro requis, opérateur détecté — MTN 650-654/67x/68x,
+Orange 655-659/69x, validation dans
+`src/modules/premium/payments/mobileMoney.ts`), **carte bancaire (Stripe)**
+et **PayPal**. Pour carte/PayPal, aucun numéro n'est demandé : le client
+finalise sur la page hébergée CamerPay (`payment_method` = `stripe` /
+`paypal` transmis à l'initiation). Le règlement (webhook / payment-status)
+est identique pour toutes les méthodes.
 
 ```
 App ──(planKey, phone, paymentMethod)──▶ payment-initiate (Edge, JWT)

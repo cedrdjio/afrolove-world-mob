@@ -1,6 +1,6 @@
 import { supabase } from '@/shared/services/supabase/client';
 import { paymentService } from '@/modules/premium/payments';
-import type { PaymentResult } from '@/modules/premium/payments';
+import type { CheckoutInput, PaymentResult } from '@/modules/premium/payments';
 
 export interface PremiumPlan {
   key: string;
@@ -89,11 +89,7 @@ async function fetchEntitlements(): Promise<Entitlements> {
  * dev stub used — stacking, expiry, limits and gating are unchanged. The caller
  * routes on `outcome`; entitlements are re-fetched on 'succeeded'.
  */
-async function purchasePlan(input: {
-  planKey: string;
-  phone: string;
-  paymentMethod?: string;
-}): Promise<PaymentResult> {
+async function purchasePlan(input: CheckoutInput): Promise<PaymentResult> {
   return paymentService.checkout(input);
 }
 

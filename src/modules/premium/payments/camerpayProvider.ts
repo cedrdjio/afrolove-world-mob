@@ -24,7 +24,9 @@ interface InitiateResponse {
 
 async function initiate(input: CheckoutInput): Promise<InitiateResponse> {
   const { data, error } = await supabase.functions.invoke('payment-initiate', {
-    body: { planKey: input.planKey, phone: input.phone, paymentMethod: input.paymentMethod },
+    // phone est absent pour Stripe/PayPal — CamerPay n'en a pas besoin, le
+    // client renseigne sa carte / son compte sur la page hébergée.
+    body: { planKey: input.planKey, phone: input.phone ?? undefined, paymentMethod: input.paymentMethod },
   });
   if (error) throw error;
   if (!data?.payUrl || !data?.transactionUuid) {
