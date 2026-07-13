@@ -19,6 +19,7 @@ import { FullScreenLoader } from '@/shared/components/feedback';
 import { colors, gradients } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useProfileStats } from '@/modules/profile/hooks/useProfileStats';
+import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
 import { computeProfileCompletion, calculateAge } from '@/modules/profile/types/profile';
 
@@ -50,8 +51,14 @@ export function MyProfileScreen() {
   const profileQuery = useProfileQuery();
   const statsQuery = useProfileStats();
   const interestsQuery = useInterestsQuery();
+  const entitlements = useEntitlements();
 
   const profile = profileQuery.data;
+  const isPremium = entitlements.data?.isPremium ?? false;
+  const premiumPlanLabel = entitlements.data?.planLabel ?? null;
+  const premiumUntilLabel = entitlements.data?.premiumUntil
+    ? new Date(entitlements.data.premiumUntil).toLocaleDateString('fr-FR')
+    : null;
 
   const completionPercent = useMemo(() => {
     if (!profile) return 0;
@@ -245,37 +252,59 @@ export function MyProfileScreen() {
             </Pressable>
           </Animated.View>
 
-          {/* Carte Premium — maquette 08 : "Vois qui t'a déjà liké". */}
+          {/* Carte Premium : promo quand on n'est pas abonné, gestion de
+              l'abonnement (forfait + échéance) quand on l'est déjà. */}
           <Animated.View entering={FadeInDown.delay(420)}>
-            <Pressable onPress={() => router.push('/premium')} className="mt-3.5 active:opacity-90">
-              <LinearGradient
-                colors={gradients.brand}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  borderRadius: 20,
-                  padding: 16,
-                  shadowColor: '#6A4FC0',
-                  shadowOpacity: 0.3,
-                  shadowRadius: 18,
-                  shadowOffset: { width: 0, height: 8 },
-                  elevation: 6,
-                }}
+            {isPremium ? (
+              <Pressable
+                onPress={() => router.push('/premium')}
+                className="mt-3.5 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-gold/[0.35] bg-gold/[0.08] px-4 py-3.5 active:opacity-90"
               >
-                <View className="flex-row items-center gap-3.5">
-                  <View className="h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.18]">
-                    <Star size={20} color="#fff" fill="#fff" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="mb-0.5 font-heading text-[13.5px] text-white">AfriLove Premium</Text>
-                    <Text className="font-body text-[11.5px] text-white/70">Vois qui t'a déjà liké.</Text>
-                  </View>
-                  <View className="rounded-full bg-white px-3.5 py-2">
-                    <Text className="font-heading text-[11px] text-brand">Essayer</Text>
-                  </View>
+                <View className="h-11 w-11 items-center justify-center rounded-2xl bg-gold/[0.15]">
+                  <Star size={20} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
                 </View>
-              </LinearGradient>
-            </Pressable>
+                <View className="flex-1">
+                  <Text className="mb-0.5 font-heading text-[13.5px] text-ink">
+                    Premium actif{premiumPlanLabel ? ` · ${premiumPlanLabel}` : ''}
+                  </Text>
+                  <Text className="font-body text-[11.5px] text-ink-muted">
+                    {premiumUntilLabel
+                      ? `Jusqu'au ${premiumUntilLabel} — gérer ou prolonger`
+                      : 'Gérer ou prolonger mon abonnement'}
+                  </Text>
+                </View>
+              </Pressable>
+            ) : (
+              <Pressable onPress={() => router.push('/premium')} className="mt-3.5 active:opacity-90">
+                <LinearGradient
+                  colors={gradients.brand}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 20,
+                    padding: 16,
+                    shadowColor: '#6A4FC0',
+                    shadowOpacity: 0.3,
+                    shadowRadius: 18,
+                    shadowOffset: { width: 0, height: 8 },
+                    elevation: 6,
+                  }}
+                >
+                  <View className="flex-row items-center gap-3.5">
+                    <View className="h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.18]">
+                      <Star size={20} color="#fff" fill="#fff" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="mb-0.5 font-heading text-[13.5px] text-white">AfriLove Premium</Text>
+                      <Text className="font-body text-[11.5px] text-white/70">Vois qui t'a déjà liké.</Text>
+                    </View>
+                    <View className="rounded-full bg-white px-3.5 py-2">
+                      <Text className="font-heading text-[11px] text-brand">Essayer</Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+              </Pressable>
+            )}
           </Animated.View>
         </View>
       </ScrollView>

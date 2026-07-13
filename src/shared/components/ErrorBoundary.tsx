@@ -48,8 +48,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <Text className="mb-2.5 text-center font-display text-[26px] leading-none text-ink">
             Une erreur est survenue
           </Text>
-          <Text className="mb-8 text-center font-body text-[13px] leading-[20px] text-ink-muted">
+          <Text className="mb-3 text-center font-body text-[13px] leading-[20px] text-ink-muted">
             Quelque chose a mal tourné. Vous pouvez réessayer sans perdre votre session.
+          </Text>
+          {/* Détail technique visible : sans Sentry configuré, c'est le seul
+              moyen de savoir CE QUI a planté quand un utilisateur le signale. */}
+          <Text className="mb-8 text-center font-body text-[10px] leading-[14px] text-ink/35" numberOfLines={3}>
+            {String(this.state.error.message ?? this.state.error)}
           </Text>
           <Pressable onPress={this.handleRetry} className="w-full rounded-[18px] bg-brand py-[17px]">
             <Text className="text-center font-heading text-[14px] tracking-wide text-white">

@@ -16,6 +16,7 @@ import { Heart, BadgeCheck, ShieldQuestion } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
 import { colors } from '@/shared/constants/theme';
+import { formatLastSeen } from '@/shared/utils/lastSeen';
 import type { DiscoveryProfile } from '@/modules/discovery/types/discovery';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -183,6 +184,9 @@ export function SwipeCard({
     .filter(Boolean)
     .join(' · ');
 
+  // Hors présence temps réel, on montre la dernière activité connue.
+  const lastSeenLabel = isOnline ? null : formatLastSeen(profile.lastActiveAt);
+
   const cardContent = (
     <Animated.View
       style={[
@@ -257,6 +261,11 @@ export function SwipeCard({
           <View className="mb-1.5 flex-row items-center gap-1.5">
             <View className="h-2 w-2 rounded-full bg-success" />
             <Text className="font-heading-semibold text-[11px] text-white/90">En ligne</Text>
+          </View>
+        ) : lastSeenLabel ? (
+          <View className="mb-1.5 flex-row items-center gap-1.5">
+            <View className="h-2 w-2 rounded-full bg-white/35" />
+            <Text className="font-body-medium text-[11px] text-white/60">{lastSeenLabel}</Text>
           </View>
         ) : null}
         {locationLine ? (

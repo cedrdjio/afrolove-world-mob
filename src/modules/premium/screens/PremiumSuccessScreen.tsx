@@ -13,6 +13,18 @@ export function PremiumSuccessScreen() {
   const { plan } = useLocalSearchParams<{ plan?: string }>();
   const scale = useSharedValue(0);
 
+  // L'écran vit dans la pile modale premium : on referme d'abord la modale,
+  // puis on remplace vers les tabs — un replace direct inter-piles depuis la
+  // modale pouvait faire échouer la navigation.
+  const goToApp = () => {
+    try {
+      router.dismissAll();
+    } catch {
+      // pas de modale à fermer — on continue
+    }
+    router.replace('/(tabs)/discover');
+  };
+
   useEffect(() => {
     scale.value = withDelay(150, withTiming(1, { duration: 380 }));
   }, [scale]);
@@ -52,7 +64,7 @@ export function PremiumSuccessScreen() {
           {plan ? `Votre forfait "${plan}" est activé. ` : ''}Profitez de tous les avantages dès maintenant.
         </Text>
 
-        <GradientButton label="Découvrir l'application" onPress={() => router.replace('/(tabs)/discover')} style={{ width: '100%' }} />
+        <GradientButton label="Découvrir l'application" onPress={goToApp} style={{ width: '100%' }} />
       </View>
     </View>
   );
