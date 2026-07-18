@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 import { Lock } from 'lucide-react-native';
@@ -27,7 +27,12 @@ export function ChangePasswordScreen() {
       const { error } = await supabase.auth.updateUser({ password: next });
       if (error) throw error;
     },
-    onSuccess: () => router.back(),
+    onSuccess: () => {
+      // Retour visible : sans confirmation, l'écran se fermait en silence et
+      // rien n'indiquait que le nouveau mot de passe était bien actif.
+      Alert.alert('Mot de passe mis à jour', 'Votre nouveau mot de passe est actif dès maintenant.');
+      router.back();
+    },
   });
   const changeError = useAppError(changePassword.error);
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { getQueryParams } from 'expo-auth-session/build/QueryParams';
@@ -51,6 +52,12 @@ export function useAuthDeepLink() {
           router.replace('/(auth)/reset-password');
         } else if (params.type === 'signup') {
           router.replace('/(auth)/success');
+        } else if (params.type === 'email_change') {
+          // Lien de confirmation du changement d'email : sans ce cas, le tap
+          // ouvrait l'app sans aucun retour visible et l'utilisateur ne
+          // savait pas si son adresse avait réellement changé.
+          Alert.alert('Email confirmé', 'Votre nouvelle adresse email est maintenant active.');
+          router.replace('/settings/account');
         }
       })
       .catch(() => {
