@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "949332317190",
+    "project_id": "afrilove-world",
+    "storage_bucket": "afrilove-world.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949332317190:android:f729fb77c3fe3f8279df87",
+        "android_client_info": {
+          "package_name": "com.afriloveworld.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJINNe9iwb6_GYsLi6V_XfTUxgaywuCRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949332317190:android:f69f0d8aabd7c86379df87",
+        "android_client_info": {
+          "package_name": "com.afroloveworld.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJINNe9iwb6_GYsLi6V_XfTUxgaywuCRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
