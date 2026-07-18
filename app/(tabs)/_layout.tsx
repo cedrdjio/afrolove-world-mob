@@ -6,6 +6,7 @@ import { useLocationSync } from '@/modules/profile/hooks/useLocationSync';
 import { usePushSync } from '@/modules/notifications/hooks/usePush';
 import { useNotificationsRealtime } from '@/modules/notifications/hooks/useNotifications';
 import { usePresenceSync } from '@/shared/stores/presenceStore';
+import { VerificationPromptModal } from '@/modules/kyc/components/VerificationPromptModal';
 
 export default function TabsLayout() {
   useLocationSync();
@@ -18,6 +19,8 @@ export default function TabsLayout() {
       <View style={{ flex: 1 }}>
         <Slot />
         <BottomNavBar />
+        {/* Rappel périodique « faites-vous vérifier » (badge de crédibilité). */}
+        <VerificationPromptModal />
       </View>
     </RequireCompletedOnboarding>
   );
