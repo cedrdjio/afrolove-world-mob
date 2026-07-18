@@ -91,7 +91,7 @@ export function MyProfileScreen() {
       <ScreenBackground theme="cream" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-28">
         <View
-          style={{ height: 330, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+          style={{ height: 380, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
           className="relative overflow-hidden"
         >
           {profile.avatarUrl ? (
@@ -100,10 +100,27 @@ export function MyProfileScreen() {
             <PhotoPlaceholder seed={0} style={{ flex: 1 }} showIcon iconSize={44} />
           )}
           <LinearGradient
-            colors={['rgba(24,15,42,0.34)', 'transparent', 'rgba(24,15,42,0.55)']}
-            locations={[0, 0.42, 1]}
+            colors={['rgba(24,15,42,0.34)', 'transparent', 'rgba(24,15,42,0.78)']}
+            locations={[0, 0.4, 1]}
             style={{ position: 'absolute', inset: 0 }}
           />
+
+          {/* Identité posée sur la photo — même langage visuel que la fiche
+              candidat, pour une page qui donne envie d'être regardée. */}
+          <View className="absolute inset-x-[18px]" style={{ bottom: 18 }} pointerEvents="none">
+            <View className="flex-row items-baseline gap-2 pr-24">
+              <Text className="font-display text-[30px] text-white" numberOfLines={1}>
+                {profile.firstName ?? 'Moi'}
+                {age != null ? `, ${age}` : ''}
+              </Text>
+            </View>
+            {locationLabel ? (
+              <View className="mt-1.5 flex-row items-center gap-1.5">
+                <MapPin size={12} color="rgba(255,255,255,0.8)" />
+                <Text className="font-body-medium text-[12.5px] text-white/80">{locationLabel}</Text>
+              </View>
+            ) : null}
+          </View>
 
           {/* Raccourci photos — la photo se gère là où on la voit. */}
           <Pressable
@@ -167,37 +184,33 @@ export function MyProfileScreen() {
         </View>
 
         <View className="px-[22px] pt-6">
+          {/* Statut de vérification en pleine largeur : le badge rassure, et
+              un profil non vérifié a un chemin clair vers la crédibilité. */}
           <Animated.View entering={FadeInDown.delay(180)}>
-            <View className="mb-1 flex-row items-center justify-between">
-              <View className="flex-row items-baseline gap-2">
-                <Text className="font-display text-[32px] text-ink">{profile.firstName ?? 'Moi'},</Text>
-                {age != null ? (
-                  <Text className="font-display-semibold text-[26px] text-ink-muted">{age}</Text>
-                ) : null}
+            {profile.isVerified ? (
+              <View className="mb-3 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-gold/[0.3] bg-gold/[0.08] px-4 py-3">
+                <BadgeCheck size={16} color={colors.gold.DEFAULT} strokeWidth={2.6} />
+                <Text className="font-heading text-[12.5px] text-ink">
+                  {profile.gender === 'femme' ? 'Profil vérifié' : 'Profil vérifié'} — badge visible par tous
+                </Text>
               </View>
-              {profile.isVerified ? (
-                <View className="flex-row items-center gap-1.5 rounded-full bg-gold/[0.12] px-3 py-1.5">
-                  <BadgeCheck size={11} color={colors.gold.DEFAULT} strokeWidth={2.8} />
-                  <Text className="font-heading text-[10px] text-gold">
-                    {profile.gender === 'femme' ? 'Vérifiée' : 'Vérifié'}
+            ) : (
+              <Pressable
+                onPress={() => router.push('/kyc/upload-id')}
+                className="mb-3 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-brand/[0.22] bg-brand/[0.06] px-4 py-3 active:opacity-85"
+              >
+                <ShieldCheck size={16} color={colors.brand.DEFAULT} strokeWidth={2.4} />
+                <View className="flex-1">
+                  <Text className="font-heading text-[12.5px] text-ink">Profil non vérifié</Text>
+                  <Text className="mt-0.5 font-body text-[11px] text-ink-muted">
+                    Obtenez votre badge en 2 minutes — plus de confiance, plus de matches.
                   </Text>
                 </View>
-              ) : (
-                <Pressable
-                  onPress={() => router.push('/kyc/upload-id')}
-                  className="flex-row items-center gap-1.5 rounded-full bg-brand/[0.1] px-3 py-1.5 active:opacity-80"
-                >
-                  <ShieldCheck size={11} color={colors.brand.DEFAULT} strokeWidth={2.6} />
-                  <Text className="font-heading text-[10px] text-brand">Me vérifier</Text>
-                </Pressable>
-              )}
-            </View>
-            {locationLabel ? (
-              <View className="mb-3 flex-row items-center gap-1.5">
-                <MapPin size={12} color={colors.ink.muted} />
-                <Text className="font-body-medium text-[12px] text-ink-muted">{locationLabel}</Text>
-              </View>
-            ) : null}
+                <View className="rounded-full bg-brand px-3 py-1.5">
+                  <Text className="font-heading text-[10.5px] text-white">Me vérifier</Text>
+                </View>
+              </Pressable>
+            )}
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(240)}>

@@ -1,17 +1,22 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   View,
   Text,
   Pressable,
   useWindowDimensions,
-  ScrollView,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { X } from 'lucide-react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react-native';
+// ScrollView vient de gesture-handler, PAS de react-native : les images sont
+// enveloppées de GestureDetector (pinch/pan/double-tap) et, sur la nouvelle
+// architecture RN, ces handlers natifs capturaient tous les touchers — le
+// ScrollView RN classique ne recevait jamais le glissement horizontal et la
+// galerie restait bloquée sur la première photo. La version RNGH participe à
+// l'arbitrage des gestes et rend la pagination au doigt fonctionnelle.
+import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useAnimatedReaction,
@@ -133,6 +138,7 @@ export function FullscreenGalleryScreen() {
   const profileQuery = useOtherProfileQuery(id);
   const [index, setIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const scrollRef = useRef<ScrollView>(null);
 
   if (!profileQuery.data) return <FullScreenLoader />;
 
@@ -142,9 +148,18 @@ export function FullscreenGalleryScreen() {
     setIndex(Math.round(e.nativeEvent.contentOffset.x / width));
   };
 
+  // Flèches ‹ › : navigation garantie même si un appareil arbitre mal les
+  // gestes — le swipe reste le chemin principal.
+  const goTo = (i: number) => {
+    const clamped = Math.max(0, Math.min(photos.length - 1, i));
+    scrollRef.current?.scrollTo({ x: clamped * width, animated: true });
+    setIndex(clamped);
+  };
+
   return (
     <View className="flex-1 bg-black">
       <ScrollView
+        ref={scrollRef}
         horizontal
         pagingEnabled
         scrollEnabled={scrollEnabled}
@@ -176,6 +191,29 @@ export function FullscreenGalleryScreen() {
             {index + 1} / {photos.length}
           </Text>
         </View>
+      ) : null}
+
+      {photos.length > 1 && index > 0 ? (
+        <Pressable
+          onPress={() => goTo(index - 1)}
+          className="absolute left-3 h-11 w-11 items-center justify-center rounded-full bg-white/[0.14]"
+          style={{ top: height / 2 - 22 }}
+          hitSlop={8}
+          accessibilityLabel="Photo précédente"
+        >
+          <ChevronLeft size={22} color="#fff" strokeWidth={2.4} />
+        </Pressable>
+      ) : null}
+      {photos.length > 1 && index < photos.length - 1 ? (
+        <Pressable
+          onPress={() => goTo(index + 1)}
+          className="absolute right-3 h-11 w-11 items-center justify-center rounded-full bg-white/[0.14]"
+          style={{ top: height / 2 - 22 }}
+          hitSlop={8}
+          accessibilityLabel="Photo suivante"
+        >
+          <ChevronRight size={22} color="#fff" strokeWidth={2.4} />
+        </Pressable>
       ) : null}
 
       <Pressable

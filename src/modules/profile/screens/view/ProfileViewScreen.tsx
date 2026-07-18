@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ArrowLeft } from 'lucide-react-native';
@@ -60,6 +60,16 @@ export function ProfileViewScreen() {
             });
           } else {
             router.back();
+          }
+        },
+        // Sans gestion d'erreur, atteindre la limite gratuite rendait le
+        // bouton « J'aime » muet — l'appui semblait ne rien faire du tout.
+        onError: (error) => {
+          const message = error instanceof Error ? error.message : '';
+          if (message.includes('SWIPE_LIMIT_REACHED') || message.includes('LIKE_LIMIT_REACHED')) {
+            router.push({ pathname: '/discover-like-limit', params: { reason: 'swipes' } });
+          } else {
+            Alert.alert('Erreur', "Votre J'aime n'a pas pu être enregistré. Réessayez.");
           }
         },
       },

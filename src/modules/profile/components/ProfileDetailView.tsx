@@ -9,7 +9,7 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
-import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark } from 'lucide-react-native';
+import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark, Coffee, UserRound } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground } from '@/shared/components/layout';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
@@ -34,9 +34,11 @@ function hashToSeed(id: string): number {
 
 function SectionTitle({ icon, children }: { icon?: React.ReactNode; children: string }) {
   return (
-    <View className="mb-2.5 flex-row items-center gap-1.5">
-      {icon}
-      <Text className="font-heading text-[13px] text-ink/60">{children}</Text>
+    <View className="mb-3 flex-row items-center gap-2.5">
+      {icon ? (
+        <View className="h-7 w-7 items-center justify-center rounded-[9px] bg-brand/[0.1]">{icon}</View>
+      ) : null}
+      <Text className="font-heading text-[12.5px] uppercase tracking-wide text-ink/55">{children}</Text>
     </View>
   );
 }
@@ -95,6 +97,9 @@ export function ProfileDetailView({
 
   const activePhotoUrl = profile.photos[activePhoto]?.url;
   const locationLine = [profile.city, profile.country].filter(Boolean).join(', ');
+  // Rencontres diaspora : la distance se lit « à 5 200 km », pas en minutes.
+  const distanceLabel =
+    profile.distanceKm != null ? `à ${Math.round(profile.distanceKm).toLocaleString('fr-FR')} km` : null;
 
   return (
     <View className="flex-1">
@@ -183,10 +188,19 @@ export function ProfileDetailView({
               </Text>
               {profile.isVerified ? <VerifiedBadge tone="onDark" /> : null}
             </View>
-            {locationLine ? (
-              <View className="mt-1 flex-row items-center gap-1.5">
-                <MapPin size={13} color="rgba(255,255,255,0.75)" />
-                <Text className="font-body-medium text-[13px] text-white/75">{locationLine}</Text>
+            {locationLine || distanceLabel ? (
+              <View className="mt-2.5 flex-row flex-wrap items-center gap-2">
+                {locationLine ? (
+                  <View className="flex-row items-center gap-1.5 rounded-full border border-white/[0.28] bg-white/[0.16] px-3 py-1.5">
+                    <MapPin size={11} color="#fff" />
+                    <Text className="font-heading-semibold text-[11px] text-white">{locationLine}</Text>
+                  </View>
+                ) : null}
+                {distanceLabel ? (
+                  <View className="rounded-full border border-white/[0.28] bg-white/[0.16] px-3 py-1.5">
+                    <Text className="font-heading-semibold text-[11px] text-white/90">{distanceLabel}</Text>
+                  </View>
+                ) : null}
               </View>
             ) : null}
           </View>
@@ -239,7 +253,7 @@ export function ProfileDetailView({
 
           <GlassCard padding={0}>
             <View className="px-[18px] pt-[18px]">
-              <SectionTitle>Mode de vie</SectionTitle>
+              <SectionTitle icon={<Coffee size={13} color={colors.brand.DEFAULT} />}>Mode de vie</SectionTitle>
             </View>
             {displayData.lifestyleRows.map((item, i) => (
               <View
@@ -256,7 +270,7 @@ export function ProfileDetailView({
 
           <GlassCard padding={0}>
             <View className="px-[18px] pt-[18px]">
-              <SectionTitle>Essentiel</SectionTitle>
+              <SectionTitle icon={<UserRound size={13} color={colors.brand.DEFAULT} />}>Essentiel</SectionTitle>
             </View>
             <View className="px-[18px] pb-1.5">
               <InfoRow
