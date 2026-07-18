@@ -15,7 +15,15 @@ async function registerDevice(userId: string): Promise<boolean> {
   try {
     const Notifications = await import('expo-notifications');
 
-    const { status } = await Notifications.getPermissionsAsync();
+    // La permission est DEMANDÉE ici si elle ne l'a jamais été : beaucoup de
+    // comptes existants n'ont jamais vu l'écran d'onboarding « notifications »
+    // (ou l'ont passé) et aucun token n'était donc jamais enregistré — les
+    // notifications n'arrivaient que dans l'onglet, jamais sur le téléphone.
+    // Un refus explicite (canAskAgain=false) est respecté : on n'insiste pas.
+    let { status, canAskAgain } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted' && canAskAgain) {
+      ({ status } = await Notifications.requestPermissionsAsync());
+    }
     if (status !== 'granted') return false;
 
     if (Platform.OS === 'android') {
