@@ -1679,8 +1679,10 @@ export type Database = {
         Args: {
           p_age_max?: number
           p_age_min?: number
+          p_country?: string
           p_interest_ids?: string[]
           p_max_distance_km?: number
+          p_scope?: string
           p_verified_only?: boolean
         }
         Returns: number
@@ -1707,6 +1709,13 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_discovery_countries: {
+        Args: never
+        Returns: {
+          country: string
+          member_count: number
+        }[]
       }
       get_my_blocked_profiles: {
         Args: never
@@ -1859,6 +1868,7 @@ export type Database = {
         Args: {
           p_age_max?: number
           p_age_min?: number
+          p_country?: string
           p_interest_ids?: string[]
           p_limit?: number
           p_max_distance_km?: number
@@ -1866,6 +1876,7 @@ export type Database = {
           p_offset?: number
           p_online_recently?: boolean
           p_query?: string
+          p_scope?: string
           p_verified_only?: boolean
         }
         Returns: {

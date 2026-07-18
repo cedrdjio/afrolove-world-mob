@@ -1,5 +1,10 @@
 import { supabase } from '@/shared/services/supabase/client';
-import type { DiscoveryFilters, DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
+import type {
+  DiscoveryCountry,
+  DiscoveryFilters,
+  DiscoveryProfile,
+  SwipeAction,
+} from '@/modules/discovery/types/discovery';
 
 const DECK_SIZE = 25;
 
@@ -39,11 +44,12 @@ async function searchProfiles(filters: DiscoveryFilters): Promise<DiscoveryProfi
   const { data, error } = await supabase.rpc('search_profiles', {
     p_age_min: filters.ageMin,
     p_age_max: filters.ageMax,
-    p_max_distance_km: filters.maxDistanceKm ?? undefined,
     p_verified_only: filters.verifiedOnly,
     p_new_only: filters.mode === 'new',
     p_online_recently: filters.mode === 'online',
     p_interest_ids: filters.interestIds?.length ? filters.interestIds : undefined,
+    p_scope: filters.scope,
+    p_country: filters.scope === 'country' ? filters.country ?? undefined : undefined,
     p_limit: DECK_SIZE,
   });
   if (error) throw error;
@@ -52,17 +58,28 @@ async function searchProfiles(filters: DiscoveryFilters): Promise<DiscoveryProfi
 
 /** Nombre de profils correspondant aux filtres — bouton « Voir N profils ». */
 async function countProfiles(
-  filters: Pick<DiscoveryFilters, 'ageMin' | 'ageMax' | 'maxDistanceKm' | 'verifiedOnly' | 'interestIds'>,
+  filters: Pick<DiscoveryFilters, 'ageMin' | 'ageMax' | 'scope' | 'country' | 'verifiedOnly' | 'interestIds'>,
 ): Promise<number> {
   const { data, error } = await supabase.rpc('count_search_profiles', {
     p_age_min: filters.ageMin,
     p_age_max: filters.ageMax,
-    p_max_distance_km: filters.maxDistanceKm ?? undefined,
     p_verified_only: filters.verifiedOnly,
     p_interest_ids: filters.interestIds?.length ? filters.interestIds : undefined,
+    p_scope: filters.scope,
+    p_country: filters.scope === 'country' ? filters.country ?? undefined : undefined,
   });
   if (error) throw error;
   return data ?? 0;
+}
+
+/** Pays réellement représentés dans l'app — alimente le choix « pays précis ». */
+async function fetchCountries(): Promise<DiscoveryCountry[]> {
+  const { data, error } = await supabase.rpc('get_discovery_countries');
+  if (error) throw error;
+  return (data ?? []).map((row: { country: string; member_count: number }) => ({
+    country: row.country,
+    memberCount: row.member_count,
+  }));
 }
 
 /**
@@ -103,6 +120,7 @@ async function searchByText(query: string): Promise<DiscoveryProfile[]> {
 export const discoveryService = {
   searchProfiles,
   countProfiles,
+  fetchCountries,
   swipe,
   searchByText,
 };

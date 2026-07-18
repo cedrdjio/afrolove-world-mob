@@ -13,19 +13,21 @@ import type { DiscoveryFeedMode, SwipeAction } from '@/modules/discovery/types/d
  */
 export function useDiscoveryFeed(mode: DiscoveryFeedMode) {
   const { isAuthenticated } = useAuth();
-  const distanceKm = useFiltersStore((s) => s.distanceKm);
+  const scope = useFiltersStore((s) => s.scope);
+  const country = useFiltersStore((s) => s.country);
   const ageMin = useFiltersStore((s) => s.ageMin);
   const ageMax = useFiltersStore((s) => s.ageMax);
   const verifiedOnly = useFiltersStore((s) => s.verifiedOnly);
   const interestIds = useFiltersStore((s) => s.interestIds);
 
   return useQuery({
-    queryKey: ['discovery', mode, distanceKm, ageMin, ageMax, verifiedOnly, interestIds],
+    queryKey: ['discovery', mode, scope, country, ageMin, ageMax, verifiedOnly, interestIds],
     queryFn: () =>
       discoveryService.searchProfiles({
         ageMin,
         ageMax,
-        maxDistanceKm: distanceKm,
+        scope,
+        country,
         verifiedOnly,
         mode,
         interestIds,
@@ -38,18 +40,29 @@ export function useDiscoveryFeed(mode: DiscoveryFeedMode) {
 /** Compteur live du bouton « Voir N profils » de l'écran Filtres. */
 export function useDiscoveryCount() {
   const { isAuthenticated } = useAuth();
-  const distanceKm = useFiltersStore((s) => s.distanceKm);
+  const scope = useFiltersStore((s) => s.scope);
+  const country = useFiltersStore((s) => s.country);
   const ageMin = useFiltersStore((s) => s.ageMin);
   const ageMax = useFiltersStore((s) => s.ageMax);
   const verifiedOnly = useFiltersStore((s) => s.verifiedOnly);
   const interestIds = useFiltersStore((s) => s.interestIds);
 
   return useQuery({
-    queryKey: ['discovery-count', distanceKm, ageMin, ageMax, verifiedOnly, interestIds],
-    queryFn: () =>
-      discoveryService.countProfiles({ ageMin, ageMax, maxDistanceKm: distanceKm, verifiedOnly, interestIds }),
+    queryKey: ['discovery-count', scope, country, ageMin, ageMax, verifiedOnly, interestIds],
+    queryFn: () => discoveryService.countProfiles({ ageMin, ageMax, scope, country, verifiedOnly, interestIds }),
     enabled: isAuthenticated,
     staleTime: 30_000,
+  });
+}
+
+/** Pays représentés dans l'app, pour le sélecteur « pays précis » des filtres. */
+export function useDiscoveryCountries() {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: ['discovery-countries'],
+    queryFn: () => discoveryService.fetchCountries(),
+    enabled: isAuthenticated,
+    staleTime: 10 * 60_000,
   });
 }
 
