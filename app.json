@@ -90,9 +90,8 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "cd2d0e09-1b74-4976-a4fb-208d902b6f0b"
+        "projectId": "ab4bb20e-80b7-45cd-a1e3-172d94c54a07"
       }
-    },
-    "owner": "cedricdjio"
+    }
   }
 }
