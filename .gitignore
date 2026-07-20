@@ -34,6 +34,10 @@ yarn-error.*
 .env
 .env*.local
 
+# Google Play service account key (NE JAMAIS committer)
+google-play-service-account.json
+google-play-*.json
+
 # typescript
 *.tsbuildinfo
 
