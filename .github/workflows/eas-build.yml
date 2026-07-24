@@ -1,5 +1,9 @@
 name: EAS Build (Android)
 
+# Déclenchement MANUEL uniquement (bouton « Run workflow » dans l'onglet
+# Actions, utilisable depuis un navigateur mobile). Le déclenchement sur
+# push a été retiré : il relançait un build EAS à chaque commit et consommait
+# le quota de builds.
 on:
   workflow_dispatch:
     inputs:
@@ -12,9 +16,6 @@ on:
           - development
           - preview
           - production
-  push:
-    branches:
-      - claude/graphify-plugin-0n39xh
 
 permissions:
   contents: write
@@ -47,23 +48,29 @@ jobs:
           PROFILE="${{ inputs.profile || 'preview' }}"
           eas build --platform android --profile "$PROFILE" --non-interactive --wait --json > eas-build-result.json
           cat eas-build-result.json
-          echo "artifact_url=$(node -pe 'JSON.parse(require("fs").readFileSync("eas-build-result.json")).[0].artifacts.buildUrl')" >> "$GITHUB_OUTPUT"
+          URL=$(node -pe 'const j=JSON.parse(require("fs").readFileSync("eas-build-result.json","utf8")); const b=Array.isArray(j)?j[0]:j; (b.artifacts && (b.artifacts.applicationArchiveUrl || b.artifacts.buildUrl)) || ""')
+          if [ -z "$URL" ]; then echo "Aucune URL d'artefact trouvée"; exit 1; fi
+          EXT="${URL##*.}"; case "$EXT" in apk|aab) : ;; *) EXT=apk ;; esac
+          echo "artifact_url=$URL" >> "$GITHUB_OUTPUT"
+          echo "artifact_ext=$EXT" >> "$GITHUB_OUTPUT"
 
-      - name: Download APK
-        run: curl -L -o AfroLoveWorld-${{ github.run_number }}.apk "${{ steps.eas_build.outputs.artifact_url }}"
+      - name: Download build artifact
+        run: curl -L -o "AfroLoveWorld-${{ github.run_number }}.${{ steps.eas_build.outputs.artifact_ext }}" "${{ steps.eas_build.outputs.artifact_url }}"
 
-      - name: Upload APK as build artifact
+      - name: Upload as workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: AfroLoveWorld-${{ github.run_number }}
-          path: AfroLoveWorld-${{ github.run_number }}.apk
+          path: AfroLoveWorld-${{ github.run_number }}.${{ steps.eas_build.outputs.artifact_ext }}
           retention-days: 30
 
-      - name: Publish APK to a GitHub Release (permanent download link)
+      - name: Publish to a GitHub Release (lien de téléchargement permanent)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: eas-build-${{ github.run_number }}
           name: AfroLove World — EAS build #${{ github.run_number }}
           body: |
-            APK Android généré via EAS Build depuis le commit ${{ github.sha }}.
-          files: AfroLoveWorld-${{ github.run_number }}.apk
+            Build Android généré via EAS Build depuis le commit ${{ github.sha }}.
+            Fichier .apk = installable directement pour tester ;
+            fichier .aab = à envoyer sur la Play Console (profil production).
+          files: AfroLoveWorld-${{ github.run_number }}.${{ steps.eas_build.outputs.artifact_ext }}
