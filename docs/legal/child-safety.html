@@ -1,0 +1,194 @@
+<style>
+  :root {
+    --bg: #faf9fc;
+    --surface: #ffffff;
+    --ink: #211a30;
+    --muted: #6a6280;
+    --brand: #221937;
+    --accent: #6d4fb0;
+    --accent-soft: #efeafa;
+    --hairline: #e7e2f0;
+    --shadow: 0 1px 2px rgba(34,25,55,.06), 0 8px 28px rgba(34,25,55,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161022;
+      --surface: #1e1731;
+      --ink: #ece8f5;
+      --muted: #9a90b4;
+      --brand: #0f0a1a;
+      --accent: #a890df;
+      --accent-soft: #251c3b;
+      --hairline: #2c2340;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #faf9fc; --surface: #ffffff; --ink: #211a30; --muted: #6a6280;
+    --brand: #221937; --accent: #6d4fb0; --accent-soft: #efeafa; --hairline: #e7e2f0;
+    --shadow: 0 1px 2px rgba(34,25,55,.06), 0 8px 28px rgba(34,25,55,.07);
+  }
+  :root[data-theme="dark"] {
+    --bg: #161022; --surface: #1e1731; --ink: #ece8f5; --muted: #9a90b4;
+    --brand: #0f0a1a; --accent: #a890df; --accent-soft: #251c3b; --hairline: #2c2340;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px 96px; }
+
+  /* Header band */
+  header.band {
+    background: var(--brand);
+    color: #f4f1fb;
+    padding: 44px 0 40px;
+    margin-bottom: 56px;
+    border-bottom: 3px solid var(--accent);
+  }
+  header.band .wrap { padding-bottom: 0; }
+  .brandrow { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+  .mark {
+    width: 34px; height: 34px; border-radius: 9px; flex: none;
+    background: linear-gradient(150deg, #9B7EDE, #6d4fb0);
+    display: grid; place-items: center; font-size: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.25);
+  }
+  .brandname { font-size: 15px; font-weight: 600; letter-spacing: .2px; color: #efeafa; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: #b6a6e4; font-weight: 600; margin: 0 0 10px;
+  }
+  header.band h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 600; font-size: clamp(28px, 5vw, 40px); line-height: 1.12;
+    margin: 0; text-wrap: balance; color: #ffffff;
+  }
+  header.band .updated {
+    margin-top: 20px; font-size: 13.5px; color: #b3a6d6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lede {
+    font-size: 18.5px; line-height: 1.6; color: var(--ink);
+    margin: 0 0 12px; text-wrap: pretty;
+  }
+  .lede.en { color: var(--muted); font-size: 16px; font-style: italic; }
+
+  section { margin-top: 44px; }
+  .sechead { display: flex; gap: 16px; align-items: baseline; margin-bottom: 6px; }
+  .num {
+    font-family: Georgia, serif; font-size: 15px; font-weight: 600;
+    color: var(--accent); flex: none; width: 26px;
+    font-variant-numeric: tabular-nums;
+  }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 21px; font-weight: 600; margin: 0; color: var(--ink);
+    text-wrap: balance;
+  }
+  section > p, section > ul { margin-left: 42px; }
+  p { margin: 12px 0; color: var(--ink); }
+  .en-note { color: var(--muted); font-size: 14.5px; }
+  ul { padding-left: 20px; margin: 12px 0; }
+  li { margin: 7px 0; }
+  strong { font-weight: 650; }
+
+  hr.rule { border: none; border-top: 1px solid var(--hairline); margin: 56px 0 0; }
+
+  .contact {
+    margin: 48px 0 0 42px; padding: 24px 26px;
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 14px; box-shadow: var(--shadow);
+    border-left: 3px solid var(--accent);
+  }
+  .contact h2 { margin-bottom: 4px; }
+  .contact .row { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  .contact .label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; width: 100%; }
+  .contact a { color: var(--accent); text-decoration: none; font-weight: 600; word-break: break-word; }
+  .contact a:hover { text-decoration: underline; }
+  .contact a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  footer.foot {
+    margin: 64px 0 0; padding-top: 20px; border-top: 1px solid var(--hairline);
+    font-size: 13px; color: var(--muted); text-align: center;
+  }
+
+  @media (max-width: 520px) {
+    section > p, section > ul, .contact { margin-left: 0; }
+    .sechead { gap: 10px; }
+    .num { width: 20px; }
+  }
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <div class="brandrow">
+      <span class="mark">❤</span>
+      <span class="brandname">AfriLove World</span>
+    </div>
+    <p class="eyebrow">Sécurité &amp; conformité</p>
+    <h1>Normes de sécurité des enfants</h1>
+    <p class="updated">Politique de lutte contre l'exploitation et les abus sexuels sur mineurs (CSAE) · Dernière mise à jour&nbsp;: 24&nbsp;juillet&nbsp;2026</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="lede">AfriLove World est une application de rencontres strictement réservée aux personnes majeures. Nous appliquons une tolérance zéro à l'égard de toute forme d'exploitation ou d'abus sexuels sur mineurs (CSAE), ainsi qu'à tout contenu, comportement ou compte qui y serait lié.</p>
+  <p class="lede en">AfriLove World is an adults-only dating application with a zero-tolerance policy toward child sexual abuse and exploitation (CSAE). This page states our published child safety standards.</p>
+
+  <section>
+    <div class="sechead"><span class="num">1</span><h2>Un service réservé aux adultes (18 ans et plus)</h2></div>
+    <p>L'inscription est interdite aux mineurs. Lors de la création du compte, chaque membre certifie être âgé de 18&nbsp;ans révolus. Tout compte pour lequel nous avons des raisons de penser qu'il appartient à un mineur est immédiatement suspendu, puis supprimé après vérification.</p>
+    <p class="en-note"><strong>EN&nbsp;·</strong> Registration is limited to users aged 18 and over. Any account suspected of belonging to a minor is suspended immediately and removed after review.</p>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">2</span><h2>Tolérance zéro pour le contenu CSAE</h2></div>
+    <p>Les contenus, messages ou sollicitations impliquant des mineurs de quelque manière que ce soit sont strictement interdits. Les comptes concernés sont bannis définitivement, et les contenus illicites sont conservés et transmis aux autorités compétentes lorsque la loi l'exige.</p>
+    <p class="en-note"><strong>EN&nbsp;·</strong> Any content, message or solicitation involving minors is strictly prohibited; offending accounts are permanently banned and unlawful material is preserved and reported to the relevant authorities as required by law.</p>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">3</span><h2>Prévention et modération</h2></div>
+    <ul>
+      <li>Vérification d'identité optionnelle (badge «&nbsp;vérifié&nbsp;») par examen de documents officiels.</li>
+      <li>Modération des photos de profil avant publication.</li>
+      <li>Détection des comportements à risque et fermeture proactive des comptes suspects.</li>
+      <li>Blocage réciproque&nbsp;: un membre bloqué disparaît de la découverte, de la recherche et des conversations.</li>
+    </ul>
+    <p class="en-note"><strong>EN&nbsp;·</strong> Optional ID verification, profile-photo moderation, proactive removal of suspicious accounts, and user-to-user blocking.</p>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">4</span><h2>Signalement dans l'application</h2></div>
+    <p>Chaque profil et chaque conversation dispose d'une fonction de <strong>signalement</strong> et de <strong>blocage</strong> accessible en quelques secondes. Les signalements liés à la sécurité des enfants sont traités en priorité par notre équipe. Ils peuvent aussi nous être adressés directement à l'adresse ci-dessous.</p>
+    <p class="en-note"><strong>EN&nbsp;·</strong> Every profile and conversation offers in-app reporting and blocking. Child-safety reports are prioritised and may also be sent to the contact below.</p>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">5</span><h2>Coopération avec les autorités</h2></div>
+    <p>Nous respectons les lois applicables en matière de protection de l'enfance dans les pays où le service est disponible. Lorsqu'un contenu d'abus sexuel sur mineur est identifié, nous le signalons aux autorités régionales et nationales compétentes (ainsi qu'aux organismes de référence tels que le NCMEC lorsque cela s'applique) et coopérons pleinement avec leurs demandes légales.</p>
+    <p class="en-note"><strong>EN&nbsp;·</strong> We comply with applicable child-protection laws and report identified CSAE material to regional and national authorities (and to bodies such as NCMEC where applicable).</p>
+  </section>
+
+  <div class="contact">
+    <div class="sechead"><span class="num">6</span><h2>Contact — sécurité des enfants</h2></div>
+    <p>Pour toute question ou tout signalement relatif à la sécurité des enfants ou à la conformité CSAE&nbsp;:</p>
+    <div class="row">
+      <span class="label">E-mail dédié</span>
+      <a href="mailto:support@afriloveworld.com">support@afriloveworld.com</a>
+    </div>
+  </div>
+
+  <footer class="foot">
+    © 2026 AfriLove World — Normes de sécurité des enfants / Child Safety Standards
+  </footer>
+</main>
