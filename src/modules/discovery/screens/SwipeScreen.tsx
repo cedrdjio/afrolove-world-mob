@@ -4,12 +4,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
-import { SlidersHorizontal, Bell } from 'lucide-react-native';
+import { SlidersHorizontal, Bell, Sun, Moon } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
+import { useThemeStore } from '@/shared/theme/themeStore';
 import { useDiscoveryFeed, useSwipe } from '@/modules/discovery/hooks/useDiscovery';
 import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { useHasUnreadNotifications } from '@/modules/notifications/hooks/useNotifications';
@@ -51,6 +53,8 @@ export function SwipeScreen() {
   const hasUnreadNotifications = useHasUnreadNotifications();
   const entitlements = useEntitlements();
   const onlineIds = usePresenceStore((s) => s.onlineIds);
+  const c = useThemeColors();
+  const setThemePref = useThemeStore((s) => s.setPref);
 
   // « À proximité » réordonne le deck par distance (profils sans distance en
   // dernier). « Pour toi » garde l'ordre recommandé du serveur. Les profils
@@ -152,18 +156,36 @@ export function SwipeScreen() {
         className="flex-row items-center justify-between px-5"
         style={{ paddingTop: Math.max(insets.top, 24) + 12 }}
       >
-        <Pressable onPress={() => router.push('/discover-filters')}>
-          <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
-            <View className="h-11 w-11 items-center justify-center">
-              <SlidersHorizontal size={17} color={colors.ink.DEFAULT} />
-            </View>
-          </GlassSurface>
-        </Pressable>
+        <View className="flex-row items-center gap-2.5">
+          <Pressable onPress={() => router.push('/discover-filters')}>
+            <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
+              <View className="h-11 w-11 items-center justify-center">
+                <SlidersHorizontal size={17} color={c.ink.DEFAULT} />
+              </View>
+            </GlassSurface>
+          </Pressable>
+          {/* Bascule clair / sombre — juste à côté du filtre. Un appui force le
+              thème opposé au thème courant ; par défaut l'app suit le système. */}
+          <Pressable
+            onPress={() => setThemePref(c.isDark ? 'light' : 'dark')}
+            accessibilityLabel={c.isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+          >
+            <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
+              <View className="h-11 w-11 items-center justify-center">
+                {c.isDark ? (
+                  <Sun size={18} color={colors.gold.DEFAULT} />
+                ) : (
+                  <Moon size={17} color={c.ink.DEFAULT} />
+                )}
+              </View>
+            </GlassSurface>
+          </Pressable>
+        </View>
         <Text className="font-display text-[22px] tracking-wide text-ink">Découvrir</Text>
         <Pressable onPress={() => router.push('/notifications')}>
           <GlassSurface variant="light" radius={15} style={{ width: 44, height: 44 }}>
             <View className="h-11 w-11 items-center justify-center">
-              <Bell size={18} color={colors.ink.DEFAULT} />
+              <Bell size={18} color={c.ink.DEFAULT} />
               {hasUnreadNotifications ? (
                 <View className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-cream bg-brand" />
               ) : null}

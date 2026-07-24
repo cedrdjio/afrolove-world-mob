@@ -1,5 +1,6 @@
 import { View, StyleSheet, type ViewProps } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useColorScheme } from 'nativewind';
 import { colors } from '@/shared/constants/theme';
 import { GlowOrb } from './GlowOrb';
 
@@ -12,9 +13,12 @@ interface ScreenBackgroundProps extends ViewProps {
 
 /** Base full-bleed screen surface — Fluent style : dégradé lavande prononcé
  *  + halos lumineux intégrés côté clair, dégradé nuit + halos côté sombre.
- *  Les enfants (GlowOrb supplémentaires…) se superposent librement. */
+ *  En mode sombre, le fond « cream » bascule automatiquement sur la nuit. */
 export function ScreenBackground({ theme = 'cream', halos = true, style, children, ...props }: ScreenBackgroundProps) {
-  if (theme === 'deep') {
+  const { colorScheme } = useColorScheme();
+  const effectiveTheme = colorScheme === 'dark' ? 'deep' : theme;
+
+  if (effectiveTheme === 'deep') {
     return (
       <View style={[StyleSheet.absoluteFill, style]} {...props}>
         <LinearGradient

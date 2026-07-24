@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Valeurs par défaut (thème clair) des tokens ink/cream — identiques à la
+ * charte d'origine. Le ThemeProvider les remplace à l'exécution pour le mode
+ * sombre. Déclarées ici pour que NativeWind résolve les classes même hors du
+ * provider. */
+:root {
+  --ink: 46 36 64;
+  --ink-soft: 61 53 82;
+  --ink-muted: 94 84 115;
+  --ink-faint: 138 127 160;
+  --cream: 250 248 253;
+  --cream-bezel1: 237 228 249;
+  --cream-bezel2: 217 201 241;
+}

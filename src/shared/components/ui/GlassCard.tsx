@@ -1,5 +1,6 @@
 import { View, StyleSheet, type ViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useColorScheme } from 'nativewind';
 import { GlassSurface } from './GlassSurface';
 import { colors } from '@/shared/constants/theme';
 
@@ -18,7 +19,10 @@ interface GlassCardProps extends ViewProps {
  * anciens fonds blancs plats bg-white/[0.55]).
  */
 export function GlassCard({ tone = 'light', radius = 22, padding = 18, style, children, ...props }: GlassCardProps) {
-  const light = tone === 'light';
+  const { colorScheme } = useColorScheme();
+  // En mode sombre, une carte « claire » prend le reflet/ombre sombres pour
+  // rester cohérente (le verre lui-même est basculé par GlassSurface).
+  const light = tone === 'light' && colorScheme !== 'dark';
 
   return (
     <GlassSurface

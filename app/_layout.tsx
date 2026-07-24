@@ -11,6 +11,7 @@ import { colors } from '@/shared/constants/theme';
 import { queryClient } from '@/shared/services/queryClient';
 import { OfflineOverlay } from '@/shared/components/feedback';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
+import { ThemeProvider } from '@/shared/theme/ThemeProvider';
 import { useInitializeAuth } from '@/modules/auth/hooks/useAuth';
 import { useAuthDeepLink } from '@/modules/auth/hooks/useAuthDeepLink';
 import { usePushNavigation } from '@/modules/notifications/hooks/usePush';
@@ -44,6 +45,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <ErrorBoundary>
+            <ThemeProvider>
             <AppBootstrap />
             <Stack
               screenOptions={{
@@ -76,6 +78,7 @@ export default function RootLayout() {
               <Stack.Screen name="system" />
             </Stack>
             <OfflineOverlay />
+            </ThemeProvider>
           </ErrorBoundary>
         </QueryClientProvider>
       </SafeAreaProvider>

@@ -1,8 +1,19 @@
 import { View, StyleSheet, type ViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { useColorScheme } from 'nativewind';
 import { glass } from '@/shared/constants/theme';
 
 type GlassVariant = 'light' | 'lightStrong' | 'lightSoft' | 'dark' | 'darkStrong';
+
+// En mode sombre, les surfaces « claires » deviennent du verre sombre pour
+// rester lisibles sur le fond nuit. Les variantes déjà sombres ne bougent pas.
+const DARK_REMAP: Record<GlassVariant, GlassVariant> = {
+  light: 'dark',
+  lightStrong: 'darkStrong',
+  lightSoft: 'dark',
+  dark: 'dark',
+  darkStrong: 'darkStrong',
+};
 
 const VARIANT_CONFIG: Record<
   GlassVariant,
@@ -47,7 +58,9 @@ export function GlassSurface({
   children,
   ...props
 }: GlassSurfaceProps) {
-  const config = VARIANT_CONFIG[variant];
+  const { colorScheme } = useColorScheme();
+  const resolved = colorScheme === 'dark' ? DARK_REMAP[variant] : variant;
+  const config = VARIANT_CONFIG[resolved];
 
   return (
     <View style={[{ borderRadius: radius, overflow: 'hidden' }, style]} {...props}>

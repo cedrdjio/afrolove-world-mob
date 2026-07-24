@@ -19,18 +19,20 @@ module.exports = {
           DEFAULT: '#9B7EDE',
           dark: '#7C5CBF',
         },
-        // Ink — aubergine, texte sur fonds clairs
+        // Ink — texte. Passe par des variables CSS pour basculer en dark mode
+        // (valeurs par défaut = clair, identiques à l'origine ; voir global.css
+        // et ThemeProvider).
         ink: {
-          DEFAULT: '#2E2440',
-          soft: '#3D3552',
-          muted: '#5E5473',
-          faint: '#8A7FA0',
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          soft: 'rgb(var(--ink-soft) / <alpha-value>)',
+          muted: 'rgb(var(--ink-muted) / <alpha-value>)',
+          faint: 'rgb(var(--ink-faint) / <alpha-value>)',
         },
-        // Cream — blanc lavande / brume, surfaces claires
+        // Cream — surfaces claires, également pilotées par variables CSS.
         cream: {
-          DEFAULT: '#FAF8FD',
-          bezel1: '#EDE4F9',
-          bezel2: '#D9C9F1',
+          DEFAULT: 'rgb(var(--cream) / <alpha-value>)',
+          bezel1: 'rgb(var(--cream-bezel1) / <alpha-value>)',
+          bezel2: 'rgb(var(--cream-bezel2) / <alpha-value>)',
         },
         // Deep — nuit aubergine (splash, héros, match, premium)
         deep: {
