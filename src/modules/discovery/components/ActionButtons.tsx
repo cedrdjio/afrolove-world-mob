@@ -1,5 +1,5 @@
 import { View, Pressable } from 'react-native';
-import { X, Star, Heart, Bookmark } from 'lucide-react-native';
+import { X, Heart, Bookmark } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,14 +9,13 @@ import { gradients, colors } from '@/shared/constants/theme';
 
 interface ActionButtonsProps {
   onNope: () => void;
-  onSuperLike: () => void;
   onLike: () => void;
   /** Signet : garder le profil du dessus dans ses favoris (≠ like). */
   onToggleFavorite: () => void;
   isFavorite: boolean;
 }
 
-export function ActionButtons({ onNope, onSuperLike, onLike, onToggleFavorite, isFavorite }: ActionButtonsProps) {
+export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: ActionButtonsProps) {
   const heartbeat = useSharedValue(1);
 
   useEffect(() => {
@@ -47,18 +46,6 @@ export function ActionButtons({ onNope, onSuperLike, onLike, onToggleFavorite, i
         >
           <View className="h-[58px] w-[58px] items-center justify-center">
             <X size={22} color={colors.ink.muted} strokeWidth={2.2} />
-          </View>
-        </GlassSurface>
-      </Pressable>
-
-      <Pressable onPress={withHaptics(onSuperLike)}>
-        <GlassSurface
-          variant="lightStrong"
-          radius={24}
-          style={{ width: 48, height: 48, shadowColor: colors.ink.soft, shadowOpacity: 0.12, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}
-        >
-          <View className="h-12 w-12 items-center justify-center">
-            <Star size={19} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>

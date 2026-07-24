@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import * as Haptics from 'expo-haptics';
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -9,7 +10,7 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
-import { MoreHorizontal, MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark, Coffee, UserRound } from 'lucide-react-native';
+import { MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark, Coffee, UserRound, Flag, UserX } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground } from '@/shared/components/layout';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
@@ -20,7 +21,7 @@ import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { colors } from '@/shared/constants/theme';
 import { InfoRow } from '@/modules/profile/components/InfoRow';
-import { ProfileActionSheet } from '@/modules/profile/components/ProfileActionSheet';
+import { useBlockUser } from '@/modules/reports/hooks/useModeration';
 import type { Profile } from '@/modules/profile/types/profile';
 import type { ProfileDisplayData } from '@/modules/profile/hooks/useProfileDisplayData';
 
@@ -74,10 +75,32 @@ export function ProfileDetailView({
 }: ProfileDetailViewProps) {
   const router = useRouter();
   const [activePhoto, setActivePhoto] = useState(0);
-  // La feuille d'actions n'est montée que lorsqu'elle est ouverte — un
-  // BottomSheet fermé mais monté avalait tous les touchers (page figée).
-  const [actionsOpen, setActionsOpen] = useState(false);
+  const blockUser = useBlockUser();
   const displayName = profile.firstName ?? '';
+
+  // Confirmation avant blocage, puis retour visible de succès.
+  const handleBlock = () => {
+    Alert.alert(
+      `Bloquer ${displayName} ?`,
+      'Cette personne disparaîtra de vos découvertes, recherches et conversations, et ne pourra plus vous contacter.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Bloquer',
+          style: 'destructive',
+          onPress: () =>
+            blockUser.mutate(profile.id, {
+              onSuccess: () => {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                Alert.alert('Profil bloqué', `${displayName} ne peut plus vous voir ni vous contacter.`);
+                router.back();
+              },
+              onError: () => Alert.alert('Erreur', "Le blocage n'a pas pu être appliqué. Réessayez."),
+            }),
+        },
+      ],
+    );
+  };
 
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -296,6 +319,34 @@ export function ProfileDetailView({
               />
             </View>
           </GlassCard>
+
+          {/* Sécurité : signaler / bloquer, désormais visibles en bas de fiche
+              (plus dans un menu « … » caché). */}
+          {variant === 'discovery' ? (
+            <View className="mt-1 flex-row gap-3">
+              <Pressable
+                onPress={() => router.push(`/reports/${profile.id}`)}
+                className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl border border-danger/25 bg-danger/[0.06] py-3.5"
+                accessibilityLabel="Signaler ce profil"
+              >
+                <Flag size={15} color={colors.danger} />
+                <Text className="font-heading-semibold text-[13px] text-danger">Signaler</Text>
+              </Pressable>
+              <Pressable
+                onPress={handleBlock}
+                disabled={blockUser.isPending}
+                className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl border border-ink/15 bg-ink/[0.04] py-3.5"
+                accessibilityLabel="Bloquer ce profil"
+              >
+                {blockUser.isPending ? (
+                  <ActivityIndicator size="small" color={colors.ink.muted} />
+                ) : (
+                  <UserX size={15} color={colors.ink.muted} />
+                )}
+                <Text className="font-heading-semibold text-[13px] text-ink-muted">Bloquer</Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
       </Animated.ScrollView>
 
@@ -310,17 +361,7 @@ export function ProfileDetailView({
         <Animated.View style={[{ position: 'absolute', left: 60, right: 60 }, stickyHeaderStyle]}>
           <Text className="text-center font-display text-[17px] text-ink">{displayName}</Text>
         </Animated.View>
-        {variant === 'discovery' ? (
-          <Pressable onPress={() => setActionsOpen(true)}>
-            <GlassSurface variant="dark" radius={13} style={{ width: 42, height: 42 }}>
-              <View className="h-[42px] w-[42px] items-center justify-center">
-                <MoreHorizontal size={17} color="#fff" />
-              </View>
-            </GlassSurface>
-          </Pressable>
-        ) : (
-          <View style={{ width: 42 }} />
-        )}
+        <View style={{ width: 42 }} />
       </View>
 
       {variant === 'discovery' ? (
@@ -368,14 +409,6 @@ export function ProfileDetailView({
             </View>
           </GlassSurface>
         </View>
-      ) : null}
-
-      {variant === 'discovery' && actionsOpen ? (
-        <ProfileActionSheet
-          profileId={profile.id}
-          profileName={displayName}
-          onClose={() => setActionsOpen(false)}
-        />
       ) : null}
     </View>
   );

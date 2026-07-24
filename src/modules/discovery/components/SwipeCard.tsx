@@ -10,7 +10,6 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
 import { Heart, BadgeCheck, ShieldQuestion } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,9 +19,11 @@ import { formatLastSeen } from '@/shared/utils/lastSeen';
 import type { DiscoveryProfile } from '@/modules/discovery/types/discovery';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.28;
 
-export type SwipeDirection = 'left' | 'right' | 'up';
+// Les gestes de swipe sont volontairement désactivés : un tap ouvre la fiche,
+// et le like / pass passe par les boutons. La carte joue alors une sortie
+// vers la droite (like) ou la gauche (pass) — l'unique animation restante.
+export type SwipeDirection = 'left' | 'right';
 
 interface SwipeCardProps {
   profile: DiscoveryProfile;
@@ -31,7 +32,7 @@ interface SwipeCardProps {
   isTop: boolean;
   stackIndex: number;
   /** Renseigné quand un bouton d'action déclenche le swipe : la carte joue
-   *  la même animation de sortie qu'un geste avant de notifier onSwiped. */
+   *  son animation de sortie avant de notifier onSwiped. */
   commandedDirection?: SwipeDirection | null;
   /** Présence Realtime — affiche la pastille « En ligne » sur la carte. */
   isOnline?: boolean;
@@ -47,12 +48,10 @@ export function SwipeCard({
   isOnline = false,
 }: SwipeCardProps) {
   const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
   // Springs toward its slot so a card sliding from the stack to the top
   // visibly "wakes up" instead of snapping — this is what makes the deck
-  // feel fluid after every swipe.
+  // feel fluid after every action.
   const stackProgress = useSharedValue(stackIndex);
-  const crossedThreshold = useSharedValue(false);
   const isLeaving = useSharedValue(false);
 
   useEffect(() => {
@@ -66,13 +65,9 @@ export function SwipeCard({
     [onSwiped],
   );
 
-  const thresholdHaptic = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-  }, []);
-
   // The deck only advances once the exit animation has finished — advancing
-  // immediately unmounted the card mid-flight, making every swipe look like
-  // an abrupt teleport instead of a throw.
+  // immediately unmounted the card mid-flight, making every action look like
+  // an abrupt teleport instead of a glide.
   const animateOut = useCallback(
     (direction: SwipeDirection) => {
       'worklet';
@@ -82,100 +77,45 @@ export function SwipeCard({
         'worklet';
         if (finished) runOnJS(finishSwipe)(direction);
       };
-      if (direction === 'up') {
-        translateY.value = withTiming(-900, { duration: 260 }, done);
-      } else if (direction === 'right') {
-        translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: 260 }, done);
+      if (direction === 'right') {
+        translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: 280 }, done);
       } else {
-        translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: 260 }, done);
+        translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: 280 }, done);
       }
     },
-    [finishSwipe, isLeaving, translateX, translateY],
+    [finishSwipe, isLeaving, translateX],
   );
 
-  // Action-bar buttons (Nope / Super / Like) command the same exit animation
-  // as a finger swipe, so both paths look and behave identically.
+  // Action-bar buttons (Pass / Like) command the exit animation: pass slides
+  // the card left, like slides it right.
   useEffect(() => {
     if (isTop && commandedDirection) {
       animateOut(commandedDirection);
     }
   }, [isTop, commandedDirection, animateOut]);
 
-  const pan = Gesture.Pan()
+  // Tap-only: no pan, so the card can never be dragged into the profile by
+  // accident. A single tap opens the full profile.
+  const tap = Gesture.Tap()
     .enabled(isTop)
-    .onUpdate((event) => {
-      if (isLeaving.value) return;
-      translateX.value = event.translationX;
-      translateY.value = event.translationY;
-
-      // One gentle tick exactly when the card becomes "droppable".
-      const beyond =
-        Math.abs(event.translationX) > SWIPE_THRESHOLD || event.translationY < -SWIPE_THRESHOLD;
-      if (beyond && !crossedThreshold.value) {
-        crossedThreshold.value = true;
-        runOnJS(thresholdHaptic)();
-      } else if (!beyond && crossedThreshold.value) {
-        crossedThreshold.value = false;
-      }
-    })
-    .onEnd((event) => {
-      if (isLeaving.value) return;
-      crossedThreshold.value = false;
-      const goingUp = event.translationY < -SWIPE_THRESHOLD && Math.abs(event.translationX) < SWIPE_THRESHOLD;
-      const goingRight = event.translationX > SWIPE_THRESHOLD;
-      const goingLeft = event.translationX < -SWIPE_THRESHOLD;
-
-      if (goingUp) {
-        animateOut('up');
-      } else if (goingRight) {
-        animateOut('right');
-      } else if (goingLeft) {
-        animateOut('left');
-      } else {
-        translateX.value = withSpring(0, { damping: 18, stiffness: 180, overshootClamping: true });
-        translateY.value = withSpring(0, { damping: 18, stiffness: 180, overshootClamping: true });
-      }
+    .onEnd(() => {
+      runOnJS(onTap)();
     });
 
-  const tap = Gesture.Tap().onEnd(() => {
-    runOnJS(onTap)();
-  });
-
-  const composed = Gesture.Simultaneous(pan, tap);
-
   const cardStyle = useAnimatedStyle(() => {
-    const rotate = interpolate(translateX.value, [-SCREEN_WIDTH, 0, SCREEN_WIDTH], [-12, 0, 12], Extrapolation.CLAMP);
+    const rotate = interpolate(translateX.value, [-SCREEN_WIDTH, 0, SCREEN_WIDTH], [-10, 0, 10], Extrapolation.CLAMP);
     const stackScale = 1 - stackProgress.value * 0.04;
     const stackTranslateY = stackProgress.value * 8;
 
     return {
       transform: [
         { translateX: isTop ? translateX.value : 0 },
-        { translateY: (isTop ? translateY.value : 0) + stackTranslateY },
+        { translateY: stackTranslateY },
         { rotate: isTop ? `${rotate}deg` : '0deg' },
         { scale: stackScale },
       ],
     };
   });
-
-  const likeStampStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1], Extrapolation.CLAMP),
-    transform: [
-      { scale: interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0.7, 1], Extrapolation.CLAMP) },
-      { rotate: '-12deg' },
-    ],
-  }));
-  const nopeStampStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [-SWIPE_THRESHOLD, 0], [1, 0], Extrapolation.CLAMP),
-    transform: [
-      { scale: interpolate(translateX.value, [-SWIPE_THRESHOLD, 0], [1, 0.7], Extrapolation.CLAMP) },
-      { rotate: '12deg' },
-    ],
-  }));
-  const superStampStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(translateY.value, [-SWIPE_THRESHOLD, 0], [1, 0], Extrapolation.CLAMP),
-    transform: [{ scale: interpolate(translateY.value, [-SWIPE_THRESHOLD, 0], [1, 0.7], Extrapolation.CLAMP) }],
-  }));
 
   const locationLine = [
     [profile.city, profile.country].filter(Boolean).join(', '),
@@ -190,7 +130,7 @@ export function SwipeCard({
   const cardContent = (
     <Animated.View
       style={[
-        { position: 'absolute', inset: 0, borderRadius: 28, overflow: 'hidden' },
+        { position: 'absolute', inset: 0, borderRadius: 30, overflow: 'hidden' },
         { shadowColor: '#3D3552', shadowOpacity: 0.28, shadowRadius: 30, shadowOffset: { width: 0, height: 14 } },
         cardStyle,
       ]}
@@ -210,29 +150,6 @@ export function SwipeCard({
         locations={[0.38, 1]}
         style={{ position: 'absolute', inset: 0 }}
       />
-
-      {isTop ? (
-        <>
-          <Animated.View
-            style={[{ position: 'absolute', top: 20, left: 20 }, likeStampStyle]}
-            className="rounded-lg border-4 border-brand px-3 py-1"
-          >
-            <Text className="font-display-black text-[24px] text-brand">Like</Text>
-          </Animated.View>
-          <Animated.View
-            style={[{ position: 'absolute', top: 20, right: 20 }, nopeStampStyle]}
-            className="rounded-lg border-4 border-ink-muted px-3 py-1"
-          >
-            <Text className="font-display-black text-[24px] text-ink-muted">Nope</Text>
-          </Animated.View>
-          <Animated.View
-            style={[{ position: 'absolute', top: 20, alignSelf: 'center' }, superStampStyle]}
-            className="rounded-lg border-4 border-gold px-3 py-1"
-          >
-            <Text className="font-display-black text-[24px] text-gold">Super</Text>
-          </Animated.View>
-        </>
-      ) : null}
 
       <View className="absolute left-3.5 top-3.5 flex-row items-center gap-1.5 rounded-full border border-white/95 bg-white/[0.88] px-3 py-1.5">
         <Heart size={11} color={colors.brand.DEFAULT} fill={colors.brand.DEFAULT} />
@@ -284,5 +201,5 @@ export function SwipeCard({
 
   if (!isTop) return cardContent;
 
-  return <GestureDetector gesture={composed}>{cardContent}</GestureDetector>;
+  return <GestureDetector gesture={tap}>{cardContent}</GestureDetector>;
 }

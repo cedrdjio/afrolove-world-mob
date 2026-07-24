@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -7,14 +7,13 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { SlidersHorizontal, Bell } from 'lucide-react-native';
 import { ScreenBackground } from '@/shared/components/layout';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
-import { Chip } from '@/shared/components/ui/Chip';
 import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
 import { useDiscoveryFeed, useSwipe } from '@/modules/discovery/hooks/useDiscovery';
 import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { useHasUnreadNotifications } from '@/modules/notifications/hooks/useNotifications';
-import type { DiscoveryFeedMode, DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
+import type { DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
 import { SwipeCard, type SwipeDirection } from '@/modules/discovery/components/SwipeCard';
 import { ActionButtons } from '@/modules/discovery/components/ActionButtons';
 import { NoProfilesState } from '@/modules/discovery/screens/NoProfilesScreen';
@@ -22,43 +21,54 @@ import { usePresenceStore } from '@/shared/stores/presenceStore';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import { useFavoriteIds, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
 
-const FEED_MODES: { key: DiscoveryFeedMode; label: string }[] = [
-  { key: 'all', label: 'Tous' },
-  { key: 'new', label: 'Nouveaux' },
-  { key: 'online', label: 'En ligne' },
+// Deux onglets façon maquette : « Pour toi » = flux recommandé tel quel ;
+// « À proximité » = le même flux, trié par distance croissante côté client.
+type DiscoveryTab = 'foryou' | 'nearby';
+const TABS: { key: DiscoveryTab; label: string }[] = [
+  { key: 'foryou', label: 'Pour toi' },
+  { key: 'nearby', label: 'À proximité' },
 ];
 
 const DIRECTION_TO_ACTION: Record<SwipeDirection, SwipeAction> = {
   left: 'pass',
   right: 'like',
-  up: 'super_like',
 };
 
 export function SwipeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [mode, setMode] = useState<DiscoveryFeedMode>('all');
+  const [tab, setTab] = useState<DiscoveryTab>('foryou');
   const [deckIndex, setDeckIndex] = useState(0);
   const [commandedDirection, setCommandedDirection] = useState<SwipeDirection | null>(null);
-  const feed = useDiscoveryFeed(mode);
+  const feed = useDiscoveryFeed('all');
   const swipe = useSwipe();
   const feedError = useAppError(feed.error);
   const hasUnreadNotifications = useHasUnreadNotifications();
   const entitlements = useEntitlements();
   const onlineIds = usePresenceStore((s) => s.onlineIds);
 
-  const profiles = feed.data ?? [];
+  // « À proximité » réordonne le deck par distance (profils sans distance en
+  // dernier). « Pour toi » garde l'ordre recommandé du serveur.
+  const profiles = useMemo(() => {
+    const list = feed.data ?? [];
+    if (tab !== 'nearby') return list;
+    return [...list].sort((a, b) => {
+      const da = a.distanceKm ?? Number.POSITIVE_INFINITY;
+      const db = b.distanceKm ?? Number.POSITIVE_INFINITY;
+      return da - db;
+    });
+  }, [feed.data, tab]);
 
   // Compteur de swipes restants pour les comptes sans forfait (null = illimité).
   const swipesLimit = entitlements.data?.swipesLimit ?? null;
   const swipesRemaining =
     swipesLimit == null ? null : Math.max(0, swipesLimit - (entitlements.data?.swipesUsedToday ?? 0));
 
-  // A new deck (filters changed, chip changed, refetch) restarts at the top.
+  // A new deck (tab switched, filters changed, refetch) restarts at the top.
   useEffect(() => {
     setDeckIndex(0);
     setCommandedDirection(null);
-  }, [feed.dataUpdatedAt]);
+  }, [feed.dataUpdatedAt, tab]);
 
   // Deck épuisé ≠ « plus personne » : les profils déjà swipés étant exclus
   // côté serveur, un refetch ramène les visages suivants. Sans ça, l'écran
@@ -156,18 +166,29 @@ export function SwipeScreen() {
         </Pressable>
       </View>
 
-      <View className="flex-row items-center gap-2.5 px-5 pt-6">
-        {FEED_MODES.map((feedMode) => (
-          <Chip
-            key={feedMode.key}
-            label={feedMode.label}
-            selected={mode === feedMode.key}
-            onPress={() => {
-              Haptics.selectionAsync().catch(() => {});
-              setMode(feedMode.key);
-            }}
-          />
-        ))}
+      <View className="flex-row items-center gap-3 px-5 pt-6">
+        {/* Sélecteur à 2 onglets « Pour toi / À proximité » façon maquette. */}
+        <View className="flex-row rounded-full border border-brand/15 bg-white/60 p-1">
+          {TABS.map((t) => {
+            const active = tab === t.key;
+            return (
+              <Pressable
+                key={t.key}
+                onPress={() => {
+                  Haptics.selectionAsync().catch(() => {});
+                  setTab(t.key);
+                }}
+                className={`rounded-full px-4 py-2 ${active ? 'bg-brand' : ''}`}
+              >
+                <Text
+                  className={`font-heading text-[12.5px] ${active ? 'text-white' : 'text-ink-muted'}`}
+                >
+                  {t.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
         {swipesRemaining != null ? (
           <Pressable
             onPress={() => router.push('/premium/pricing')}
@@ -180,7 +201,7 @@ export function SwipeScreen() {
         ) : null}
       </View>
 
-      <View className="mx-[18px] mt-6 flex-1" style={{ marginBottom: 210 }}>
+      <View className="mx-3 mt-5 flex-1" style={{ marginBottom: 188 }}>
         {feed.isLoading || isRefilling ? (
           <Animated.View
             entering={FadeIn.duration(300)}
@@ -219,7 +240,6 @@ export function SwipeScreen() {
         <View className="absolute inset-x-0" style={{ bottom: 118 }}>
           <ActionButtons
             onNope={() => triggerSwipe('left')}
-            onSuperLike={() => triggerSwipe('up')}
             onLike={() => triggerSwipe('right')}
             onToggleFavorite={handleToggleFavorite}
             isFavorite={topIsFavorite}
