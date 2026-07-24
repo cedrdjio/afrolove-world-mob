@@ -13,6 +13,8 @@ import { ProfileDetailView } from '@/modules/profile/components/ProfileDetailVie
 import { useSwipe } from '@/modules/discovery/hooks/useDiscovery';
 import { useFavoriteIds, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
 import { useDeckStore } from '@/modules/discovery/stores/deckStore';
+import { usePresenceStore } from '@/shared/stores/presenceStore';
+import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 
 export function ProfileViewScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,6 +28,7 @@ export function ProfileViewScreen() {
   // Traiter un profil depuis la fiche le retire du deck Découverte : au retour,
   // on tombe directement sur le profil suivant (et non plus sur le même).
   const consume = useDeckStore((s) => s.consume);
+  const onlineIds = usePresenceStore((s) => s.onlineIds);
 
   // L'écran restait bloqué sur un loader infini quand la requête échouait
   // (RPC indisponible, profil supprimé, hors-ligne…) — sans même un bouton
@@ -124,11 +127,14 @@ export function ProfileViewScreen() {
     );
   };
 
+  const isOnline = onlineIds.has(profile.id) || isRecentlyOnline(profile.lastActiveAt);
+
   return (
     <ProfileDetailView
       profile={profile}
       displayData={displayData}
       variant="discovery"
+      isOnline={isOnline}
       onGalleryPress={() => router.push(`/profile/${profile.id}/gallery`)}
       onLike={handleLike}
       onPass={handlePass}

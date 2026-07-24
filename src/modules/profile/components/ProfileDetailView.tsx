@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
@@ -10,7 +10,7 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
-import { MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark, Coffee, UserRound, Flag, UserX } from 'lucide-react-native';
+import { MapPin, Heart, X, GraduationCap, Briefcase, Church, Ruler, ArrowLeft, Eye, Expand, Languages, Sparkles, Bookmark, Coffee, UserRound, Flag, UserX, ChevronDown, Images } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenBackground } from '@/shared/components/layout';
 import { PhotoPlaceholder } from '@/shared/components/ui/PhotoPlaceholder';
@@ -53,6 +53,8 @@ interface ProfileDetailViewProps {
   variant: 'discovery' | 'preview';
   /** Cartouches « compatibilité » / « points communs » de la maquette. */
   discoveryStats?: { compatibility: number; commonInterests: number };
+  /** Statut de présence temps réel — affiche la pastille « En temps réel ». */
+  isOnline?: boolean;
   onGalleryPress: () => void;
   onLike?: () => void;
   /** Passer ce profil (dislike) depuis la fiche : enregistre le pass puis
@@ -71,6 +73,7 @@ export function ProfileDetailView({
   profile,
   displayData,
   variant,
+  isOnline = false,
   onGalleryPress,
   onLike,
   onPass,
@@ -79,6 +82,7 @@ export function ProfileDetailView({
 }: ProfileDetailViewProps) {
   const router = useRouter();
   const [activePhoto, setActivePhoto] = useState(0);
+  const [bioExpanded, setBioExpanded] = useState(false);
   const blockUser = useBlockUser();
   const displayName = profile.firstName ?? '';
 
@@ -215,6 +219,12 @@ export function ProfileDetailView({
               </Text>
               {profile.isVerified ? <VerifiedBadge tone="onDark" /> : null}
             </View>
+            {isOnline ? (
+              <View className="mt-2 flex-row items-center gap-1.5 self-start rounded-full border border-white/20 bg-black/25 px-2.5 py-1">
+                <View className="h-2 w-2 rounded-full bg-success" />
+                <Text className="font-heading-semibold text-[11px] text-white">En temps réel</Text>
+              </View>
+            ) : null}
             {locationLine || distanceLabel ? (
               <View className="mt-2.5 flex-row flex-wrap items-center gap-2">
                 {locationLine ? (
@@ -249,10 +259,53 @@ export function ProfileDetailView({
         </View>
 
         <View className="px-5 pt-5" style={{ gap: 14 }}>
+          {/* Bandeau de vignettes photos, façon maquette : on tape pour changer
+              la photo du héros, la dernière tuile ouvre la galerie plein écran. */}
+          {profile.photos.length > 1 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 10, paddingRight: 4 }}
+            >
+              {profile.photos.map((photo, i) => (
+                <Pressable key={photo.id} onPress={() => setActivePhoto(i)}>
+                  <View
+                    className={`overflow-hidden rounded-2xl ${i === activePhoto ? 'border-2 border-brand' : 'border border-white/10'}`}
+                    style={{ width: 74, height: 92 }}
+                  >
+                    <Image source={{ uri: photo.url }} style={{ flex: 1 }} contentFit="cover" transition={150} />
+                  </View>
+                </Pressable>
+              ))}
+              <Pressable onPress={onGalleryPress} accessibilityLabel="Voir toutes les photos">
+                <View
+                  className="items-center justify-center gap-1 rounded-2xl border border-brand/25 bg-brand/[0.08]"
+                  style={{ width: 74, height: 92 }}
+                >
+                  <Images size={18} color={colors.brand.DEFAULT} />
+                  <Text className="font-heading-semibold text-[10px] text-brand">Voir tout</Text>
+                </View>
+              </Pressable>
+            </ScrollView>
+          ) : null}
+
           {profile.bio ? (
             <GlassCard>
-              <SectionTitle icon={<Sparkles size={13} color={colors.brand.DEFAULT} />}>À propos</SectionTitle>
-              <Text className="font-body text-[13.5px] leading-[21px] text-ink-muted">{profile.bio}</Text>
+              <Pressable
+                onPress={() => setBioExpanded((v) => !v)}
+                className="flex-row items-center justify-between"
+              >
+                <SectionTitle icon={<Sparkles size={13} color={colors.brand.DEFAULT} />}>À propos</SectionTitle>
+                <View style={{ transform: [{ rotate: bioExpanded ? '180deg' : '0deg' }] }}>
+                  <ChevronDown size={18} color={colors.ink.muted} />
+                </View>
+              </Pressable>
+              <Text
+                className="font-body text-[13.5px] leading-[21px] text-ink-muted"
+                numberOfLines={bioExpanded ? undefined : 3}
+              >
+                {profile.bio}
+              </Text>
             </GlassCard>
           ) : null}
 
