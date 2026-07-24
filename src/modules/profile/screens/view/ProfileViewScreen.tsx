@@ -12,6 +12,7 @@ import { useProfileDisplayData } from '@/modules/profile/hooks/useProfileDisplay
 import { ProfileDetailView } from '@/modules/profile/components/ProfileDetailView';
 import { useSwipe } from '@/modules/discovery/hooks/useDiscovery';
 import { useFavoriteIds, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
+import { useDeckStore } from '@/modules/discovery/stores/deckStore';
 
 export function ProfileViewScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +23,9 @@ export function ProfileViewScreen() {
   const swipe = useSwipe();
   const favoriteIds = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
+  // Traiter un profil depuis la fiche le retire du deck Découverte : au retour,
+  // on tombe directement sur le profil suivant (et non plus sur le même).
+  const consume = useDeckStore((s) => s.consume);
 
   // L'écran restait bloqué sur un loader infini quand la requête échouait
   // (RPC indisponible, profil supprimé, hors-ligne…) — sans même un bouton
@@ -46,12 +50,15 @@ export function ProfileViewScreen() {
 
   // "J'aime" records a real swipe; the celebration only fires on an actual
   // mutual match (it used to open unconditionally without saving anything).
+  // Dans tous les cas de succès on « consomme » le profil : la Découverte,
+  // toujours montée dessous, passe directement au suivant.
   const handleLike = () => {
     if (swipe.isPending) return;
     swipe.mutate(
       { targetId: profile.id, action: 'like' },
       {
         onSuccess: ({ isMatch }) => {
+          consume(profile.id);
           if (isMatch) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
             router.replace({
@@ -76,7 +83,46 @@ export function ProfileViewScreen() {
     );
   };
 
+  // Dislike depuis la fiche : enregistre le pass, retire le profil du deck,
+  // puis revient à la Découverte sur le profil suivant.
+  const handlePass = () => {
+    if (swipe.isPending) {
+      router.back();
+      return;
+    }
+    swipe.mutate(
+      { targetId: profile.id, action: 'pass' },
+      {
+        onSuccess: () => {
+          consume(profile.id);
+          router.back();
+        },
+        onError: () => {
+          // Un pass qui échoue ne doit pas bloquer l'utilisateur sur la fiche.
+          consume(profile.id);
+          router.back();
+        },
+      },
+    );
+  };
+
   const isFavorite = favoriteIds.has(profile.id);
+
+  // Favori depuis la fiche : on garde le profil de côté ET on avance au suivant
+  // (« comme une faveur »), au lieu de rester bloqué sur la même fiche.
+  const handleToggleFavorite = () => {
+    if (toggleFavorite.isPending) return;
+    toggleFavorite.mutate(
+      { targetId: profile.id, isFavorite },
+      {
+        onSuccess: () => {
+          consume(profile.id);
+          router.back();
+        },
+        onError: () => Alert.alert('Erreur', "L'action n'a pas pu être enregistrée. Réessayez."),
+      },
+    );
+  };
 
   return (
     <ProfileDetailView
@@ -85,11 +131,9 @@ export function ProfileViewScreen() {
       variant="discovery"
       onGalleryPress={() => router.push(`/profile/${profile.id}/gallery`)}
       onLike={handleLike}
+      onPass={handlePass}
       isFavorite={isFavorite}
-      onToggleFavorite={() => {
-        if (toggleFavorite.isPending) return;
-        toggleFavorite.mutate({ targetId: profile.id, isFavorite });
-      }}
+      onToggleFavorite={handleToggleFavorite}
     />
   );
 }

@@ -20,6 +20,7 @@ import { NoProfilesState } from '@/modules/discovery/screens/NoProfilesScreen';
 import { usePresenceStore } from '@/shared/stores/presenceStore';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import { useFavoriteIds, useToggleFavorite } from '@/modules/favorites/hooks/useSavedFavorites';
+import { useDeckStore } from '@/modules/discovery/stores/deckStore';
 
 // Deux onglets façon maquette : « Pour toi » = flux recommandé tel quel ;
 // « À proximité » = le même flux, trié par distance croissante côté client.
@@ -38,8 +39,12 @@ export function SwipeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<DiscoveryTab>('foryou');
-  const [deckIndex, setDeckIndex] = useState(0);
   const [commandedDirection, setCommandedDirection] = useState<SwipeDirection | null>(null);
+  // Profils déjà traités (like/pass/favori, y compris depuis la fiche détail) :
+  // ils sont filtrés du deck, donc le profil du dessus avance à chaque action.
+  const consumedIds = useDeckStore((s) => s.consumedIds);
+  const consume = useDeckStore((s) => s.consume);
+  const clearConsumed = useDeckStore((s) => s.clear);
   const feed = useDiscoveryFeed('all');
   const swipe = useSwipe();
   const feedError = useAppError(feed.error);
@@ -48,46 +53,47 @@ export function SwipeScreen() {
   const onlineIds = usePresenceStore((s) => s.onlineIds);
 
   // « À proximité » réordonne le deck par distance (profils sans distance en
-  // dernier). « Pour toi » garde l'ordre recommandé du serveur.
+  // dernier). « Pour toi » garde l'ordre recommandé du serveur. Les profils
+  // déjà traités sont retirés — c'est ce qui fait avancer le deck.
   const profiles = useMemo(() => {
-    const list = feed.data ?? [];
+    const list = (feed.data ?? []).filter((p) => !consumedIds.has(p.id));
     if (tab !== 'nearby') return list;
     return [...list].sort((a, b) => {
       const da = a.distanceKm ?? Number.POSITIVE_INFINITY;
       const db = b.distanceKm ?? Number.POSITIVE_INFINITY;
       return da - db;
     });
-  }, [feed.data, tab]);
+  }, [feed.data, tab, consumedIds]);
 
   // Compteur de swipes restants pour les comptes sans forfait (null = illimité).
   const swipesLimit = entitlements.data?.swipesLimit ?? null;
   const swipesRemaining =
     swipesLimit == null ? null : Math.max(0, swipesLimit - (entitlements.data?.swipesUsedToday ?? 0));
 
-  // A new deck (tab switched, filters changed, refetch) restarts at the top.
   useEffect(() => {
-    setDeckIndex(0);
     setCommandedDirection(null);
   }, [feed.dataUpdatedAt, tab]);
 
-  // Deck épuisé ≠ « plus personne » : les profils déjà swipés étant exclus
-  // côté serveur, un refetch ramène les visages suivants. Sans ça, l'écran
-  // affichait « Vous avez tout vu » alors qu'un simple refresh montrait
-  // d'autres profils.
-  const deckExhausted = !feed.isLoading && !feed.isFetching && deckIndex >= profiles.length;
+  // Deck épuisé ≠ « plus personne » : les profils déjà traités étant filtrés
+  // (et les swipés exclus côté serveur), on vide la liste locale et on
+  // recharge un lot frais. Sans ça, l'écran affichait « Vous avez tout vu »
+  // alors qu'un simple refresh montrait d'autres profils.
+  const rawCount = feed.data?.length ?? 0;
+  const deckExhausted = !feed.isLoading && !feed.isFetching && profiles.length === 0;
   useEffect(() => {
-    if (deckExhausted && profiles.length > 0) {
+    if (deckExhausted && rawCount > 0) {
+      clearConsumed();
       feed.refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deckExhausted, profiles.length]);
+  }, [deckExhausted, rawCount]);
 
-  const visibleCards = profiles.slice(deckIndex, deckIndex + 3);
-  const isRefilling = feed.isFetching && deckIndex >= profiles.length;
-  const isEmpty = deckExhausted && profiles.length === 0;
+  const visibleCards = profiles.slice(0, 3);
+  const isRefilling = feed.isFetching && profiles.length === 0;
+  const isEmpty = deckExhausted && rawCount === 0;
 
   const handleSwiped = (direction: SwipeDirection, profile: DiscoveryProfile) => {
-    setDeckIndex((i) => i + 1);
+    consume(profile.id);
     setCommandedDirection(null);
     swipe.mutate(
       { targetId: profile.id, action: DIRECTION_TO_ACTION[direction] },

@@ -55,6 +55,9 @@ interface ProfileDetailViewProps {
   discoveryStats?: { compatibility: number; commonInterests: number };
   onGalleryPress: () => void;
   onLike?: () => void;
+  /** Passer ce profil (dislike) depuis la fiche : enregistre le pass puis
+   *  revient à la Découverte sur le profil suivant. */
+  onPass?: () => void;
   /** Fourni uniquement quand un match existe déjà — ouvre la conversation. */
   onMessage?: () => void;
   /** Signet favoris (≠ like) — garder ce profil de côté. */
@@ -70,6 +73,7 @@ export function ProfileDetailView({
   variant,
   onGalleryPress,
   onLike,
+  onPass,
   isFavorite = false,
   onToggleFavorite,
 }: ProfileDetailViewProps) {
@@ -378,7 +382,7 @@ export function ProfileDetailView({
             }}
           >
             <View className="flex-row items-center gap-3 p-3">
-              <Pressable onPress={() => router.back()} accessibilityLabel="Passer">
+              <Pressable onPress={onPass ?? (() => router.back())} accessibilityLabel="Passer">
                 <GlassSurface variant="light" radius={24} style={{ width: 52, height: 52 }}>
                   <View className="h-[52px] w-[52px] items-center justify-center">
                     <X size={20} color={colors.ink.muted} />
