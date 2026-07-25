@@ -21,6 +21,7 @@ import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { colors } from '@/shared/constants/theme';
 import { InfoRow } from '@/modules/profile/components/InfoRow';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
 import { useBlockUser } from '@/modules/reports/hooks/useModeration';
 import type { Profile } from '@/modules/profile/types/profile';
 import type { ProfileDisplayData } from '@/modules/profile/hooks/useProfileDisplayData';
@@ -84,6 +85,10 @@ export function ProfileDetailView({
   const [activePhoto, setActivePhoto] = useState(0);
   const [bioExpanded, setBioExpanded] = useState(false);
   const blockUser = useBlockUser();
+  const c = useThemeColors();
+  // Accent des icônes : lavande vive en sombre (le violet brand se noyait
+  // dans les cartes charbon), brand en clair.
+  const accent = c.isDark ? colors.gold.DEFAULT : colors.brand.DEFAULT;
   const displayName = profile.firstName ?? '';
 
   // Confirmation avant blocage, puis retour visible de succès.
@@ -193,7 +198,7 @@ export function ProfileDetailView({
             <View className="absolute inset-x-[18px] flex-row gap-1.5" style={{ top: 108 }}>
               {profile.photos.map((photo, i) => (
                 <Pressable key={photo.id} onPress={() => setActivePhoto(i)} className="flex-1" hitSlop={8}>
-                  <View className={`h-[3px] rounded-full ${i === activePhoto ? 'bg-white/90' : 'bg-white/35'}`} />
+                  <View className={`h-[3px] rounded-full ${i === activePhoto ? 'bg-surface/90' : 'bg-white/35'}`} />
                 </Pressable>
               ))}
             </View>
@@ -282,8 +287,8 @@ export function ProfileDetailView({
                   className="items-center justify-center gap-1 rounded-2xl border border-brand/25 bg-brand/[0.08]"
                   style={{ width: 74, height: 92 }}
                 >
-                  <Images size={18} color={colors.brand.DEFAULT} />
-                  <Text className="font-heading-semibold text-[10px] text-brand">Voir tout</Text>
+                  <Images size={18} color={accent} />
+                  <Text className="font-heading-semibold text-[10px]" style={{ color: accent }}>Voir tout</Text>
                 </View>
               </Pressable>
             </ScrollView>
@@ -295,9 +300,9 @@ export function ProfileDetailView({
                 onPress={() => setBioExpanded((v) => !v)}
                 className="flex-row items-center justify-between"
               >
-                <SectionTitle icon={<Sparkles size={13} color={colors.brand.DEFAULT} />}>À propos</SectionTitle>
+                <SectionTitle icon={<Sparkles size={13} color={accent} />}>À propos</SectionTitle>
                 <View style={{ transform: [{ rotate: bioExpanded ? '180deg' : '0deg' }] }}>
-                  <ChevronDown size={18} color={colors.ink.muted} />
+                  <ChevronDown size={18} color={c.ink.muted} />
                 </View>
               </Pressable>
               <Text
@@ -311,7 +316,7 @@ export function ProfileDetailView({
 
           {displayData.interestLabels.length > 0 ? (
             <GlassCard>
-              <SectionTitle icon={<Heart size={13} color={colors.brand.DEFAULT} />}>Centres d'intérêt</SectionTitle>
+              <SectionTitle icon={<Heart size={13} color={accent} />}>Centres d'intérêt</SectionTitle>
               <View className="flex-row flex-wrap gap-2">
                 {displayData.interestLabels.map((label) => (
                   <Chip key={label} label={label} selected size="sm" />
@@ -322,7 +327,7 @@ export function ProfileDetailView({
 
           {displayData.languageLabels.length > 0 ? (
             <GlassCard>
-              <SectionTitle icon={<Languages size={13} color={colors.brand.DEFAULT} />}>Langues</SectionTitle>
+              <SectionTitle icon={<Languages size={13} color={accent} />}>Langues</SectionTitle>
               <View className="flex-row flex-wrap gap-2">
                 {displayData.languageLabels.map((label) => (
                   <Chip key={label} label={label} size="sm" />
@@ -333,7 +338,7 @@ export function ProfileDetailView({
 
           <GlassCard padding={0}>
             <View className="px-[18px] pt-[18px]">
-              <SectionTitle icon={<Coffee size={13} color={colors.brand.DEFAULT} />}>Mode de vie</SectionTitle>
+              <SectionTitle icon={<Coffee size={13} color={accent} />}>Mode de vie</SectionTitle>
             </View>
             {displayData.lifestyleRows.map((item, i) => (
               <View
@@ -350,26 +355,26 @@ export function ProfileDetailView({
 
           <GlassCard padding={0}>
             <View className="px-[18px] pt-[18px]">
-              <SectionTitle icon={<UserRound size={13} color={colors.brand.DEFAULT} />}>Essentiel</SectionTitle>
+              <SectionTitle icon={<UserRound size={13} color={accent} />}>Essentiel</SectionTitle>
             </View>
             <View className="px-[18px] pb-1.5">
               <InfoRow
-                icon={<Church size={15} color={colors.brand.DEFAULT} />}
+                icon={<Church size={15} color={accent} />}
                 label="Religion"
                 value={displayData.religionLabel ?? '—'}
               />
               <InfoRow
-                icon={<GraduationCap size={15} color={colors.brand.DEFAULT} />}
+                icon={<GraduationCap size={15} color={accent} />}
                 label="Éducation"
                 value={displayData.educationLabel ?? '—'}
               />
               <InfoRow
-                icon={<Briefcase size={15} color={colors.brand.DEFAULT} />}
+                icon={<Briefcase size={15} color={accent} />}
                 label="Profession"
                 value={profile.profession ?? '—'}
               />
               <InfoRow
-                icon={<Ruler size={15} color={colors.brand.DEFAULT} />}
+                icon={<Ruler size={15} color={accent} />}
                 label="Taille"
                 value={profile.heightCm ? `${profile.heightCm} cm` : '—'}
                 isLast
@@ -448,8 +453,8 @@ export function ProfileDetailView({
                     <View className="h-[52px] w-[52px] items-center justify-center">
                       <Bookmark
                         size={19}
-                        color={colors.brand.DEFAULT}
-                        fill={isFavorite ? colors.brand.DEFAULT : 'none'}
+                        color={accent}
+                        fill={isFavorite ? accent : "none"}
                       />
                     </View>
                   </GlassSurface>

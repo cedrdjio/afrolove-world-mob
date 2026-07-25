@@ -10,7 +10,7 @@ export function VerifiedFilterScreen() {
 
   return (
     <SearchFieldLayout title="Vérification" scrollable={false}>
-      <View className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-4">
+      <View className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-4">
         <View className="h-9 w-9 items-center justify-center rounded-full bg-gold/[0.12]">
           <BadgeCheck size={16} color={colors.gold.DEFAULT} />
         </View>

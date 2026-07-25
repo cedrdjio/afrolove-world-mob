@@ -82,7 +82,7 @@ export function DeleteAccountScreen() {
           placeholder={CONFIRM_WORD}
           placeholderTextColor="rgba(46,36,64,0.2)"
           autoCapitalize="characters"
-          className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-white/[0.55] px-5 py-4 font-heading text-[15px] tracking-wide text-ink"
+          className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-surface/[0.55] px-5 py-4 font-heading text-[15px] tracking-wide text-ink"
         />
 
         {deleteError ? (

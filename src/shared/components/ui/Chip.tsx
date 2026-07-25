@@ -61,7 +61,7 @@ export function Chip({ label, selected = false, onPress, size = 'md', icon }: Ch
         onPress={handlePress}
         onPressIn={pressIn}
         onPressOut={pressOut}
-        className={`rounded-full border-[1.5px] border-white/70 bg-white/[0.45] ${
+        className={`rounded-full border-[1.5px] border-surface-border/70 bg-surface/[0.45] ${
           size === 'sm' ? 'px-3.5 py-2' : 'px-4 py-2.5'
         }`}
       >

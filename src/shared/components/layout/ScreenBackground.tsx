@@ -16,9 +16,29 @@ interface ScreenBackgroundProps extends ViewProps {
  *  En mode sombre, le fond « cream » bascule automatiquement sur la nuit. */
 export function ScreenBackground({ theme = 'cream', halos = true, style, children, ...props }: ScreenBackgroundProps) {
   const { colorScheme } = useColorScheme();
-  const effectiveTheme = colorScheme === 'dark' ? 'deep' : theme;
+  const isDark = colorScheme === 'dark';
 
-  if (effectiveTheme === 'deep') {
+  // Mode sombre : fond quasi noir, plat, façon maquette de référence —
+  // pas de dégradé violet lumineux ni de halos marqués.
+  if (isDark) {
+    return (
+      <View style={[StyleSheet.absoluteFill, style]} {...props}>
+        <LinearGradient
+          colors={['#1A1424', '#120E1A', '#0C0912']}
+          locations={[0, 0.5, 1]}
+          start={{ x: 0.3, y: 0 }}
+          end={{ x: 0.7, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        {halos ? (
+          <GlowOrb size={300} color="rgba(139,105,214,0.06)" top={-100} right={-90} duration={12000} />
+        ) : null}
+        {children}
+      </View>
+    );
+  }
+
+  if (theme === 'deep') {
     return (
       <View style={[StyleSheet.absoluteFill, style]} {...props}>
         <LinearGradient

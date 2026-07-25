@@ -122,7 +122,7 @@ export function NotificationsScreen() {
                 <Pressable
                   onPress={() => openNotification(item)}
                   className={`mb-2 flex-row items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 active:opacity-85 ${
-                    item.read ? 'border-white/[0.85] bg-white/[0.65]' : 'border-white/[0.92] bg-white/[0.78]'
+                    item.read ? 'border-surface-border/[0.85] bg-surface/[0.65]' : 'border-surface-border/[0.92] bg-surface/[0.78]'
                   }`}
                   style={!item.read ? { borderLeftWidth: 3.5, borderLeftColor: accent } : undefined}
                 >

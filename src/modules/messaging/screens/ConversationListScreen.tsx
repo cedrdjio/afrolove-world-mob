@@ -63,7 +63,7 @@ export function ConversationListScreen() {
                 <Pressable
                   onPress={() => router.push(`/chat/${item.matchId}`)}
                   onLongPress={() => openActions(item)}
-                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5 active:opacity-85"
+                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5 active:opacity-85"
                 >
                   <Avatar
                     source={item.partnerAvatarUrl ?? undefined}

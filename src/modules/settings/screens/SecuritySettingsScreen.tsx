@@ -24,7 +24,7 @@ export function SecuritySettingsScreen() {
           <View style={{ width: 44 }} />
         </View>
 
-        <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
+        <View className="overflow-hidden rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45]">
           <SettingsRow
             icon={<Mail size={16} color={colors.brand.DEFAULT} />}
             label="Changer l'email"

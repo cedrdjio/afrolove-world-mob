@@ -34,7 +34,7 @@ export function SettingsHubScreen() {
         <Text className="mb-5 font-display text-[28px] text-ink">Paramètres</Text>
 
         <View
-          className="mb-[22px] flex-row items-center gap-3.5 rounded-3xl border-[1.5px] border-white/[0.92] bg-white/[0.78] px-5 py-[18px]"
+          className="mb-[22px] flex-row items-center gap-3.5 rounded-3xl border-[1.5px] border-surface-border/[0.92] bg-surface/[0.78] px-5 py-[18px]"
           style={{ shadowColor: colors.ink.soft, shadowOpacity: 0.08, shadowRadius: 18, shadowOffset: { width: 0, height: 6 } }}
         >
           <Avatar source={profile?.avatarUrl ?? undefined} seed={profile?.firstName ?? ''} size={62} />
@@ -160,7 +160,7 @@ function SettingsGroup({ title, children }: { title: string; children: React.Rea
   return (
     <View className="mb-4">
       <Text className="mb-2 font-heading text-[11px] text-ink/35">{title}</Text>
-      <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">{children}</View>
+      <View className="overflow-hidden rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45]">{children}</View>
     </View>
   );
 }

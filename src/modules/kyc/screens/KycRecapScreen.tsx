@@ -77,7 +77,7 @@ export function KycRecapScreen() {
         <View className="mb-[18px] gap-2.5">
           <Animated.View
             entering={FadeInDown.delay(90)}
-            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
+            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5"
           >
             <View className="h-9 w-[52px] flex-row overflow-hidden rounded-lg border border-brand/20">
               {frontUri ? <Image source={{ uri: frontUri }} style={{ flex: 1 }} contentFit="cover" /> : null}
@@ -98,7 +98,7 @@ export function KycRecapScreen() {
 
           <Animated.View
             entering={FadeInDown.delay(160)}
-            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
+            className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5"
           >
             <View className="h-9 w-[52px] overflow-hidden rounded-lg">
               {selfieUri ? <Image source={{ uri: selfieUri }} style={{ flex: 1 }} contentFit="cover" /> : null}

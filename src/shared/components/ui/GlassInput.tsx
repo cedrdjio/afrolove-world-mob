@@ -24,8 +24,8 @@ export const GlassInput = forwardRef<TextInput, GlassInputProps>(
         ) : null}
         <View
           className={cn(
-            'flex-row items-center gap-2.5 rounded-2xl border-[1.5px] bg-white/55 px-[18px] py-3.5',
-            focused || error ? 'border-brand/40 bg-white/[0.55]' : 'border-white/75',
+            'flex-row items-center gap-2.5 rounded-2xl border-[1.5px] bg-surface/55 px-[18px] py-3.5',
+            focused || error ? 'border-brand/40 bg-surface/[0.55]' : 'border-surface-border/75',
           )}
           style={{
             shadowColor: focused ? colors.brand.DEFAULT : colors.ink.soft,

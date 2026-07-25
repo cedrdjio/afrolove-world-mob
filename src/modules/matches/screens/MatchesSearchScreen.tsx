@@ -29,7 +29,7 @@ export function MatchesSearchScreen() {
       <ScreenBackground theme="cream" />
 
       <View className="mb-4 flex-row items-center gap-3 px-6" style={{ paddingTop: 24 }}>
-        <View className="flex-1 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
+        <View className="flex-1 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5">
           <SearchIcon size={16} color="rgba(62,53,82,0.28)" />
           <TextInput
             value={query}
@@ -71,7 +71,7 @@ export function MatchesSearchScreen() {
             <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45)}>
               <Pressable
                 onPress={() => router.push(`/chat/${item.matchId}`)}
-                className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5 active:opacity-85"
+                className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5 active:opacity-85"
               >
                 <Avatar
                   source={item.partnerAvatarUrl ?? undefined}

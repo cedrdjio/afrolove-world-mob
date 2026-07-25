@@ -44,7 +44,7 @@ export function ChangeEmailScreen() {
         scrollable={false}
       >
         <View className="flex-1 items-center justify-center px-2">
-          <View className="mb-4 h-16 w-16 items-center justify-center rounded-[20px] bg-white/[0.55]">
+          <View className="mb-4 h-16 w-16 items-center justify-center rounded-[20px] bg-surface/[0.55]">
             <MailCheck size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />
           </View>
           <Text className="mb-2 text-center font-display text-[22px] leading-tight text-ink">

@@ -44,7 +44,7 @@ export function AccountSettingsScreen() {
         value={lastName}
         onChangeText={setLastName}
       />
-      <View className="mt-1 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
+      <View className="mt-1 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5">
         <View className="flex-row items-center gap-2.5">
           <Mail size={15} color="rgba(62,53,82,0.26)" />
           <View className="flex-1">

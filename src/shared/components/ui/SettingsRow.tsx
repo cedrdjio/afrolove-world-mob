@@ -19,7 +19,7 @@ export function SettingsRow({ icon, label, onPress, isLast = false, right }: Set
         onPress?.();
       }}
       className={`flex-row items-center justify-between px-[18px] py-3.5 ${
-        isLast ? '' : 'border-b border-white/60'
+        isLast ? '' : 'border-b border-surface-border/60'
       }`}
     >
       <View className="flex-row items-center gap-3">

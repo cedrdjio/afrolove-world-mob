@@ -95,7 +95,7 @@ export function VerificationPromptModal() {
             confiance aux profils vérifiés.
           </Text>
 
-          <View className="mb-6 rounded-2xl bg-white/[0.65] px-4 py-3.5" style={{ gap: 10 }}>
+          <View className="mb-6 rounded-2xl bg-surface/[0.65] px-4 py-3.5" style={{ gap: 10 }}>
             <View className="flex-row items-center gap-2.5">
               <BadgeCheck size={15} color={colors.gold.DEFAULT} strokeWidth={2.4} />
               <Text className="flex-1 font-body-medium text-[12.5px] text-ink">

@@ -42,7 +42,7 @@ function DateField({
   max?: number;
 }) {
   return (
-    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/70 bg-white/[0.45] px-3 py-4">
+    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-surface-border/70 bg-surface/[0.45] px-3 py-4">
       <TextInput
         value={value}
         onChangeText={(t) => {

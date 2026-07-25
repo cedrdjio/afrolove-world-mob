@@ -34,6 +34,11 @@ module.exports = {
           bezel1: 'rgb(var(--cream-bezel1) / <alpha-value>)',
           bezel2: 'rgb(var(--cream-bezel2) / <alpha-value>)',
         },
+        // Surface — fond des cartes : blanc en clair, charbon en sombre.
+        // Remplace les anciens bg-white/... de surface pour que les cartes
+        // restent lisibles dans les deux thèmes.
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        'surface-border': 'rgb(var(--surface-border) / <alpha-value>)',
         // Deep — nuit aubergine (splash, héros, match, premium)
         deep: {
           DEFAULT: '#221937',

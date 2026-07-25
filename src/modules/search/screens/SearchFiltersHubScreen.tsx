@@ -54,7 +54,7 @@ export function SearchFiltersHubScreen() {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-          <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
+          <View className="overflow-hidden rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45]">
             {rows.map((row, i) => (
               <Pressable
                 key={row.label}

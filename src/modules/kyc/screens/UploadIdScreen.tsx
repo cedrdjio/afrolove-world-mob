@@ -59,7 +59,7 @@ export function UploadIdScreen() {
         <KycHeader step={1} />
 
         <View
-          className="mb-3.5 h-[60px] w-[60px] items-center justify-center rounded-[18px] bg-white/[0.55]"
+          className="mb-3.5 h-[60px] w-[60px] items-center justify-center rounded-[18px] bg-surface/[0.55]"
           style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 16, shadowOffset: { width: 0, height: 4 } }}
         >
           <IdCard size={28} color={colors.brand.DEFAULT} strokeWidth={1.6} />
@@ -80,7 +80,7 @@ export function UploadIdScreen() {
                 key={doc.key}
                 onPress={() => setDocType(doc.key)}
                 className={`flex-1 items-center rounded-2xl border-[1.5px] py-3.5 ${
-                  selected ? 'border-brand/30 bg-brand/[0.1]' : 'border-white/[0.88] bg-white/65'
+                  selected ? 'border-brand/30 bg-brand/[0.1]' : 'border-surface-border/[0.88] bg-surface/65'
                 }`}
               >
                 <View style={{ marginBottom: 6 }}>
@@ -123,7 +123,7 @@ export function UploadIdScreen() {
           <Pressable
             onPress={() => pickImage('back')}
             style={{ aspectRatio: 3 / 2 }}
-            className="flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl border-2 border-dashed border-brand/[0.22] bg-white/55"
+            className="flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl border-2 border-dashed border-brand/[0.22] bg-surface/55"
           >
             {backUri ? (
               <Image source={{ uri: backUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
@@ -136,7 +136,7 @@ export function UploadIdScreen() {
           </Pressable>
         </View>
 
-        <View className="mb-4 rounded-2xl border-[1.5px] border-white/[0.88] bg-white/65 px-4 py-3.5">
+        <View className="mb-4 rounded-2xl border-[1.5px] border-surface-border/[0.88] bg-surface/65 px-4 py-3.5">
           <Text className="mb-2 font-heading text-[11px] text-ink/[0.38]">
             Conseils pour une bonne photo
           </Text>

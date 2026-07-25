@@ -35,7 +35,7 @@ function DateField({
   max?: number;
 }) {
   return (
-    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-white/70 bg-white/[0.45] px-3 py-4">
+    <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-surface-border/70 bg-surface/[0.45] px-3 py-4">
       <TextInput
         value={value}
         onChangeText={(t) => {
@@ -70,7 +70,7 @@ export function BirthdayScreen() {
       <OnboardingHeader step={3} total={8} />
 
       <View
-        className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]"
+        className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-surface/[0.55]"
         style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
       >
         <Cake size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />

@@ -91,7 +91,7 @@ export function ProfileCompletionScreen() {
           {doneItems.map((item) => (
             <View
               key={item.key}
-              className="flex-row items-center gap-3 rounded-[17px] border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
+              className="flex-row items-center gap-3 rounded-[17px] border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5"
             >
               <LinearGradient
                 colors={gradients.brand}
@@ -111,7 +111,7 @@ export function ProfileCompletionScreen() {
             <Pressable
               key={item.key}
               onPress={() => router.push(item.href)}
-              className="flex-row items-center gap-3 rounded-[17px] border-[1.5px] border-brand/[0.22] bg-white/55 px-4 py-3.5"
+              className="flex-row items-center gap-3 rounded-[17px] border-[1.5px] border-brand/[0.22] bg-surface/55 px-4 py-3.5"
             >
               <View className="h-8 w-8 items-center justify-center rounded-[10px] border-[1.5px] border-dashed border-brand/30 bg-brand/10">
                 <Plus size={14} color={colors.brand.DEFAULT} />

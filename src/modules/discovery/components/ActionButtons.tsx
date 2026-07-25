@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect } from 'react';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { gradients, colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
 
 interface ActionButtonsProps {
   onNope: () => void;
@@ -16,6 +17,11 @@ interface ActionButtonsProps {
 }
 
 export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: ActionButtonsProps) {
+  const c = useThemeColors();
+  // Icônes contrastées dans les deux thèmes (le X sombre disparaissait sur
+  // les pastilles charbon du mode nuit).
+  const nopeColor = c.isDark ? 'rgba(255,255,255,0.85)' : colors.ink.muted;
+  const bookmarkColor = c.isDark ? colors.gold.DEFAULT : colors.brand.DEFAULT;
   const heartbeat = useSharedValue(1);
 
   useEffect(() => {
@@ -45,7 +51,7 @@ export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: 
           style={{ width: 58, height: 58, shadowColor: colors.ink.soft, shadowOpacity: 0.14, shadowRadius: 20, shadowOffset: { width: 0, height: 8 } }}
         >
           <View className="h-[58px] w-[58px] items-center justify-center">
-            <X size={22} color={colors.ink.muted} strokeWidth={2.2} />
+            <X size={22} color={nopeColor} strokeWidth={2.2} />
           </View>
         </GlassSurface>
       </Pressable>
@@ -80,8 +86,8 @@ export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: 
           <View className="h-12 w-12 items-center justify-center">
             <Bookmark
               size={19}
-              color={colors.brand.DEFAULT}
-              fill={isFavorite ? colors.brand.DEFAULT : 'none'}
+              color={bookmarkColor}
+              fill={isFavorite ? bookmarkColor : 'none'}
             />
           </View>
         </GlassSurface>

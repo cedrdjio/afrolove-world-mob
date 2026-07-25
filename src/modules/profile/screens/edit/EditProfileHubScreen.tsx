@@ -82,7 +82,7 @@ export function EditProfileHubScreen() {
             <Text className="mb-2 font-heading text-[11px] text-ink/35">
               {section.title}
             </Text>
-            <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
+            <View className="overflow-hidden rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45]">
               {section.rows.map((row, i) => (
                 <SettingsRow
                   key={row.label}

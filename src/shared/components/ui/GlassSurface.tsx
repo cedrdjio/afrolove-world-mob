@@ -15,6 +15,13 @@ const DARK_REMAP: Record<GlassVariant, GlassVariant> = {
   darkStrong: 'darkStrong',
 };
 
+// Surfaces du thème sombre : charbon aubergine quasi opaque + hairline
+// discrète — des cartes solides façon maquette, pas un voile blanc.
+const DARK_THEME_CONFIG: Record<'dark' | 'darkStrong', { background: string; border: string; intensity: number }> = {
+  dark: { background: 'rgba(42,35,60,0.88)', border: 'rgba(255,255,255,0.07)', intensity: 10 },
+  darkStrong: { background: 'rgba(52,44,74,0.94)', border: 'rgba(255,255,255,0.09)', intensity: 12 },
+};
+
 const VARIANT_CONFIG: Record<
   GlassVariant,
   { background: string; border: string; blurTint: 'light' | 'dark'; intensity: number }
@@ -59,8 +66,11 @@ export function GlassSurface({
   ...props
 }: GlassSurfaceProps) {
   const { colorScheme } = useColorScheme();
-  const resolved = colorScheme === 'dark' ? DARK_REMAP[variant] : variant;
-  const config = VARIANT_CONFIG[resolved];
+  const isDarkTheme = colorScheme === 'dark';
+  const resolved = isDarkTheme ? DARK_REMAP[variant] : variant;
+  const config = isDarkTheme
+    ? { ...VARIANT_CONFIG[resolved], ...DARK_THEME_CONFIG[resolved as 'dark' | 'darkStrong'] }
+    : VARIANT_CONFIG[resolved];
 
   return (
     <View style={[{ borderRadius: radius, overflow: 'hidden' }, style]} {...props}>

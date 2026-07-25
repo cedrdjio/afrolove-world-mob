@@ -7,6 +7,7 @@ import { Compass, Heart, MessageCircle, User } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
 
 const TABS = [
   { key: 'discover', href: '/(tabs)/discover', icon: Compass },
@@ -26,6 +27,11 @@ function TabItem({
   fillWhenActive: boolean;
   onPress: () => void;
 }) {
+  const c = useThemeColors();
+  // Icônes lisibles dans les deux thèmes : lavande vive + blanc estompé en
+  // sombre, brand + aubergine estompée en clair.
+  const activeColor = c.isDark ? colors.gold.DEFAULT : colors.brand.DEFAULT;
+  const idleColor = c.isDark ? 'rgba(255,255,255,0.42)' : 'rgba(46,36,64,0.28)';
   const pop = useSharedValue(active ? 1 : 0);
 
   // Becoming active lifts the icon subtly; leaving fades it back — a clean
@@ -49,12 +55,15 @@ function TabItem({
       <Animated.View style={iconStyle}>
         <Icon
           size={22}
-          color={active ? colors.brand.DEFAULT : 'rgba(46,36,64,0.28)'}
+          color={active ? activeColor : idleColor}
           strokeWidth={active ? 2.4 : 1.8}
-          fill={active && fillWhenActive ? colors.brand.DEFAULT : 'none'}
+          fill={active && fillWhenActive ? activeColor : 'none'}
         />
       </Animated.View>
-      <Animated.View style={dotStyle} className="h-1 w-1 rounded-full bg-brand" />
+      <Animated.View
+        style={[dotStyle, { backgroundColor: activeColor }]}
+        className="h-1 w-1 rounded-full"
+      />
     </Pressable>
   );
 }

@@ -38,7 +38,7 @@ export function PremiumFeaturesScreen() {
             {FEATURES.map((feature) => (
               <View
                 key={feature.title}
-                className="flex-row items-start gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-4"
+                className="flex-row items-start gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-4"
               >
                 <View className="h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.12]">
                   <feature.Icon size={18} color={colors.gold.DEFAULT} />

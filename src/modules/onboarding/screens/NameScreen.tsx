@@ -47,7 +47,7 @@ export function NameScreen() {
 
       <View className="flex-1">
         <View
-          className="mb-[22px] h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]"
+          className="mb-[22px] h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-surface/[0.55]"
           style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
         >
           <UserRound size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />
@@ -61,7 +61,7 @@ export function NameScreen() {
         </Text>
 
         <Text className="mb-2 font-heading-semibold text-[11.5px] text-ink/45">Prénom</Text>
-        <View className="mb-4 flex-row items-center gap-2.5 rounded-[18px] border-2 border-brand/35 bg-white/[0.55] px-[22px] py-4">
+        <View className="mb-4 flex-row items-center gap-2.5 rounded-[18px] border-2 border-brand/35 bg-surface/[0.55] px-[22px] py-4">
           <TextInput
             autoFocus
             value={firstName}
@@ -74,7 +74,7 @@ export function NameScreen() {
         </View>
 
         <Text className="mb-2 font-heading-semibold text-[11.5px] text-ink/45">Nom</Text>
-        <View className="mb-3 flex-row items-center gap-2.5 rounded-[18px] border-2 border-brand/35 bg-white/[0.55] px-[22px] py-4">
+        <View className="mb-3 flex-row items-center gap-2.5 rounded-[18px] border-2 border-brand/35 bg-surface/[0.55] px-[22px] py-4">
           <TextInput
             value={lastName}
             onChangeText={setLastName}

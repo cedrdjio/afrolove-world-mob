@@ -180,7 +180,7 @@ export function FullscreenGalleryScreen() {
 
       <View className="absolute inset-x-0 flex-row justify-center gap-1.5 px-6" style={{ top: 58 }}>
         {photos.map((photo, i) => (
-          <View key={photo.id} className={`h-1 flex-1 rounded-full ${i === index ? 'bg-white/90' : 'bg-white/30'}`} />
+          <View key={photo.id} className={`h-1 flex-1 rounded-full ${i === index ? 'bg-surface/90' : 'bg-white/30'}`} />
         ))}
       </View>
 

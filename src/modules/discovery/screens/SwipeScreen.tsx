@@ -196,7 +196,7 @@ export function SwipeScreen() {
 
       <View className="flex-row items-center gap-3 px-5 pt-6">
         {/* Sélecteur à 2 onglets « Pour toi / À proximité » façon maquette. */}
-        <View className="flex-row rounded-full border border-brand/15 bg-white/60 p-1">
+        <View className="flex-row rounded-full border border-brand/15 bg-surface/60 p-1">
           {TABS.map((t) => {
             const active = tab === t.key;
             return (
@@ -220,9 +220,11 @@ export function SwipeScreen() {
         {swipesRemaining != null ? (
           <Pressable
             onPress={() => router.push('/premium/pricing')}
-            className="ml-auto rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5"
+            className={`ml-auto rounded-full border px-3 py-1.5 ${
+              c.isDark ? 'border-white/15 bg-white/[0.08]' : 'border-brand/20 bg-brand/[0.08]'
+            }`}
           >
-            <Text className="font-heading text-[10.5px] uppercase text-brand">
+            <Text className={`font-heading text-[10.5px] uppercase ${c.isDark ? 'text-gold' : 'text-brand'}`}>
               {swipesRemaining} swipe{swipesRemaining > 1 ? 's' : ''}
             </Text>
           </Pressable>
@@ -233,7 +235,7 @@ export function SwipeScreen() {
         {feed.isLoading || isRefilling ? (
           <Animated.View
             entering={FadeIn.duration(300)}
-            className="flex-1 items-center justify-center rounded-[28px] border-[1.5px] border-white/80 bg-white/50"
+            className="flex-1 items-center justify-center rounded-[28px] border-[1.5px] border-surface-border/80 bg-surface/50"
           >
             <ActivityIndicator size="large" color={colors.brand.DEFAULT} />
             <Text className="mt-4 font-body text-[13px] text-ink-muted">Recherche de profils…</Text>

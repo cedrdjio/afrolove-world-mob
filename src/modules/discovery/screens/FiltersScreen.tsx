@@ -97,7 +97,7 @@ export function FiltersScreen() {
                 key={key}
                 onPress={() => setScope(key)}
                 className={`flex-row items-center gap-3.5 rounded-2xl border-[1.5px] px-4 py-3.5 active:opacity-90 ${
-                  selected ? 'border-brand/[0.45] bg-brand/[0.08]' : 'border-white/70 bg-white/[0.45]'
+                  selected ? 'border-brand/[0.45] bg-brand/[0.08]' : 'border-surface-border/70 bg-surface/[0.45]'
                 }`}
               >
                 <View
@@ -124,7 +124,7 @@ export function FiltersScreen() {
         </View>
 
         {scope === 'country' ? (
-          <View className="mb-4 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-4">
+          <View className="mb-4 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-4">
             <Text className="mb-3 font-heading text-[11px] text-ink/40">Quel pays ?</Text>
             {countriesQuery.isLoading ? (
               <ActivityIndicator size="small" color={colors.brand.DEFAULT} />
@@ -147,7 +147,7 @@ export function FiltersScreen() {
         ) : null}
 
         <Text className="mb-3 font-heading text-[11px] text-ink/40">Tranche d'âge</Text>
-        <View className="mb-7 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
+        <View className="mb-7 flex-row items-center justify-between rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-5 py-4">
           <Stepper
             value={ageMin}
             onDecrement={() => setAgeRange(Math.max(18, ageMin - 1), ageMax)}
@@ -161,7 +161,7 @@ export function FiltersScreen() {
           />
         </View>
 
-        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
+        <View className="mb-8 flex-row items-center justify-between rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-5 py-4">
           <Text className="font-heading-semibold text-[13px] text-ink">Profils vérifiés uniquement</Text>
           <ToggleSwitch value={verifiedOnly} onChange={toggleVerifiedOnly} />
         </View>

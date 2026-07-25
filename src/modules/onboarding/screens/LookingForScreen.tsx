@@ -24,7 +24,7 @@ export function LookingForScreen() {
     <OnboardingLayout orbPosition="bottomRight">
       <OnboardingHeader step={4} total={8} />
 
-      <View className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]">
+      <View className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-surface/[0.55]">
         <Search size={28} color={colors.brand.DEFAULT} strokeWidth={1.8} />
       </View>
       <Text className="mb-2 font-display text-[36px] leading-none text-ink">Je recherche…</Text>

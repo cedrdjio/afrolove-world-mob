@@ -16,7 +16,7 @@ interface GlassCardProps extends ViewProps {
 /**
  * Carte de verre Fluent — BlurView réel + reflet supérieur + ombre portée
  * douce. C'est la brique standard des cartes de contenu (remplace les
- * anciens fonds blancs plats bg-white/[0.55]).
+ * anciens fonds blancs plats bg-surface/[0.55]).
  */
 export function GlassCard({ tone = 'light', radius = 22, padding = 18, style, children, ...props }: GlassCardProps) {
   const { colorScheme } = useColorScheme();
@@ -48,12 +48,13 @@ export function GlassCard({ tone = 'light', radius = 22, padding = 18, style, ch
       ]}
       {...props}
     >
-      {/* Reflet — la lumière accroche le haut de la carte comme sur la maquette. */}
+      {/* Reflet — net en clair ; à peine perceptible en sombre pour garder
+          des cartes charbon solides (le voile blanc délavait tout). */}
       <LinearGradient
         colors={
           light
             ? ['rgba(255,255,255,0.65)', 'rgba(255,255,255,0)']
-            : ['rgba(255,255,255,0.14)', 'rgba(255,255,255,0)']
+            : ['rgba(255,255,255,0.04)', 'rgba(255,255,255,0)']
         }
         locations={[0, 0.55]}
         style={[StyleSheet.absoluteFill, { borderRadius: radius }]}

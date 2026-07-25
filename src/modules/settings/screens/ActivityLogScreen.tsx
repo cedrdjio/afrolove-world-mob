@@ -70,7 +70,7 @@ export function ActivityLogScreen() {
             key={key}
             onPress={() => setFilter(key)}
             className={`rounded-full border-[1.5px] px-3.5 py-1.5 ${
-              filter === key ? 'border-brand bg-brand' : 'border-white/70 bg-white/[0.45]'
+              filter === key ? 'border-brand bg-brand' : 'border-surface-border/70 bg-surface/[0.45]'
             }`}
           >
             <Text className={`font-heading text-[11px] ${filter === key ? 'text-white' : 'text-ink/50'}`}>
@@ -114,7 +114,7 @@ export function ActivityLogScreen() {
             return (
               <View
                 key={log.id}
-                className="mb-2 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3"
+                className="mb-2 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3"
               >
                 <View className="mb-1 flex-row items-center gap-2">
                   <View

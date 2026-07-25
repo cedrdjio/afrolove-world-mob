@@ -57,7 +57,7 @@ export function EditPreferencesScreen() {
       </View>
 
       <Text className="mb-2.5 font-heading text-[11px] text-ink/40">Tranche d'âge</Text>
-      <View className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-5 py-4">
+      <View className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-5 py-4">
         <Stepper value={ageMin} onChange={(v) => setAgeMin(Math.min(v, ageMax))} min={18} max={ageMax} />
         <Text className="font-body-medium text-[12px] text-ink-muted">à</Text>
         <Stepper value={ageMax} onChange={(v) => setAgeMax(Math.max(v, ageMin))} min={ageMin} max={99} />

@@ -116,7 +116,7 @@ export function UploadSelfieScreen() {
             className="h-[72px] w-[72px] items-center justify-center rounded-full border-[3px] border-white/30 active:opacity-80"
             accessibilityLabel="Prendre le selfie"
           >
-            <View className="h-[58px] w-[58px] rounded-full bg-white/90" />
+            <View className="h-[58px] w-[58px] rounded-full bg-surface/90" />
           </Pressable>
         )}
       </View>

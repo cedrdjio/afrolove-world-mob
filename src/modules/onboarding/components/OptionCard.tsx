@@ -46,7 +46,7 @@ export function OptionCard({ Icon, title, description, selected, onPress }: Opti
   return (
     <Pressable
       onPress={handlePress}
-      className="flex-row items-center gap-3.5 rounded-[22px] border-[1.5px] border-white/[0.88] bg-white/65 px-5 py-5"
+      className="flex-row items-center gap-3.5 rounded-[22px] border-[1.5px] border-surface-border/[0.88] bg-surface/65 px-5 py-5"
       style={{ shadowColor: '#3D3552', shadowOpacity: 0.07, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
     >
       <View className="h-[50px] w-[50px] items-center justify-center rounded-2xl bg-brand/[0.08]">

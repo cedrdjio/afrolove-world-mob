@@ -123,13 +123,13 @@ function PhotoTile({
 
         <Pressable
           onPress={onRemove}
-          className="absolute right-1.5 top-1.5 h-[22px] w-[22px] items-center justify-center rounded-full bg-white/90"
+          className="absolute right-1.5 top-1.5 h-[22px] w-[22px] items-center justify-center rounded-full bg-surface/90"
         >
           <X size={11} color={colors.ink.DEFAULT} />
         </Pressable>
         <Pressable
           onPress={onReplace}
-          className="absolute right-1.5 top-8 h-[22px] w-[22px] items-center justify-center rounded-full bg-white/90"
+          className="absolute right-1.5 top-8 h-[22px] w-[22px] items-center justify-center rounded-full bg-surface/90"
         >
           <RefreshCw size={11} color={colors.ink.DEFAULT} />
         </Pressable>
@@ -141,7 +141,7 @@ function PhotoTile({
         ) : (
           <Pressable
             onPress={onMakePrimary}
-            className="absolute bottom-1.5 left-1.5 h-[22px] w-[22px] items-center justify-center rounded-full bg-white/90"
+            className="absolute bottom-1.5 left-1.5 h-[22px] w-[22px] items-center justify-center rounded-full bg-surface/90"
           >
             <Star size={11} color={colors.gold.DEFAULT} />
           </Pressable>
@@ -232,7 +232,7 @@ export function EditPhotosScreen() {
             onPress={handleAdd}
             disabled={addingSlot}
             style={{ width: columnWidth, height: rowHeight }}
-            className="items-center justify-center rounded-2xl border-2 border-dashed border-brand/[0.28] bg-white/[0.62]"
+            className="items-center justify-center rounded-2xl border-2 border-dashed border-brand/[0.28] bg-surface/[0.62]"
           >
             <View className="mb-1.5 h-9 w-9 items-center justify-center rounded-full bg-brand/10">
               <Plus size={18} color={colors.brand.DEFAULT} />

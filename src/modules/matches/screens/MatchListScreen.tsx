@@ -58,14 +58,14 @@ export function MatchListScreen() {
 
         <Pressable
           onPress={() => router.push('/matches-search')}
-          className="mb-4 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5"
+          className="mb-4 flex-row items-center gap-2.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5"
         >
           <SearchIcon size={15} color="rgba(62,53,82,0.28)" />
           <Text className="font-body text-[13px] text-ink/30">Rechercher un match…</Text>
         </Pressable>
 
         {/* Onglets Matchs | Favoris */}
-        <View className="mb-5 flex-row rounded-full border-[1.5px] border-white/70 bg-white/[0.45] p-1">
+        <View className="mb-5 flex-row rounded-full border-[1.5px] border-surface-border/70 bg-surface/[0.45] p-1">
           {(
             [
               { key: 'matchs', label: 'Matchs' },
@@ -188,7 +188,7 @@ export function MatchListScreen() {
             ) : !isPremium && likersCount > 0 ? (
               <Pressable
                 onPress={() => router.push('/premium')}
-                className="mb-6 flex-row items-center gap-3 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3 active:opacity-85"
+                className="mb-6 flex-row items-center gap-3 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3 active:opacity-85"
               >
                 <View className="h-9 w-9 items-center justify-center rounded-full bg-brand/10">
                   <Lock size={14} color={colors.brand.DEFAULT} strokeWidth={2.2} />
@@ -224,7 +224,7 @@ export function MatchListScreen() {
               >
                 <Pressable
                   onPress={() => router.push(`/profile/${favorite.id}`)}
-                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3 active:opacity-85"
+                  className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3 active:opacity-85"
                 >
                   <Avatar source={favorite.avatarUrl ?? undefined} seed={favorite.firstName} size={46} />
                   <View className="flex-1">

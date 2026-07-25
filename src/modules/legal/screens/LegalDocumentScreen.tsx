@@ -101,7 +101,7 @@ export function LegalDocumentScreen() {
         ) : (
           <Animated.View entering={FadeInDown.duration(350)} className="flex-1">
             <ScrollView
-              className="mb-4 flex-1 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]"
+              className="mb-4 flex-1 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45]"
               contentContainerClassName="px-5 py-4"
               showsVerticalScrollIndicator
             >

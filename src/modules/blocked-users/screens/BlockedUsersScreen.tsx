@@ -86,7 +86,7 @@ export function BlockedUsersScreen() {
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => (
               <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45)}>
-                <View className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
+                <View className="mb-2 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5">
                   <Avatar source={item.avatarUrl ?? undefined} seed={item.firstName} size={48} />
                   <View className="flex-1">
                     <Text className="mb-0.5 font-heading text-[14px] text-ink">{item.firstName}</Text>

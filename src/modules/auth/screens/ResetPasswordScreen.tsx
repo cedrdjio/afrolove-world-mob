@@ -44,7 +44,7 @@ export function ResetPasswordScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <View className="flex-1 px-6" style={{ paddingTop: 68 }}>
           <View
-            className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-white/[0.55]"
+            className="mb-5 h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-surface/[0.55]"
             style={{ shadowColor: colors.brand.DEFAULT, shadowOpacity: 0.1, shadowRadius: 18, shadowOffset: { width: 0, height: 4 } }}
           >
             <Lock size={26} color={colors.brand.DEFAULT} strokeWidth={1.8} />

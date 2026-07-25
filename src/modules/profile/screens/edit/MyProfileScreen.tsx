@@ -125,7 +125,7 @@ export function MyProfileScreen() {
           {/* Raccourci photos — la photo se gère là où on la voit. */}
           <Pressable
             onPress={() => router.push('/edit-profile/photos')}
-            className="absolute bottom-4 right-[18px] flex-row items-center gap-1.5 rounded-full bg-white/90 px-3 py-2 active:opacity-85"
+            className="absolute bottom-4 right-[18px] flex-row items-center gap-1.5 rounded-full bg-surface/90 px-3 py-2 active:opacity-85"
           >
             <Camera size={13} color={colors.brand.DEFAULT} strokeWidth={2.2} />
             <Text className="font-heading text-[10.5px] text-brand">
@@ -142,14 +142,14 @@ export function MyProfileScreen() {
             <View className="flex-row items-center gap-2">
               <Pressable
                 onPress={() => router.push('/edit-profile')}
-                className="rounded-full bg-white/90 px-3.5 py-2 active:opacity-80"
+                className="rounded-full bg-surface/90 px-3.5 py-2 active:opacity-80"
               >
                 <Text className="font-heading text-[11px] text-brand">Modifier</Text>
               </Pressable>
               <Pressable
                 onPress={() => router.push('/settings')}
                 hitSlop={6}
-                className="h-[34px] w-[34px] items-center justify-center rounded-full bg-white/90 active:opacity-80"
+                className="h-[34px] w-[34px] items-center justify-center rounded-full bg-surface/90 active:opacity-80"
                 accessibilityLabel="Paramètres"
               >
                 <Settings size={16} color={colors.brand.DEFAULT} strokeWidth={2.1} />
@@ -165,7 +165,7 @@ export function MyProfileScreen() {
             >
               <Pressable
                 onPress={() => router.push('/edit-profile/completion')}
-                className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/95 bg-white/85 px-4 py-3.5 active:opacity-90"
+                className="flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/95 bg-surface/85 px-4 py-3.5 active:opacity-90"
                 style={{ shadowColor: colors.ink.soft, shadowOpacity: 0.1, shadowRadius: 22, shadowOffset: { width: 0, height: 6 } }}
               >
                 <View className="flex-1">
@@ -216,7 +216,7 @@ export function MyProfileScreen() {
           <Animated.View entering={FadeInDown.delay(240)}>
             <Pressable
               onPress={() => router.push('/edit-profile/bio')}
-              className="mb-3 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5 active:opacity-90"
+              className="mb-3 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5 active:opacity-90"
             >
               <Text className="mb-1.5 font-heading text-[11px] text-ink/35">À propos</Text>
               {profile.bio ? (
@@ -244,7 +244,7 @@ export function MyProfileScreen() {
             {stats.map((stat) => (
               <View
                 key={stat.label}
-                className="flex-1 items-center rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] py-3.5"
+                className="flex-1 items-center rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] py-3.5"
               >
                 <Text className="mb-1 font-display text-[22px]" style={{ color: stat.color }}>
                   {stat.value}

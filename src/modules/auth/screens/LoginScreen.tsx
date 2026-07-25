@@ -150,7 +150,7 @@ export function LoginScreen() {
           <Pressable
             disabled={!googleAuth.isReady || googleAuth.isPending}
             onPress={() => googleAuth.promptAsync()}
-            className="mb-6 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.5] py-3.5"
+            className="mb-6 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.5] py-3.5"
             style={{ opacity: googleAuth.isReady ? 1 : 0.5 }}
           >
             {googleAuth.isPending ? (

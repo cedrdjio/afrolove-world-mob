@@ -10,7 +10,7 @@ import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { REPORT_REASONS } from '@/modules/reports/constants/reasons';
 import { useSubmitReport } from '@/modules/reports/hooks/useModeration';
-import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from "@/shared/theme/useThemeColors";
 
 export function ReportUserScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,6 +18,7 @@ export function ReportUserScreen() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [details, setDetails] = useState('');
   const submitReport = useSubmitReport();
+  const c = useThemeColors();
   const submitError = useAppError(submitReport.error);
 
   const handleSubmit = () => {
@@ -37,16 +38,16 @@ export function ReportUserScreen() {
       <View className="flex-1 px-6" style={{ paddingTop: 68, paddingBottom: 28 }}>
         <View className="mb-6 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
-            <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />
+            <ArrowLeft size={19} color={c.ink.DEFAULT} strokeWidth={2} />
           </IconButton>
           <Text className="font-display text-[20px] text-ink">Signaler</Text>
           <View style={{ width: 44 }} />
         </View>
 
-        <View className="mb-5 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5">
+        <View className="mb-5 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5">
           <Avatar seed={id ?? '1'} size={44} />
           <Text className="font-heading-semibold text-[14px] text-ink">
-            Signalement du profil #{id}
+            Signalement du profil
           </Text>
         </View>
 
@@ -61,7 +62,7 @@ export function ReportUserScreen() {
                 key={reason.key}
                 onPress={() => setSelectedReason(reason.key)}
                 className={`flex-row items-center justify-between rounded-2xl border-[1.5px] px-4 py-3.5 ${
-                  selected ? 'border-danger/40 bg-danger/[0.06]' : 'border-white/70 bg-white/[0.55]'
+                  selected ? 'border-danger/40 bg-danger/[0.06]' : 'border-surface-border/70 bg-surface/[0.55]'
                 }`}
               >
                 <View className="flex-1 pr-3">
@@ -80,9 +81,9 @@ export function ReportUserScreen() {
           value={details}
           onChangeText={setDetails}
           placeholder="Détails supplémentaires (optionnel)"
-          placeholderTextColor="rgba(46,36,64,0.25)"
+          placeholderTextColor={c.isDark ? "rgba(240,237,247,0.35)" : "rgba(46,36,64,0.25)"}
           multiline
-          className="mb-4 rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45] px-4 py-3.5 font-body text-[13px] text-ink"
+          className="mb-4 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5 font-body text-[13px] text-ink"
           style={{ minHeight: 80, textAlignVertical: 'top' }}
         />
 

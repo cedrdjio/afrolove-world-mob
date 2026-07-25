@@ -31,7 +31,7 @@ export function PrivacySettingsScreen() {
 
   return (
     <EditScreenLayout title="Visibilité" onSave={save} saving={updateProfile.isPending}>
-      <View className="overflow-hidden rounded-2xl border-[1.5px] border-white/70 bg-white/[0.45]">
+      <View className="overflow-hidden rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45]">
         {OPTIONS.map((option, i) => (
           <View
             key={option.key}
