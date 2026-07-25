@@ -15,11 +15,12 @@ const DARK_REMAP: Record<GlassVariant, GlassVariant> = {
   darkStrong: 'darkStrong',
 };
 
-// Surfaces du thème sombre : charbon aubergine quasi opaque + hairline
-// discrète — des cartes solides façon maquette, pas un voile blanc.
+// Surfaces du thème sombre : charbon lavande quasi opaque + hairline
+// discrète — des cartes solides façon maquette, pas un voile blanc, mais
+// toujours dans la teinte aubergine/lavande de la charte.
 const DARK_THEME_CONFIG: Record<'dark' | 'darkStrong', { background: string; border: string; intensity: number }> = {
-  dark: { background: 'rgba(42,35,60,0.88)', border: 'rgba(255,255,255,0.07)', intensity: 10 },
-  darkStrong: { background: 'rgba(52,44,74,0.94)', border: 'rgba(255,255,255,0.09)', intensity: 12 },
+  dark: { background: 'rgba(48,40,70,0.88)', border: 'rgba(195,177,225,0.10)', intensity: 10 },
+  darkStrong: { background: 'rgba(60,50,88,0.94)', border: 'rgba(195,177,225,0.13)', intensity: 12 },
 };
 
 const VARIANT_CONFIG: Record<

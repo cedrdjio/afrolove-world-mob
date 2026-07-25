@@ -23,18 +23,19 @@ const LIGHT_VARS = vars({
   '--surface-border': '255 255 255',
 });
 
-// Palette sombre « référence » : fond quasi noir, cartes charbon solides,
-// texte clair à fort contraste — pas de voile blanc délavé.
+// Palette sombre « nuit lavande » : fond aubergine profond, cartes charbon
+// violacé solides, texte clair à fort contraste — la charte lavande reste
+// présente dans chaque teinte, sans voile blanc délavé.
 const DARK_VARS = vars({
-  '--ink': '240 237 247',
-  '--ink-soft': '216 210 232',
-  '--ink-muted': '172 163 194',
-  '--ink-faint': '134 124 156',
-  '--cream': '18 14 26',
-  '--cream-bezel1': '30 24 44',
-  '--cream-bezel2': '42 34 60',
-  '--surface': '44 37 62',
-  '--surface-border': '70 62 96',
+  '--ink': '242 238 250',
+  '--ink-soft': '219 212 236',
+  '--ink-muted': '176 165 200',
+  '--ink-faint': '138 127 162',
+  '--cream': '23 16 34',
+  '--cream-bezel1': '36 27 54',
+  '--cream-bezel2': '50 39 74',
+  '--surface': '50 41 74',
+  '--surface-border': '88 74 124',
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

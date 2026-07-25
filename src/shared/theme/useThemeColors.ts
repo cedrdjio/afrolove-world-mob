@@ -9,8 +9,8 @@ import { colors } from '@/shared/constants/theme';
  * Seuls `ink` (texte) et `cream` (surfaces claires) basculent : brand, gold,
  * success, danger et deep fonctionnent déjà sur les deux fonds.
  */
-const INK_DARK = { DEFAULT: '#ECE8F5', soft: '#D6CFE6', muted: '#A89EBF', faint: '#847A9A' } as const;
-const CREAM_DARK = { DEFAULT: '#161026', bezel1: '#221934', bezel2: '#2E2440' } as const;
+const INK_DARK = { DEFAULT: '#F2EEFA', soft: '#DBD4EC', muted: '#B0A5C8', faint: '#8A7FA2' } as const;
+const CREAM_DARK = { DEFAULT: '#171022', bezel1: '#241B36', bezel2: '#32274A' } as const;
 
 export function useThemeColors() {
   const { colorScheme } = useColorScheme();

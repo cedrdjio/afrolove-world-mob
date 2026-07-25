@@ -18,20 +18,21 @@ export function ScreenBackground({ theme = 'cream', halos = true, style, childre
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  // Mode sombre : fond quasi noir, plat, façon maquette de référence —
-  // pas de dégradé violet lumineux ni de halos marqués.
+  // Mode sombre : nuit lavande profonde et plate, façon maquette de
+  // référence — la charte aubergine/lavande reste lisible dans la teinte,
+  // sans le dégradé violet lumineux ni les halos marqués.
   if (isDark) {
     return (
       <View style={[StyleSheet.absoluteFill, style]} {...props}>
         <LinearGradient
-          colors={['#1A1424', '#120E1A', '#0C0912']}
+          colors={['#221833', '#171022', '#100B18']}
           locations={[0, 0.5, 1]}
           start={{ x: 0.3, y: 0 }}
           end={{ x: 0.7, y: 1 }}
           style={StyleSheet.absoluteFill}
         />
         {halos ? (
-          <GlowOrb size={300} color="rgba(139,105,214,0.06)" top={-100} right={-90} duration={12000} />
+          <GlowOrb size={300} color="rgba(155,126,222,0.08)" top={-100} right={-90} duration={12000} />
         ) : null}
         {children}
       </View>
