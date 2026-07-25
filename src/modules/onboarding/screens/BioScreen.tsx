@@ -6,11 +6,13 @@ import { OnboardingHeader } from '@/modules/onboarding/components/OnboardingHead
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 const MIN_BIO_LENGTH = 20;
 const MAX_BIO_LENGTH = 300;
 
 export function BioScreen() {
+  const placeholderColor = usePlaceholderColor();
   const router = useRouter();
   const bio = useOnboardingStore((s) => s.bio);
   const setBio = useOnboardingStore((s) => s.setBio);
@@ -37,7 +39,7 @@ export function BioScreen() {
           value={bio}
           onChangeText={(text) => setBio(text.slice(0, MAX_BIO_LENGTH))}
           placeholder="Passionné(e) de voyages, toujours partant(e) pour un bon plat et de belles conversations…"
-          placeholderTextColor="rgba(46,36,64,0.25)"
+          placeholderTextColor={placeholderColor}
           multiline
           textAlignVertical="top"
           className="flex-1 font-body text-[15px] leading-[22px] text-ink"

@@ -8,12 +8,14 @@ import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
 import { useAuth } from '@/modules/auth/hooks/useAuth';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 /** Étape identité — prénom ET nom réels. Le nom complet est indispensable
  *  pour vérifier l'identité du membre (badge vérifié / KYC) : il doit
  *  correspondre à la pièce d'identité fournie. Seul le prénom est montré
  *  aux autres membres. */
 export function NameScreen() {
+  const placeholderColor = usePlaceholderColor();
   const router = useRouter();
   const { user } = useAuth();
   const firstName = useOnboardingStore((s) => s.firstName);
@@ -68,7 +70,7 @@ export function NameScreen() {
             onChangeText={setFirstName}
             placeholder="Ton prénom"
             autoComplete="given-name"
-            placeholderTextColor="rgba(46,36,64,0.2)"
+            placeholderTextColor={placeholderColor}
             className="flex-1 font-display text-[22px] text-ink"
           />
         </View>
@@ -80,7 +82,7 @@ export function NameScreen() {
             onChangeText={setLastName}
             placeholder="Ton nom de famille"
             autoComplete="family-name"
-            placeholderTextColor="rgba(46,36,64,0.2)"
+            placeholderTextColor={placeholderColor}
             className="flex-1 font-display text-[22px] text-ink"
           />
         </View>

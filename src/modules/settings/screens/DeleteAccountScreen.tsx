@@ -12,6 +12,7 @@ import { useAuth } from '@/modules/auth/hooks/useAuth';
 import { authService } from '@/modules/auth/services/authService';
 import { accountService } from '@/modules/settings/services/accountService';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 const CONSEQUENCES = [
   'Votre profil ne sera plus visible par les autres membres',
@@ -22,6 +23,7 @@ const CONSEQUENCES = [
 const CONFIRM_WORD = 'SUPPRIMER';
 
 export function DeleteAccountScreen() {
+  const placeholderColor = usePlaceholderColor();
   const router = useRouter();
   const { user } = useAuth();
   const [confirmText, setConfirmText] = useState('');
@@ -80,7 +82,7 @@ export function DeleteAccountScreen() {
           value={confirmText}
           onChangeText={setConfirmText}
           placeholder={CONFIRM_WORD}
-          placeholderTextColor="rgba(46,36,64,0.2)"
+          placeholderTextColor={placeholderColor}
           autoCapitalize="characters"
           className="mb-6 rounded-2xl border-[1.5px] border-danger/[0.22] bg-surface/[0.55] px-5 py-4 font-heading text-[15px] tracking-wide text-ink"
         />

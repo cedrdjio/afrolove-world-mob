@@ -12,6 +12,7 @@ import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
 import { calculateAge } from '@/modules/profile/types/profile';
 import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 type Gender = 'femme' | 'homme' | 'non-binaire';
 type LookingForOption = 'femmes' | 'hommes' | 'les-deux';
@@ -41,6 +42,7 @@ function DateField({
   maxLength: number;
   max?: number;
 }) {
+  const placeholderColor = usePlaceholderColor();
   return (
     <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-surface-border/70 bg-surface/[0.45] px-3 py-4">
       <TextInput
@@ -53,7 +55,7 @@ function DateField({
         keyboardType="number-pad"
         maxLength={maxLength}
         placeholder={label}
-        placeholderTextColor="rgba(46,36,64,0.2)"
+        placeholderTextColor={placeholderColor}
         className="w-full text-center font-display text-[24px] text-ink"
       />
       <Text className="font-heading text-[9px] text-ink-faint">{label}</Text>

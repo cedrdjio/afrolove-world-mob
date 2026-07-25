@@ -20,8 +20,10 @@ import { formatMessageTime } from '@/modules/messaging/utils/time';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import type { ChatMessage } from '@/modules/messaging/types/messaging';
 import { colors, gradients } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 export function ChatScreen() {
+  const placeholderColor = usePlaceholderColor();
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user } = useAuth();
@@ -162,7 +164,7 @@ export function ChatScreen() {
               value={draft}
               onChangeText={setDraft}
               placeholder="Écrire un message…"
-              placeholderTextColor="rgba(46,36,64,0.28)"
+              placeholderTextColor={placeholderColor}
               className="font-body text-[13px] text-ink"
               multiline
               maxLength={2000}

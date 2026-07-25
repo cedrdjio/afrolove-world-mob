@@ -11,8 +11,10 @@ import { EmptyState } from '@/shared/components/feedback';
 import { useConversationsQuery } from '@/modules/messaging/hooks/useMessaging';
 import { isRecentlyOnline } from '@/modules/messaging/types/messaging';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 export function MatchesSearchScreen() {
+  const placeholderColor = usePlaceholderColor();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const conversationsQuery = useConversationsQuery();
@@ -35,7 +37,7 @@ export function MatchesSearchScreen() {
             value={query}
             onChangeText={setQuery}
             placeholder="Rechercher un match…"
-            placeholderTextColor="rgba(46,36,64,0.28)"
+            placeholderTextColor={placeholderColor}
             autoFocus
             className="flex-1 font-body text-[14px] text-ink"
           />

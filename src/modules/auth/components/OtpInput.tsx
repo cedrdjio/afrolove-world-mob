@@ -1,5 +1,6 @@
 import { TextInput } from 'react-native';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 interface OtpInputProps {
   onComplete?: (code: string) => void;
@@ -11,6 +12,7 @@ interface OtpInputProps {
 // whatever length arrives and lets the user paste the code straight from
 // the email.
 export function OtpInput({ onComplete }: OtpInputProps) {
+  const placeholderColor = usePlaceholderColor();
   return (
     <TextInput
       onChangeText={(text) => onComplete?.(text.trim())}
@@ -18,7 +20,7 @@ export function OtpInput({ onComplete }: OtpInputProps) {
       autoComplete="one-time-code"
       textContentType="oneTimeCode"
       placeholder="••••••"
-      placeholderTextColor="rgba(46,36,64,0.25)"
+      placeholderTextColor={placeholderColor}
       className="h-14 rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] text-center font-display text-[22px] text-ink"
       style={{
         letterSpacing: 6,

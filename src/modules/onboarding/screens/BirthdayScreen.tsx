@@ -7,6 +7,7 @@ import { OnboardingHeader } from '@/modules/onboarding/components/OnboardingHead
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { useOnboardingStore } from '@/modules/onboarding/stores/onboardingStore';
 import { colors } from '@/shared/constants/theme';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 function calculateAge(day: string, month: string, year: string): number | null {
   const d = Number(day);
@@ -34,6 +35,7 @@ function DateField({
   maxLength: number;
   max?: number;
 }) {
+  const placeholderColor = usePlaceholderColor();
   return (
     <View className="flex-1 items-center gap-2 rounded-[18px] border-2 border-surface-border/70 bg-surface/[0.45] px-3 py-4">
       <TextInput
@@ -46,7 +48,7 @@ function DateField({
         keyboardType="number-pad"
         maxLength={maxLength}
         placeholder={label}
-        placeholderTextColor="rgba(46,36,64,0.2)"
+        placeholderTextColor={placeholderColor}
         className="w-full text-center font-display text-[24px] text-ink"
       />
       <Text className="font-heading text-[9px] text-ink-faint">{label}</Text>

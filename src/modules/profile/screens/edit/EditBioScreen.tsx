@@ -6,10 +6,12 @@ import { Skeleton, ErrorState } from '@/shared/components/feedback';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
 import { useAppError } from '@/shared/hooks/useAppError';
+import { usePlaceholderColor } from '@/shared/theme/usePlaceholderColor';
 
 const MAX_LENGTH = 300;
 
 export function EditBioScreen() {
+  const placeholderColor = usePlaceholderColor();
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const updateProfile = useUpdateProfile();
@@ -52,7 +54,7 @@ export function EditBioScreen() {
               multiline
               textAlignVertical="top"
               placeholder="Parlez de vous…"
-              placeholderTextColor="rgba(46,36,64,0.25)"
+              placeholderTextColor={placeholderColor}
               className="flex-1 font-body text-[14px] leading-[21px] text-ink"
             />
           </View>

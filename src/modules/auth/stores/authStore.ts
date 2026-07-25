@@ -43,6 +43,11 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
       if (event === 'SIGNED_OUT') {
         get().setPendingAction(null);
+        // Le deck Découverte appartient au compte : on le vide pour que le
+        // prochain utilisateur ne voie pas les profils du précédent.
+        import('@/modules/discovery/stores/deckStore')
+          .then(({ useDeckStore }) => useDeckStore.getState().reset())
+          .catch(() => {});
       }
     });
 

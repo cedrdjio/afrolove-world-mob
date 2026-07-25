@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -12,7 +12,9 @@ import { useAppError } from '@/shared/hooks/useAppError';
 import { colors } from '@/shared/constants/theme';
 import { useThemeColors } from '@/shared/theme/useThemeColors';
 import { useThemeStore } from '@/shared/theme/themeStore';
-import { useDiscoveryFeed, useSwipe } from '@/modules/discovery/hooks/useDiscovery';
+import { useSwipe } from '@/modules/discovery/hooks/useDiscovery';
+import { discoveryService } from '@/modules/discovery/services/discoveryService';
+import { useFiltersStore } from '@/modules/discovery/stores/filtersStore';
 import { useEntitlements } from '@/modules/premium/hooks/usePremium';
 import { useHasUnreadNotifications } from '@/modules/notifications/hooks/useNotifications';
 import type { DiscoveryProfile, SwipeAction } from '@/modules/discovery/types/discovery';
@@ -42,32 +44,63 @@ export function SwipeScreen() {
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<DiscoveryTab>('foryou');
   const [commandedDirection, setCommandedDirection] = useState<SwipeDirection | null>(null);
-  // Profils déjà traités (like/pass/favori, y compris depuis la fiche détail) :
-  // ils sont filtrés du deck, donc le profil du dessus avance à chaque action.
-  const consumedIds = useDeckStore((s) => s.consumedIds);
-  const consume = useDeckStore((s) => s.consume);
-  const clearConsumed = useDeckStore((s) => s.clear);
-  const feed = useDiscoveryFeed('all');
   const swipe = useSwipe();
-  const feedError = useAppError(feed.error);
   const hasUnreadNotifications = useHasUnreadNotifications();
   const entitlements = useEntitlements();
   const onlineIds = usePresenceStore((s) => s.onlineIds);
   const c = useThemeColors();
   const setThemePref = useThemeStore((s) => s.setPref);
 
+  // Filtres actifs → signature du deck + fonction de chargement. Le deck
+  // lui-même vit dans le deckStore : revenir sur cet écran ne recharge rien.
+  const scope = useFiltersStore((s) => s.scope);
+  const country = useFiltersStore((s) => s.country);
+  const ageMin = useFiltersStore((s) => s.ageMin);
+  const ageMax = useFiltersStore((s) => s.ageMax);
+  const verifiedOnly = useFiltersStore((s) => s.verifiedOnly);
+  const interestIds = useFiltersStore((s) => s.interestIds);
+  const deckKey = JSON.stringify({ scope, country, ageMin, ageMax, verifiedOnly, interestIds });
+  const fetchDeck = useCallback(
+    () =>
+      discoveryService.searchProfiles({ ageMin, ageMax, scope, country, verifiedOnly, mode: 'all', interestIds }),
+    [ageMin, ageMax, scope, country, verifiedOnly, interestIds],
+  );
+
+  const deckProfiles = useDeckStore((s) => s.profiles);
+  const consumedIds = useDeckStore((s) => s.consumedIds);
+  const deckStatus = useDeckStore((s) => s.status);
+  const deckError = useDeckStore((s) => s.error);
+  const deckExhaustedFlag = useDeckStore((s) => s.exhausted);
+  const loadInitial = useDeckStore((s) => s.loadInitial);
+  const refillDeck = useDeckStore((s) => s.refill);
+  const consume = useDeckStore((s) => s.consume);
+  const resetDeck = useDeckStore((s) => s.reset);
+
+  useEffect(() => {
+    loadInitial(deckKey, fetchDeck);
+  }, [deckKey, fetchDeck, loadInitial]);
+
   // « À proximité » réordonne le deck par distance (profils sans distance en
   // dernier). « Pour toi » garde l'ordre recommandé du serveur. Les profils
   // déjà traités sont retirés — c'est ce qui fait avancer le deck.
   const profiles = useMemo(() => {
-    const list = (feed.data ?? []).filter((p) => !consumedIds.has(p.id));
+    const list = deckProfiles.filter((p) => !consumedIds.has(p.id));
     if (tab !== 'nearby') return list;
     return [...list].sort((a, b) => {
       const da = a.distanceKm ?? Number.POSITIVE_INFINITY;
       const db = b.distanceKm ?? Number.POSITIVE_INFINITY;
       return da - db;
     });
-  }, [feed.data, tab, consumedIds]);
+  }, [deckProfiles, tab, consumedIds]);
+
+  // Pagination intelligente : quand il reste peu de cartes, la page suivante
+  // s'AJOUTE en arrière-plan (profils swipés exclus côté serveur) — jamais de
+  // rechargement visible.
+  useEffect(() => {
+    if (profiles.length < 4 && deckStatus === 'idle' && !deckExhaustedFlag) {
+      refillDeck(fetchDeck);
+    }
+  }, [profiles.length, deckStatus, deckExhaustedFlag, refillDeck, fetchDeck]);
 
   // Compteur de swipes restants pour les comptes sans forfait (null = illimité).
   const swipesLimit = entitlements.data?.swipesLimit ?? null;
@@ -76,25 +109,17 @@ export function SwipeScreen() {
 
   useEffect(() => {
     setCommandedDirection(null);
-  }, [feed.dataUpdatedAt, tab]);
-
-  // Deck épuisé ≠ « plus personne » : les profils déjà traités étant filtrés
-  // (et les swipés exclus côté serveur), on vide la liste locale et on
-  // recharge un lot frais. Sans ça, l'écran affichait « Vous avez tout vu »
-  // alors qu'un simple refresh montrait d'autres profils.
-  const rawCount = feed.data?.length ?? 0;
-  const deckExhausted = !feed.isLoading && !feed.isFetching && profiles.length === 0;
-  useEffect(() => {
-    if (deckExhausted && rawCount > 0) {
-      clearConsumed();
-      feed.refetch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deckExhausted, rawCount]);
+  }, [deckKey, tab]);
 
   const visibleCards = profiles.slice(0, 3);
-  const isRefilling = feed.isFetching && profiles.length === 0;
-  const isEmpty = deckExhausted && rawCount === 0;
+  const isLoadingDeck = deckStatus === 'loading';
+  const isRefilling = deckStatus === 'refilling' && profiles.length === 0;
+  const isEmpty = deckExhaustedFlag && profiles.length === 0 && deckStatus === 'idle';
+  const feedError = useAppError(deckStatus === 'error' ? deckError : null);
+  const retryDeck = () => {
+    resetDeck();
+    loadInitial(deckKey, fetchDeck);
+  };
 
   const handleSwiped = (direction: SwipeDirection, profile: DiscoveryProfile) => {
     consume(profile.id);
@@ -234,7 +259,7 @@ export function SwipeScreen() {
       </View>
 
       <View className="mx-3 mt-5 flex-1" style={{ marginBottom: 160 }}>
-        {feed.isLoading || isRefilling ? (
+        {isLoadingDeck || isRefilling ? (
           <Animated.View
             entering={FadeIn.duration(300)}
             className="flex-1 items-center justify-center rounded-[28px] border-[1.5px] border-surface-border/80 bg-surface/50"
@@ -244,7 +269,7 @@ export function SwipeScreen() {
           </Animated.View>
         ) : feedError ? (
           <View className="flex-1 justify-center px-4">
-            <ErrorState error={feedError} variant="inline" onRetry={() => feed.refetch()} />
+            <ErrorState error={feedError} variant="inline" onRetry={retryDeck} />
           </View>
         ) : isEmpty ? (
           <Animated.View entering={FadeInDown} className="flex-1">
@@ -268,7 +293,7 @@ export function SwipeScreen() {
         )}
       </View>
 
-      {!isEmpty && !feed.isLoading && !isRefilling && !feedError ? (
+      {!isEmpty && !isLoadingDeck && !isRefilling && !feedError ? (
         // Barre d'actions sur fond de verre qui épouse la largeur de la carte
         // (mêmes marges) — la continuité visuelle carte → boutons, sans photo
         // derrière les boutons.
