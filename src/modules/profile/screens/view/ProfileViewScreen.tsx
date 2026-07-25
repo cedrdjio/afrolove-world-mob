@@ -111,16 +111,37 @@ export function ProfileViewScreen() {
 
   const isFavorite = favoriteIds.has(profile.id);
 
-  // Favori depuis la fiche : on garde le profil de côté ET on avance au suivant
-  // (« comme une faveur »), au lieu de rester bloqué sur la même fiche.
+  // Favori depuis la fiche : garde le profil de côté ET compte comme un like
+  // (favori = like + favori), puis revient à la Découverte sur le suivant.
+  // Retirer un favori existant, lui, ne re-swipe rien.
   const handleToggleFavorite = () => {
     if (toggleFavorite.isPending) return;
     toggleFavorite.mutate(
       { targetId: profile.id, isFavorite },
       {
         onSuccess: () => {
-          consume(profile.id);
-          router.back();
+          if (isFavorite) return;
+          swipe.mutate(
+            { targetId: profile.id, action: 'like' },
+            {
+              onSuccess: ({ isMatch }) => {
+                consume(profile.id);
+                if (isMatch) {
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  router.replace({
+                    pathname: '/matches/celebration',
+                    params: { id: profile.id, name: profile.firstName ?? '' },
+                  });
+                } else {
+                  router.back();
+                }
+              },
+              onError: () => {
+                consume(profile.id);
+                router.back();
+              },
+            },
+          );
         },
         onError: () => Alert.alert('Erreur', "L'action n'a pas pu être enregistrée. Réessayez."),
       },

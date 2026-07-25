@@ -138,14 +138,16 @@ export function SwipeScreen() {
     if (topProfile && !commandedDirection) setCommandedDirection(direction);
   };
 
-  // Signet (≠ like) : garde le profil du dessus dans Mes Matches → Favoris,
-  // sans le swiper — on continue de se balader dans le deck.
+  // Signet : garde le profil dans Mes Matches → Favoris ET compte comme un
+  // like — la carte part à droite (même animation qu'un like) et handleSwiped
+  // enregistre le like. Deux effets : 1) profil liké, 2) profil en favoris.
   const favoriteIds = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const topIsFavorite = topProfile ? favoriteIds.has(topProfile.id) : false;
   const handleToggleFavorite = () => {
     if (!topProfile || toggleFavorite.isPending) return;
     toggleFavorite.mutate({ targetId: topProfile.id, isFavorite: topIsFavorite });
+    if (!topIsFavorite) triggerSwipe('right');
   };
 
   return (
@@ -231,7 +233,7 @@ export function SwipeScreen() {
         ) : null}
       </View>
 
-      <View className="mx-3 mt-5 flex-1" style={{ marginBottom: 188 }}>
+      <View className="mx-3 mt-5 flex-1" style={{ marginBottom: 160 }}>
         {feed.isLoading || isRefilling ? (
           <Animated.View
             entering={FadeIn.duration(300)}
@@ -267,13 +269,20 @@ export function SwipeScreen() {
       </View>
 
       {!isEmpty && !feed.isLoading && !isRefilling && !feedError ? (
-        <View className="absolute inset-x-0" style={{ bottom: 118 }}>
-          <ActionButtons
-            onNope={() => triggerSwipe('left')}
-            onLike={() => triggerSwipe('right')}
-            onToggleFavorite={handleToggleFavorite}
-            isFavorite={topIsFavorite}
-          />
+        // Barre d'actions sur fond de verre qui épouse la largeur de la carte
+        // (mêmes marges) — la continuité visuelle carte → boutons, sans photo
+        // derrière les boutons.
+        <View className="absolute inset-x-3" style={{ bottom: 92 }}>
+          <GlassSurface variant="light" radius={26}>
+            <View className="py-2.5">
+              <ActionButtons
+                onNope={() => triggerSwipe('left')}
+                onLike={() => triggerSwipe('right')}
+                onToggleFavorite={handleToggleFavorite}
+                isFavorite={topIsFavorite}
+              />
+            </View>
+          </GlassSurface>
         </View>
       ) : null}
     </View>

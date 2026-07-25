@@ -3,6 +3,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import * as Haptics from 'expo-haptics';
 import { GlassSurface } from './GlassSurface';
 import { colors } from '@/shared/constants/theme';
+import { useThemedStaticIcon } from '@/shared/theme/themedIcon';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -27,6 +28,9 @@ export function IconButton({
 }: IconButtonProps) {
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  // Corrige en mode sombre les icônes passées avec une couleur encre figée
+  // (boutons retour sombres sur fond sombre).
+  const themedIcon = useThemedStaticIcon();
 
   const handlePress = () => {
     Haptics.selectionAsync().catch(() => {});
@@ -53,7 +57,7 @@ export function IconButton({
         }}
       >
         <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-          {children}
+          {themedIcon(children)}
         </View>
       </GlassSurface>
       {showDot ? (

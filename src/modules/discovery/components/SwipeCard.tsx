@@ -141,6 +141,8 @@ export function SwipeCard({
           style={{ position: 'absolute', inset: 0 }}
           contentFit="cover"
           transition={220}
+          cachePolicy="memory-disk"
+          recyclingKey={profile.id}
         />
       ) : (
         <PhotoPlaceholder seed={profile.id.charCodeAt(0)} style={{ position: 'absolute', inset: 0 }} showIcon iconSize={40} />

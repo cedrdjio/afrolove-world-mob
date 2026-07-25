@@ -50,8 +50,14 @@ async function markAllRead(profileId: string): Promise<void> {
  * dashboard. L'appelant doit unsubscribe() au démontage.
  */
 function subscribeToNotifications(profileId: string, onInsert: () => void): RealtimeChannel {
+  // Topic UNIQUE par abonnement : avec un topic fixe, un remontage rapide de
+  // l'écran (retour de paiement, navigation) récupérait la même instance de
+  // canal déjà abonnée, et l'ajout d'un callback postgres_changes après
+  // subscribe() faisait planter toute l'app (« cannot add postgres_changes
+  // callbacks … after subscribe() » → ErrorBoundary → retour au login).
+  const unique = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
   return supabase
-    .channel(`notifications:${profileId}`)
+    .channel(`notifications:${profileId}:${unique}`)
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'notifications', filter: `profile_id=eq.${profileId}` },

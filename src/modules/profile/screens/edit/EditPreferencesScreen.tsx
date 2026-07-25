@@ -5,6 +5,7 @@ import { Chip } from '@/shared/components/ui/Chip';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
 import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
 import { Minus, Plus } from 'lucide-react-native';
 import { Pressable } from 'react-native';
 
@@ -12,12 +13,13 @@ const LOOKING_FOR_OPTIONS = ['Des femmes', 'Des hommes', 'Les deux'];
 const DISTANCE_OPTIONS = [5, 10, 25, 50, 100];
 
 function Stepper({ value, onChange, min, max }: { value: number; onChange: (v: number) => void; min: number; max: number }) {
+  const tc = useThemeColors();
   return (
     <View className="flex-row items-center gap-3.5">
       <Pressable onPress={() => onChange(Math.max(min, value - 1))}>
         <GlassSurface variant="light" radius={14} style={{ width: 36, height: 36 }}>
           <View className="h-9 w-9 items-center justify-center">
-            <Minus size={14} color={colors.ink.DEFAULT} />
+            <Minus size={14} color={tc.ink.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>
@@ -25,7 +27,7 @@ function Stepper({ value, onChange, min, max }: { value: number; onChange: (v: n
       <Pressable onPress={() => onChange(Math.min(max, value + 1))}>
         <GlassSurface variant="light" radius={14} style={{ width: 36, height: 36 }}>
           <View className="h-9 w-9 items-center justify-center">
-            <Plus size={14} color={colors.ink.DEFAULT} />
+            <Plus size={14} color={tc.ink.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>

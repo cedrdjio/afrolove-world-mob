@@ -47,11 +47,11 @@ export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: 
       <Pressable onPress={withHaptics(onNope)}>
         <GlassSurface
           variant="lightStrong"
-          radius={29}
-          style={{ width: 58, height: 58, shadowColor: colors.ink.soft, shadowOpacity: 0.14, shadowRadius: 20, shadowOffset: { width: 0, height: 8 } }}
+          radius={25}
+          style={{ width: 50, height: 50, shadowColor: colors.ink.soft, shadowOpacity: 0.14, shadowRadius: 18, shadowOffset: { width: 0, height: 6 } }}
         >
-          <View className="h-[58px] w-[58px] items-center justify-center">
-            <X size={22} color={nopeColor} strokeWidth={2.2} />
+          <View className="h-[50px] w-[50px] items-center justify-center">
+            <X size={20} color={nopeColor} strokeWidth={2.2} />
           </View>
         </GlassSurface>
       </Pressable>
@@ -61,9 +61,9 @@ export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: 
           <LinearGradient
             colors={gradients.brand}
             style={{
-              width: 70,
-              height: 70,
-              borderRadius: 35,
+              width: 60,
+              height: 60,
+              borderRadius: 30,
               alignItems: 'center',
               justifyContent: 'center',
               shadowColor: '#6A4FC0',
@@ -72,7 +72,7 @@ export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: 
               shadowOffset: { width: 0, height: 12 },
             }}
           >
-            <Heart size={28} color="#fff" fill="#fff" />
+            <Heart size={24} color="#fff" fill="#fff" />
           </LinearGradient>
         </Pressable>
       </Animated.View>
@@ -80,12 +80,12 @@ export function ActionButtons({ onNope, onLike, onToggleFavorite, isFavorite }: 
       <Pressable onPress={withHaptics(onToggleFavorite)} accessibilityLabel="Ajouter aux favoris">
         <GlassSurface
           variant="lightStrong"
-          radius={24}
-          style={{ width: 48, height: 48, shadowColor: colors.ink.soft, shadowOpacity: 0.12, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}
+          radius={22}
+          style={{ width: 44, height: 44, shadowColor: colors.ink.soft, shadowOpacity: 0.12, shadowRadius: 14, shadowOffset: { width: 0, height: 5 } }}
         >
-          <View className="h-12 w-12 items-center justify-center">
+          <View className="h-11 w-11 items-center justify-center">
             <Bookmark
-              size={19}
+              size={18}
               color={bookmarkColor}
               fill={isFavorite ? bookmarkColor : 'none'}
             />

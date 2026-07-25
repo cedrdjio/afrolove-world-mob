@@ -16,7 +16,11 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 30_000,
+      // Cache généreux : naviguer entre les onglets (Découverte ↔ Messages…)
+      // réutilise les données en mémoire au lieu de refaire chaque appel API
+      // à chaque retour d'écran. Les mutations invalident ce qui doit l'être.
+      staleTime: 2 * 60_000,
+      gcTime: 15 * 60_000,
     },
   },
   // Any query or mutation hitting an expired/invalid refresh token forces a

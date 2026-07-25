@@ -72,8 +72,12 @@ async function markConversationRead(matchId: string): Promise<void> {
  * removeChannel() on unmount or the socket leaks subscriptions.
  */
 function subscribeToMessages(matchId: string, onMessage: (message: ChatMessage) => void): RealtimeChannel {
+  // Topic unique par abonnement — même raison que les notifications : un
+  // topic fixe réutilise l'instance déjà abonnée au remontage et l'ajout du
+  // callback postgres_changes plante alors toute l'app.
+  const unique = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
   return supabase
-    .channel(`messages:${matchId}`)
+    .channel(`messages:${matchId}:${unique}`)
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },

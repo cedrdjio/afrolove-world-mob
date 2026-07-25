@@ -2,6 +2,8 @@ import { forwardRef, useState } from 'react';
 import { TextInput, View, Text, Pressable, type TextInputProps } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
+import { useThemedStaticIcon } from '@/shared/theme/themedIcon';
 
 interface GlassInputProps extends TextInputProps {
   label?: string;
@@ -14,6 +16,11 @@ interface GlassInputProps extends TextInputProps {
 export const GlassInput = forwardRef<TextInput, GlassInputProps>(
   ({ label, icon, rightIcon, onRightIconPress, error, className, ...props }, ref) => {
     const [focused, setFocused] = useState(false);
+    const c = useThemeColors();
+    // Placeholder et icônes lisibles dans les deux thèmes — le placeholder
+    // encre figé disparaissait complètement sur les champs du mode sombre.
+    const themedIcon = useThemedStaticIcon();
+    const placeholderColor = c.isDark ? 'rgba(242,238,250,0.4)' : 'rgba(46,36,64,0.3)';
 
     return (
       <View className="mb-3">
@@ -34,10 +41,10 @@ export const GlassInput = forwardRef<TextInput, GlassInputProps>(
             shadowOffset: { width: 0, height: 4 },
           }}
         >
-          {icon}
+          {themedIcon(icon)}
           <TextInput
             ref={ref}
-            placeholderTextColor="rgba(46,36,64,0.3)"
+            placeholderTextColor={placeholderColor}
             onFocus={(e) => {
               setFocused(true);
               props.onFocus?.(e);
@@ -51,7 +58,7 @@ export const GlassInput = forwardRef<TextInput, GlassInputProps>(
           />
           {rightIcon ? (
             <Pressable onPress={onRightIconPress} hitSlop={8}>
-              {rightIcon}
+              {themedIcon(rightIcon)}
             </Pressable>
           ) : null}
         </View>

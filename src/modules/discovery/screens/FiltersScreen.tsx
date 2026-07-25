@@ -6,6 +6,7 @@ import { Chip } from '@/shared/components/ui/Chip';
 import { GradientButton } from '@/shared/components/ui/GradientButton';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { ToggleSwitch } from '@/shared/components/ui/ToggleSwitch';
+import { useThemeColors } from "@/shared/theme/useThemeColors";
 import { useFiltersStore } from '@/modules/discovery/stores/filtersStore';
 import { useDiscoveryCount, useDiscoveryCountries } from '@/modules/discovery/hooks/useDiscovery';
 import type { DiscoveryScope } from '@/modules/discovery/types/discovery';
@@ -38,12 +39,13 @@ const SCOPE_OPTIONS: {
 ];
 
 function Stepper({ value, onDecrement, onIncrement }: { value: number; onDecrement: () => void; onIncrement: () => void }) {
+  const tc = useThemeColors();
   return (
     <View className="flex-row items-center gap-4">
       <Pressable onPress={onDecrement}>
         <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
           <View className="h-10 w-10 items-center justify-center">
-            <Minus size={16} color={colors.ink.DEFAULT} />
+            <Minus size={16} color={tc.ink.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>
@@ -51,7 +53,7 @@ function Stepper({ value, onDecrement, onIncrement }: { value: number; onDecreme
       <Pressable onPress={onIncrement}>
         <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
           <View className="h-10 w-10 items-center justify-center">
-            <Plus size={16} color={colors.ink.DEFAULT} />
+            <Plus size={16} color={tc.ink.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>
@@ -64,6 +66,7 @@ export function FiltersScreen() {
   const { scope, country, ageMin, ageMax, verifiedOnly, setScope, setCountry, setAgeRange, toggleVerifiedOnly } =
     useFiltersStore();
   const countriesQuery = useDiscoveryCountries();
+  const tc = useThemeColors();
   const countQuery = useDiscoveryCount();
 
   const applyLabel =
@@ -82,7 +85,7 @@ export function FiltersScreen() {
           <Pressable onPress={() => router.back()}>
             <GlassSurface variant="light" radius={15} style={{ width: 40, height: 40 }}>
               <View className="h-10 w-10 items-center justify-center">
-                <X size={17} color={colors.ink.DEFAULT} />
+                <X size={17} color={tc.ink.DEFAULT} />
               </View>
             </GlassSurface>
           </Pressable>

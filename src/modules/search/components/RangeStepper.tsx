@@ -2,14 +2,16 @@ import { View, Text, Pressable } from 'react-native';
 import { Minus, Plus } from 'lucide-react-native';
 import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
 
 function Stepper({ value, onChange, min, max }: { value: number; onChange: (v: number) => void; min: number; max: number }) {
+  const tc = useThemeColors();
   return (
     <View className="flex-row items-center gap-4">
       <Pressable onPress={() => onChange(Math.max(min, value - 1))}>
         <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
           <View className="h-10 w-10 items-center justify-center">
-            <Minus size={16} color={colors.ink.DEFAULT} />
+            <Minus size={16} color={tc.ink.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>
@@ -17,7 +19,7 @@ function Stepper({ value, onChange, min, max }: { value: number; onChange: (v: n
       <Pressable onPress={() => onChange(Math.min(max, value + 1))}>
         <GlassSurface variant="light" radius={16} style={{ width: 40, height: 40 }}>
           <View className="h-10 w-10 items-center justify-center">
-            <Plus size={16} color={colors.ink.DEFAULT} />
+            <Plus size={16} color={tc.ink.DEFAULT} />
           </View>
         </GlassSurface>
       </Pressable>

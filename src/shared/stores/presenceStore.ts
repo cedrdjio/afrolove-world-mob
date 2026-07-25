@@ -27,6 +27,16 @@ export function usePresenceSync() {
   useEffect(() => {
     if (!user?.id) return;
 
+    // La présence exige un topic PARTAGÉ (tout le monde dans la même salle),
+    // donc on ne peut pas le rendre unique. En cas de remontage rapide, une
+    // instance du canal peut encore traîner dans le client : la réutiliser
+    // après subscribe() plante l'ajout de callbacks — on purge d'abord.
+    for (const existing of supabase.getChannels()) {
+      if (existing.topic === 'realtime:online-members') {
+        supabase.removeChannel(existing).catch(() => {});
+      }
+    }
+
     const channel = supabase.channel('online-members', {
       config: { presence: { key: user.id } },
     });

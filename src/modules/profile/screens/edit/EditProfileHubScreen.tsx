@@ -51,7 +51,9 @@ export function EditProfileHubScreen() {
         <GlowOrb size={230} color="rgba(106,79,192,0.09)" top={-50} right={-50} duration={9500} />
       </ScreenBackground>
 
-      <ScrollView contentContainerClassName="px-6 pb-8" style={{ paddingTop: 68 }} showsVerticalScrollIndicator={false}>
+      {/* pb généreux : la dernière rangée restait collée au bord et semblait
+          coupée — impossible de « scroller jusqu'en bas ». */}
+      <ScrollView contentContainerClassName="px-6 pb-24" style={{ paddingTop: 68 }} showsVerticalScrollIndicator={false}>
         <View className="mb-7 flex-row items-center justify-between">
           <IconButton onPress={() => router.back()}>
             <ArrowLeft size={19} color={colors.ink.DEFAULT} strokeWidth={2} />

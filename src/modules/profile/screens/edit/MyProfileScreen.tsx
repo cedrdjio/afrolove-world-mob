@@ -19,7 +19,7 @@ import { FullScreenLoader } from '@/shared/components/feedback';
 import { colors, gradients } from '@/shared/constants/theme';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useProfileStats } from '@/modules/profile/hooks/useProfileStats';
-import { useEntitlements } from '@/modules/premium/hooks/usePremium';
+import { useEntitlements, usePremiumPlans } from '@/modules/premium/hooks/usePremium';
 import { useInterestsQuery } from '@/modules/profile/hooks/useReferenceData';
 import { computeProfileCompletion, calculateAge } from '@/modules/profile/types/profile';
 
@@ -52,6 +52,7 @@ export function MyProfileScreen() {
   const statsQuery = useProfileStats();
   const interestsQuery = useInterestsQuery();
   const entitlements = useEntitlements();
+  const plansQuery = usePremiumPlans();
 
   const profile = profileQuery.data;
   const isPremium = entitlements.data?.isPremium ?? false;
@@ -265,28 +266,31 @@ export function MyProfileScreen() {
             </Pressable>
           </Animated.View>
 
-          {/* Carte Premium : promo quand on n'est pas abonné, gestion de
-              l'abonnement (forfait + échéance) quand on l'est déjà. */}
+          {/* Abonnement : abonné = forfait actuel + bouton Améliorer ;
+              non abonné = liste des forfaits achetables directement ici. */}
           <Animated.View entering={FadeInDown.delay(420)}>
             {isPremium ? (
-              <Pressable
-                onPress={() => router.push('/premium')}
-                className="mt-3.5 flex-row items-center gap-3.5 rounded-2xl border-[1.5px] border-gold/[0.35] bg-gold/[0.08] px-4 py-3.5 active:opacity-90"
-              >
-                <View className="h-11 w-11 items-center justify-center rounded-2xl bg-gold/[0.15]">
-                  <Star size={20} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
+              <View className="mt-3.5 rounded-2xl border-[1.5px] border-gold/[0.35] bg-gold/[0.08] px-4 py-3.5">
+                <View className="flex-row items-center gap-3.5">
+                  <View className="h-11 w-11 items-center justify-center rounded-2xl bg-gold/[0.15]">
+                    <Star size={20} color={colors.gold.DEFAULT} fill={colors.gold.DEFAULT} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="mb-0.5 font-heading text-[13.5px] text-ink">
+                      Premium actif{premiumPlanLabel ? ` · ${premiumPlanLabel}` : ''}
+                    </Text>
+                    <Text className="font-body text-[11.5px] text-ink-muted">
+                      {premiumUntilLabel ? `Jusqu'au ${premiumUntilLabel}` : 'Abonnement en cours'}
+                    </Text>
+                  </View>
                 </View>
-                <View className="flex-1">
-                  <Text className="mb-0.5 font-heading text-[13.5px] text-ink">
-                    Premium actif{premiumPlanLabel ? ` · ${premiumPlanLabel}` : ''}
-                  </Text>
-                  <Text className="font-body text-[11.5px] text-ink-muted">
-                    {premiumUntilLabel
-                      ? `Jusqu'au ${premiumUntilLabel} — gérer ou prolonger`
-                      : 'Gérer ou prolonger mon abonnement'}
-                  </Text>
-                </View>
-              </Pressable>
+                <Pressable
+                  onPress={() => router.push('/premium/pricing')}
+                  className="mt-3 items-center rounded-xl bg-gold/[0.18] py-2.5 active:opacity-80"
+                >
+                  <Text className="font-heading text-[12px] text-ink">Améliorer mon forfait</Text>
+                </Pressable>
+              </View>
             ) : (
               <Pressable onPress={() => router.push('/premium')} className="mt-3.5 active:opacity-90">
                 <LinearGradient
@@ -319,6 +323,42 @@ export function MyProfileScreen() {
               </Pressable>
             )}
           </Animated.View>
+
+          {/* Liste des forfaits, achetables en un geste depuis le profil —
+              visible uniquement sans abonnement actif. */}
+          {!isPremium && (plansQuery.data?.length ?? 0) > 0 ? (
+            <Animated.View entering={FadeInDown.delay(480)} className="mt-3.5">
+              <Text className="mb-2.5 font-heading text-[11px] uppercase tracking-wide text-ink/45">
+                Choisir un forfait
+              </Text>
+              <View style={{ gap: 8 }}>
+                {plansQuery.data!.map((plan) => (
+                  <Pressable
+                    key={plan.key}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/premium/checkout',
+                        params: { plan: plan.key, label: plan.label },
+                      })
+                    }
+                    className="flex-row items-center justify-between rounded-2xl border-[1.5px] border-surface-border/70 bg-surface/[0.45] px-4 py-3.5 active:opacity-85"
+                  >
+                    <View className="flex-1 pr-3">
+                      <Text className="mb-0.5 font-heading text-[13px] text-ink">{plan.label}</Text>
+                      {plan.description ? (
+                        <Text className="font-body text-[11px] text-ink-muted">{plan.description}</Text>
+                      ) : null}
+                    </View>
+                    <View className="rounded-full bg-brand px-3.5 py-2">
+                      <Text className="font-heading text-[11.5px] text-white">
+                        {(plan.priceCents / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                      </Text>
+                    </View>
+                  </Pressable>
+                ))}
+              </View>
+            </Animated.View>
+          ) : null}
         </View>
       </ScrollView>
     </View>

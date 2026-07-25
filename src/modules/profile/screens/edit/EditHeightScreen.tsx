@@ -6,11 +6,13 @@ import { GlassSurface } from '@/shared/components/ui/GlassSurface';
 import { EditScreenLayout } from '@/modules/profile/components/EditScreenLayout';
 import { Skeleton, ErrorState } from '@/shared/components/feedback';
 import { colors } from '@/shared/constants/theme';
+import { useThemeColors } from '@/shared/theme/useThemeColors';
 import { useProfileQuery } from '@/modules/profile/hooks/useProfileQuery';
 import { useUpdateProfile } from '@/modules/profile/hooks/useUpdateProfile';
 import { useAppError } from '@/shared/hooks/useAppError';
 
 export function EditHeightScreen() {
+  const tc = useThemeColors();
   const router = useRouter();
   const profileQuery = useProfileQuery();
   const updateProfile = useUpdateProfile();
@@ -51,7 +53,7 @@ export function EditHeightScreen() {
             <Pressable onPress={() => setHeight((h) => Math.max(140, h - 1))}>
               <GlassSurface variant="light" radius={22} style={{ width: 52, height: 52 }}>
                 <View className="h-[52px] w-[52px] items-center justify-center">
-                  <Minus size={20} color={colors.ink.DEFAULT} />
+                  <Minus size={20} color={tc.ink.DEFAULT} />
                 </View>
               </GlassSurface>
             </Pressable>
@@ -62,7 +64,7 @@ export function EditHeightScreen() {
             <Pressable onPress={() => setHeight((h) => Math.min(220, h + 1))}>
               <GlassSurface variant="light" radius={22} style={{ width: 52, height: 52 }}>
                 <View className="h-[52px] w-[52px] items-center justify-center">
-                  <Plus size={20} color={colors.ink.DEFAULT} />
+                  <Plus size={20} color={tc.ink.DEFAULT} />
                 </View>
               </GlassSurface>
             </Pressable>
