@@ -1,17 +1,37 @@
 name: Build Android APK
 
+# Build 100 % sur GitHub (sans EAS / Expo cloud) : prebuild -> Gradle -> APK
+# aligné et signé -> artefact + Release GitHub (lien de téléchargement permanent).
+
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Type de build"
+        type: choice
+        options: [release, debug]
+        default: release
   push:
     branches:
+      - claude/admin-dashboard-foundation-7ao5w7
       - claude/graphify-plugin-0n39xh
+    paths-ignore:
+      - "**.md"
+      - "supabase/**"
+      - ".github/workflows/test.yml"
 
 permissions:
   contents: write
 
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: ${{ github.event.inputs.build_type || 'release' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,28 +39,40 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Write environment variables
+      # N'écrit une variable que si le secret existe : sinon l'app utilise ses
+      # valeurs publiques de repli (clé Supabase publishable). Écrire une chaîne
+      # vide casserait le repli (`'' ?? défaut` renvoie '').
+      - name: Write .env (secrets présents uniquement)
+        env:
+          SUPA_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          SUPA_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+          GOOGLE_ID: ${{ secrets.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID }}
+          SENTRY_DSN: ${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}
         run: |
-          cat > .env <<EOF
-          EXPO_PUBLIC_SUPABASE_URL=${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
-          EXPO_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-          EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID=${{ secrets.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID }}
-          EOF
+          : > .env
+          [ -n "$SUPA_URL" ]   && echo "EXPO_PUBLIC_SUPABASE_URL=$SUPA_URL" >> .env
+          [ -n "$SUPA_KEY" ]   && echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=$SUPA_KEY" >> .env
+          [ -n "$GOOGLE_ID" ]  && echo "EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID=$GOOGLE_ID" >> .env
+          [ -n "$SENTRY_DSN" ] && echo "EXPO_PUBLIC_SENTRY_DSN=$SENTRY_DSN" >> .env
+          echo "Variables injectées :"; cut -d= -f1 .env || echo "(aucune — repli intégré utilisé)"
 
-      - name: Generate native Android project
-        run: npx expo prebuild --platform android
+      - name: Generate native Android project (prebuild)
+        run: npx expo prebuild --platform android --no-install
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -49,30 +81,91 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
 
-      - name: Build debug APK
+      - name: Build APK (${{ env.BUILD_TYPE }})
         working-directory: android
         run: |
           chmod +x ./gradlew
-          ./gradlew assembleDebug --no-daemon
+          if [ "$BUILD_TYPE" = "debug" ]; then
+            ./gradlew assembleDebug --no-daemon --stacktrace
+          else
+            ./gradlew assembleRelease --no-daemon --stacktrace
+          fi
 
-      - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk AfroLoveWorld-${{ github.run_number }}.apk
+      - name: Locate built APK
+        id: find
+        run: |
+          APK=$(find android/app/build/outputs/apk -name "*.apk" ! -name "*unsigned*" | head -n1)
+          [ -z "$APK" ] && APK=$(find android/app/build/outputs/apk -name "*.apk" | head -n1)
+          if [ -z "$APK" ]; then echo "Aucun APK produit"; exit 1; fi
+          echo "APK brut : $APK"
+          echo "apk=$APK" >> "$GITHUB_OUTPUT"
 
-      - name: Upload APK as build artifact
+      # Keystore depuis les secrets si présents, sinon clé éphémère : l'APK est
+      # toujours signé (installable). Une clé stable Play Store requiert les secrets.
+      - name: Prepare signing keystore
+        id: ks
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KS_STOREPASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KS_KEYPASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          KS="$RUNNER_TEMP/release.keystore"
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$KS"
+            echo "alias=$KS_ALIAS" >> "$GITHUB_OUTPUT"
+            echo "storepass=$KS_STOREPASS" >> "$GITHUB_OUTPUT"
+            echo "keypass=${KS_KEYPASS:-$KS_STOREPASS}" >> "$GITHUB_OUTPUT"
+            echo "Keystore fourni via secrets (signature stable)."
+          else
+            keytool -genkeypair -v -keystore "$KS" -alias afrilove -keyalg RSA \
+              -keysize 2048 -validity 10000 -storepass afrilove -keypass afrilove \
+              -dname "CN=AfriLove World, OU=Mobile, O=AfriLove, C=FR"
+            echo "alias=afrilove" >> "$GITHUB_OUTPUT"
+            echo "storepass=afrilove" >> "$GITHUB_OUTPUT"
+            echo "keypass=afrilove" >> "$GITHUB_OUTPUT"
+            echo "::warning::Pas de keystore secret : APK signé avec une clé éphémère (installable/testable, mais PAS pour une mise à jour Play Store)."
+          fi
+          echo "path=$KS" >> "$GITHUB_OUTPUT"
+
+      - name: Align & sign APK
+        id: sign
+        env:
+          KS_PATH: ${{ steps.ks.outputs.path }}
+          KS_ALIAS: ${{ steps.ks.outputs.alias }}
+          KS_STOREPASS: ${{ steps.ks.outputs.storepass }}
+          KS_KEYPASS: ${{ steps.ks.outputs.keypass }}
+        run: |
+          BT=$(ls -d "$ANDROID_SDK_ROOT"/build-tools/* | sort -V | tail -n1)
+          echo "build-tools : $BT"
+          OUT="AfriLoveWorld-${{ github.run_number }}.apk"
+          "$BT/zipalign" -f -p 4 "${{ steps.find.outputs.apk }}" aligned.apk
+          "$BT/apksigner" sign \
+            --ks "$KS_PATH" --ks-key-alias "$KS_ALIAS" \
+            --ks-pass "pass:$KS_STOREPASS" --key-pass "pass:$KS_KEYPASS" \
+            --out "$OUT" aligned.apk
+          "$BT/apksigner" verify --print-certs "$OUT" | head -n4
+          ls -lh "$OUT"
+          echo "apk=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AfroLoveWorld-${{ github.run_number }}
-          path: AfroLoveWorld-${{ github.run_number }}.apk
+          name: AfriLoveWorld-${{ github.run_number }}
+          path: ${{ steps.sign.outputs.apk }}
           retention-days: 30
 
-      - name: Publish APK to a GitHub Release (permanent download link)
+      - name: Publish GitHub Release (permanent download link)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: android-build-${{ github.run_number }}
-          name: AfroLove World — Android build #${{ github.run_number }}
+          tag_name: android-${{ github.run_number }}
+          name: AfriLove World — APK Android #${{ github.run_number }}
           body: |
-            APK Android généré automatiquement depuis le commit ${{ github.sha }}.
-            Build de debug (non signé pour le Play Store) — installable directement sur un appareil Android
-            en autorisant les "sources inconnues".
-          files: AfroLoveWorld-${{ github.run_number }}.apk
+            APK Android généré automatiquement depuis `${{ github.sha }}`.
+
+            - Type de build : **${{ env.BUILD_TYPE }}** — aligné (zipalign) et signé (apksigner).
+            - Installation : télécharger le `.apk` ci-dessous, autoriser les
+              « sources inconnues » sur l'appareil, puis l'ouvrir.
+          files: ${{ steps.sign.outputs.apk }}
