@@ -9,8 +9,8 @@ on:
       build_type:
         description: "Type de build"
         type: choice
-        options: [release, debug]
-        default: release
+        options: [debug, release]
+        default: debug
   push:
     branches:
       - claude/admin-dashboard-foundation-7ao5w7
@@ -31,7 +31,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      BUILD_TYPE: ${{ github.event.inputs.build_type || 'release' }}
+      BUILD_TYPE: ${{ github.event.inputs.build_type || 'debug' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -87,6 +87,13 @@ jobs:
         working-directory: android
         run: |
           chmod +x ./gradlew
+          # Renfort mémoire JVM : évite l'OutOfMemoryError: Metaspace observé au
+          # compile Kotlin/R8 du build release (le daemon Gradle disparaissait).
+          # La dernière valeur d'une clé l'emporte : on écrase le défaut d'Expo.
+          {
+            echo "org.gradle.jvmargs=-Xmx5120m -XX:MaxMetaspaceSize=2048m -Dfile.encoding=UTF-8"
+            echo "kotlin.daemon.jvmargs=-Xmx3072m -XX:MaxMetaspaceSize=1024m"
+          } >> gradle.properties
           if [ "$BUILD_TYPE" = "debug" ]; then
             ./gradlew assembleDebug --no-daemon --stacktrace
           else
